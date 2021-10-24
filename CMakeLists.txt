@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.12)
 project(RandoBlazer)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -23,28 +23,30 @@ if(NOT boost-cmake_POPULATED)
 endif()
 
 add_library(randoblazerlib STATIC
-  Item.cpp
-  Item.h
-  Lair.cpp
-  Lair.h
+  ItemPool.cpp
+  ItemPool.h
+  #Item.cpp
+  #Item.h
+  #Lair.cpp
+  #Lair.h
   Log.cpp
   Log.h
-  Map.cpp
-  Map.h
+  #Map.cpp
+  #Map.h
   Random.cpp
   Random.h
   Randomizer.cpp
   Randomizer.h
   ROMCheck.cpp
   ROMCheck.h
-  ROMData.cpp
-  ROMData.h
-  ROMUpdate.cpp
-  ROMUpdate.h
-  Sprite.cpp
-  Sprite.h
-  TextUpdate.cpp
-  TextUpdate.h
+  #ROMData.cpp
+  #ROMData.h
+  #ROMUpdate.cpp
+  #ROMUpdate.h
+  #Sprite.cpp
+  #Sprite.h
+  #TextUpdate.cpp
+  #TextUpdate.h
 )
 target_link_libraries(randoblazerlib PRIVATE Boost::random)
 
