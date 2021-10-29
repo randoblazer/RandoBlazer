@@ -10,10 +10,13 @@ using namespace std;
     how many things we would ever need to list
 */
 #define MAX_POOL_SIZE 300
-
 #define ITEM_NAME_MAX_LENGTH 40
+#define NPC_ID_MAX 420
 
 
+/*
+    This gets written to chest or NPC/tile script data to specify item.
+*/
 enum class ItemId : unsigned char {
     NOTHING         = 0x00,
     SWORD_OF_LIFE   = 0x01,
@@ -83,6 +86,10 @@ enum class ItemId : unsigned char {
     GEMS_EXP        = 0xFF,
 };
 
+/*
+    This is the offset into the lair list for the NPC released.
+    We need this to put together the randomized lair data.
+*/
 enum class NpcId : unsigned int {
     NPC_OLD_WOMAN                     = 2,
     NPC_TOOL_SHOP_OWNER               = 6,
@@ -255,6 +262,10 @@ enum class NpcId : unsigned int {
     NPC_KING_MAGRIDD                  = 405,
 };
 
+/*
+    This is a purely artificial index into a list of all Items
+    that we can use to refer to ItemPool entries
+*/
 enum class ItemIndex : unsigned int {
     NOTHING = 0,
     SWORD_OF_LIFE,
@@ -324,13 +335,18 @@ enum class ItemIndex : unsigned int {
 
     GEMS_EXP_1,
     GEMS_EXP_12,
+    GEMS_EXP_30,
     GEMS_EXP_40,
     GEMS_EXP_50,
     GEMS_EXP_60,
     GEMS_EXP_80,
     GEMS_EXP_100,
     GEMS_EXP_150,
+    GEMS_EXP_180,
     GEMS_EXP_200,
+    GEMS_EXP_250,
+    GEMS_EXP_300,
+    GEMS_EXP_400,
 
     NPC_OLD_WOMAN,
     NPC_TOOL_SHOP_OWNER,
@@ -354,6 +370,7 @@ enum class ItemIndex : unsigned int {
     NPC_BOY_CAVE,
     NPC_OLD_MAN,
     NPC_OLD_MAN2,
+    NPC_OLD_MAN3,
     NPC_IVY2,
     NPC_IVY_EMBLEM_A,
     NPC_IVY_RECOVERY_SWORD,
@@ -516,7 +533,7 @@ struct Item {
     bool isUnique;
     bool isConsumable;
     bool isExperience;
-    NpcId npcId;
+    NpcId npcId;    // aka original Lair offset
     ItemId itemId;
     int ExpAmount;
     char name[ITEM_NAME_MAX_LENGTH];
@@ -530,15 +547,23 @@ public:
     static Item allItems[MAX_POOL_SIZE];
     static int allItemsCount;
 
+    static ItemIndex itemIdMap[256];
+    static ItemIndex npcIdMap[NPC_ID_MAX];
+
     Item itemList[MAX_POOL_SIZE];
     unsigned int listSize;
 
-    void logAllItems();
-    void logList();
+    static void logAllItems();
+    static void logList();
 
-    void populateItem (ItemIndex i, Item* flags, ItemId id, const char* name);
-    void populateNpc (ItemIndex i, Item* flags, NpcId id, const char* name);
-    void populate ();
+    static void populateItem (ItemIndex i, Item* flags, ItemId id, const char* name);
+    static void populateNpc (ItemIndex i, Item* flags, NpcId id, const char* name);
+    static void populate ();
+
+    static ItemIndex getItemIndexForItemId (ItemId id);
+    static ItemIndex getItemIndexForNpcId (NpcId id);
+    static ItemIndex getItemIndexForGemsOrExp (int expAmount);
+    static const Item& getItemByIndex (ItemIndex index);
 };
 
 void resetFlags (Item &flags);

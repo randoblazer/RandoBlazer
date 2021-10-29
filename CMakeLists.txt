@@ -25,6 +25,10 @@ endif()
 add_library(randoblazerlib STATIC
   ItemPool.cpp
   ItemPool.h
+  Locations.cpp
+  Locations.h
+  Lairs.cpp
+  Lairs.h
   #Item.cpp
   #Item.h
   #Lair.cpp

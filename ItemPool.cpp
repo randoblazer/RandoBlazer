@@ -35,9 +35,6 @@ void logItem (const Item& item) {
     cout << endl;
 }
 
-Item ItemPool::allItems[MAX_POOL_SIZE];
-int ItemPool::allItemsCount = 0;
-
 ItemPool::ItemPool() {
     ItemPool::listSize = 0;
 }
@@ -46,7 +43,7 @@ ItemPool::~ItemPool() {}
 void ItemPool::logAllItems () {
     cout << allItemsCount << " items" << endl;
     for (int i = 0; i < allItemsCount; i++) {
-        logItem(this->allItems[i]);
+        logItem(allItems[i]);
     }
 }
 void ItemPool::logList () {
@@ -55,17 +52,19 @@ void ItemPool::logList () {
 
 void ItemPool::populateItem (ItemIndex index, Item *flags, ItemId id, const char* name) {
     // cout << "populate item " << (int)index << " with " << name << endl;
-    Item *dst = &ItemPool::allItems[(int)index];
+    Item *dst = &allItems[(int)index];
     memcpy(dst, flags, sizeof(Item));
     dst->itemId = id;
     strcpy(dst->name, name);
+    itemIdMap[(int)id] = index;
 }
 void ItemPool::populateNpc (ItemIndex index, Item *flags, NpcId id, const char* name) {
     // cout << "populate npc " << (int)index << " with " << name << endl;
-    Item *dst = &ItemPool::allItems[(int)index];
+    Item *dst = &allItems[(int)index];
     memcpy(dst, flags, sizeof(Item));
     dst->npcId = id;
     strcpy(dst->name, name);
+    npcIdMap[(int)id] = index;
 }
 
 void resetFlags (Item &flags) {
@@ -80,6 +79,7 @@ void resetFlags (Item &flags) {
 
 void ItemPool::populate () {
     Item flags;
+    allItemsCount = 0;
 
     resetFlags(flags);
     populateItem(ItemIndex::NOTHING, &flags, ItemId::NOTHING, "Nothing");
@@ -173,6 +173,8 @@ void ItemPool::populate () {
     populateItem(ItemIndex::GEMS_EXP_1, &flags, ItemId::GEMS_EXP, "1 Gem or Exp");
     flags.ExpAmount = 12;
     populateItem(ItemIndex::GEMS_EXP_12, &flags, ItemId::GEMS_EXP, "12 Gems or Exp");
+    flags.ExpAmount = 30;
+    populateItem(ItemIndex::GEMS_EXP_30, &flags, ItemId::GEMS_EXP, "30 Gems or Exp");
     flags.ExpAmount = 40;
     populateItem(ItemIndex::GEMS_EXP_40, &flags, ItemId::GEMS_EXP, "40 Gems or Exp");
     flags.ExpAmount = 50;
@@ -185,8 +187,16 @@ void ItemPool::populate () {
     populateItem(ItemIndex::GEMS_EXP_100, &flags, ItemId::GEMS_EXP, "100 Gems or Exp");
     flags.ExpAmount = 150;
     populateItem(ItemIndex::GEMS_EXP_150, &flags, ItemId::GEMS_EXP, "150 Gems or Exp");
+    flags.ExpAmount = 180;
+    populateItem(ItemIndex::GEMS_EXP_180, &flags, ItemId::GEMS_EXP, "180 Gems or Exp");
     flags.ExpAmount = 200;
     populateItem(ItemIndex::GEMS_EXP_200, &flags, ItemId::GEMS_EXP, "200 Gems or Exp");
+    flags.ExpAmount = 250;
+    populateItem(ItemIndex::GEMS_EXP_250, &flags, ItemId::GEMS_EXP, "250 Gems or Exp");
+    flags.ExpAmount = 300;
+    populateItem(ItemIndex::GEMS_EXP_300, &flags, ItemId::GEMS_EXP, "300 Gems or Exp");
+    flags.ExpAmount = 400;
+    populateItem(ItemIndex::GEMS_EXP_400, &flags, ItemId::GEMS_EXP, "400 Gems or Exp");
 
     resetFlags(flags);
     Item npc;
@@ -375,4 +385,30 @@ void ItemPool::populate () {
     populateNpc(ItemIndex::NPC_KING_MAGRIDD, &reqNpc, NpcId::NPC_KING_MAGRIDD, "King Magridd");
 
     allItemsCount = 1 + (int)ItemIndex::NPC_KING_MAGRIDD;
+}
+
+ItemIndex ItemPool::getItemIndexForItemId (ItemId id) {
+    return itemIdMap[(int)id];
+}
+ItemIndex ItemPool::getItemIndexForNpcId (NpcId id) {
+    return npcIdMap[(int)id];
+}
+ItemIndex ItemPool::getItemIndexForGemsOrExp (int expAmount) {
+    switch(expAmount) {
+        case 1: return ItemIndex::GEMS_EXP_1;
+        case 12: return ItemIndex::GEMS_EXP_12;
+        case 40: return ItemIndex::GEMS_EXP_40;
+        case 50: return ItemIndex::GEMS_EXP_50;
+        case 60: return ItemIndex::GEMS_EXP_60;
+        case 80: return ItemIndex::GEMS_EXP_80;
+        case 100: return ItemIndex::GEMS_EXP_100;
+        case 150: return ItemIndex::GEMS_EXP_150;
+        case 200: return ItemIndex::GEMS_EXP_200;
+    }
+    // Should not happen
+    return ItemIndex::GEMS_EXP_1;
+}
+
+const Item& ItemPool::getItemByIndex (ItemIndex index) {
+    return allItems[(int)index];
 }
