@@ -31,8 +31,8 @@ add_library(randoblazerlib STATIC
   Lairs.h
   #Item.cpp
   #Item.h
-  #Lair.cpp
-  #Lair.h
+  Lair.cpp
+  Lair.h
   Log.cpp
   Log.h
   #Map.cpp

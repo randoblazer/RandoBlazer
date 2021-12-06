@@ -8,6 +8,8 @@
 #include <string>
 #include <vector>
 
+#define HEADER_OFFSET 0x200
+
 namespace Randomizer {
     struct Options {
 	Options() {}
@@ -16,6 +18,7 @@ namespace Randomizer {
     };
 
     ROMStatus CheckFile(const std::string& Filename);
+    bool backupRom (const std::string &InFile, const std::string &OutFile);
     bool Randomize(const std::string& InFile, const std::string& OutFile, unsigned int seed, const Options& options, std::string* seed_name = 0);
 }
 

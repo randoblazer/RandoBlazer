@@ -94,6 +94,7 @@ public:
     static bool isMetal (EnemyType enemy);
     static bool isSpirit (EnemyType enemy);
     static bool isSoul (EnemyType enemy);
+    static const char* enemyName (EnemyType enemy);
 
     EnemyType pickOne ();
 };

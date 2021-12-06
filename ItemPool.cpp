@@ -7,6 +7,12 @@
 
 using namespace std;
 
+// Static references
+Item ItemPool::allItems[MAX_POOL_SIZE];
+int ItemPool::allItemsCount;
+ItemIndex ItemPool::itemIdMap[256];
+ItemIndex ItemPool::npcIdMap[NPC_ID_MAX];
+
 void logItem (const Item& item) {
     if (item.isNPC) {
         cout << "NPC " << (int)item.npcId << " ";
@@ -275,7 +281,7 @@ void ItemPool::populate () {
     populateNpc(ItemIndex::NPC_MERMAID, &progNpc, NpcId::NPC_MERMAID, "NW Medical Herb Mermaid");
     populateNpc(ItemIndex::NPC_MERMAID2, &npc, NpcId::NPC_MERMAID2, "Mermaid 2");
     populateNpc(ItemIndex::NPC_MERMAID3, &npc, NpcId::NPC_MERMAID3, "Mermaid 3");
-    populateNpc(ItemIndex::NPC_MERMAID4, &npc, NpcId::NPC_MERMAID4, "Mermaid 4");
+    populateNpc(ItemIndex::NPC_MERMAID4, &npc, NpcId::NPC_MERMAID4, "Dance platform Mermaid");
     populateNpc(ItemIndex::NPC_MERMAID5, &npc, NpcId::NPC_MERMAID5, "Mermaid 5");
     populateNpc(ItemIndex::NPC_MERMAID6, &npc, NpcId::NPC_MERMAID6, "Mermaid 6");
     populateNpc(ItemIndex::NPC_MERMAID7, &npc, NpcId::NPC_MERMAID7, "Mermaid 7");
@@ -298,7 +304,7 @@ void ItemPool::populate () {
     populateNpc(ItemIndex::NPC_MERMAID_STATUE_GHOST_SHIP, &progNpc, NpcId::NPC_MERMAID_STATUE_GHOST_SHIP, "Ghost Ship Mermaid Statue");
     populateNpc(ItemIndex::NPC_MERMAID_QUEEN, &reqNpc, NpcId::NPC_MERMAID_QUEEN, "Mermaid Queen");
 
-    populateNpc(ItemIndex::NPC_GRANDPA, &npc, NpcId::NPC_GRANDPA, "Grandpa");
+    populateNpc(ItemIndex::NPC_GRANDPA, &npc, NpcId::NPC_GRANDPA, "Greeter Grandpa (northwest tunnel)");
     populateNpc(ItemIndex::NPC_GRANDPA2, &npc, NpcId::NPC_GRANDPA2, "Grandpa 2");
     populateNpc(ItemIndex::NPC_GRANDPA3, &reqNpc, NpcId::NPC_GRANDPA3, "Grandpa (opens door to King)");
     populateNpc(ItemIndex::NPC_GRANDPA4, &reqNpc, NpcId::NPC_GRANDPA4, "Grandpa (opens southeast lake)");

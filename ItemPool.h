@@ -370,7 +370,6 @@ enum class ItemIndex : unsigned int {
     NPC_BOY_CAVE,
     NPC_OLD_MAN,
     NPC_OLD_MAN2,
-    NPC_OLD_MAN3,
     NPC_IVY2,
     NPC_IVY_EMBLEM_A,
     NPC_IVY_RECOVERY_SWORD,
@@ -418,7 +417,7 @@ enum class ItemIndex : unsigned int {
     NPC_LUE,
     NPC_MERMAID3,
     NPC_MERMAID_NANA,
-    NPC_MERMAID4,
+    NPC_MERMAID4, // Opens NW platform, alternative path to left side of St Elles
     NPC_DOLPHIN2,
     NPC_MERMAID_STATUE_ROCKBIRD,
     NPC_MERMAID_BUBBLE_ARMOR,
