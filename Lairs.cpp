@@ -229,6 +229,15 @@ const char* Lair::enemyName () {
 void Lair::log () {
     cout << enemyName();
     cout << " | area " << (int)positionData[0] << " position " << (int)positionData[1] << ", " << (int)positionData[2];
+    if (isMetal()) {
+        cout << " " << "[metal]";
+    }
+    if (isSpirit()) {
+        cout << " " << "[spirit]";
+    }
+    if (isSoul()) {
+        cout << " " << "[soul]";
+    }
     cout << endl;
 }
 
@@ -303,6 +312,47 @@ bool Lair::MustNotRandomizeLairPosition() {
 bool Lair::MustNotBeUpwardsLairPosition() {
     /* This lair cannot have enemies oriented upwards */
     return (positionData[0] == 0x1B && positionData[1] == 0x25 && positionData[2] == 0x05);
+}
+
+bool Lair::isMetal() {
+    switch (act) {
+        case ActID::ACT_1:
+            return enemy == EnemyType::ACT1_SPIKEY;
+        case ActID::ACT_2:
+            return enemy == EnemyType::ACT2_SCORPION;
+        case ActID::ACT_3:
+            return enemy == EnemyType::ACT3_METAL_GORILLA;
+        case ActID::ACT_5:
+            switch (enemy) {
+                case EnemyType::ACT5_METAL_MOUSE:
+                    return true;
+                case EnemyType::ACT5_BULLDOZER:
+                    return true;
+                case EnemyType::ACT5_HELICOPTER:
+                    return true;
+                case EnemyType::TIN_DOLL:
+                    return true;
+                default:
+                    return false;
+            }
+        default:
+            return false;
+    }
+}
+
+bool Lair::isSpirit() {
+    switch (act) {
+        case ActID::ACT_2:
+            return enemy == EnemyType::ACT2_FIRE_SPIRIT;
+        case ActID::ACT_6:
+            return enemy == EnemyType::ACT6_GHOST;
+        default:
+            return false;
+    }
+}
+
+bool Lair::isSoul() {
+    return act == ActID::ACT_7 && enemy == EnemyType::ACT7_BRICK;
 }
 
 LairList::LairList () {}

@@ -2,6 +2,8 @@
 #include "ROMUpdate.h"
 #include "ROMData.h"
 #include "TextUpdate.h"
+#include "Lairs.h"
+#include "Locations.h"
 
 #include <iostream>
 #include <fstream>
@@ -10,11 +12,9 @@
 #include <stdlib.h>
 
 
-
 namespace ROMUpdate {
-
-    void ROMUpdateTextAndItems(const std::vector<Lair>& RandomizedLairList,
-                               const std::vector<Item>& RandomizedItemList,
+    void ROMUpdateTextAndItems(LairList& randomizedLairs,
+                               Locations& locations,
                                std::fstream &ROMFile,
                                const std::string& Seed) {
         unsigned char Byte;
@@ -52,17 +52,16 @@ namespace ROMUpdate {
             ROMFile.seekp (-1, std::ios::cur);
         }
 
-
         /*************************************/
         /* Full update of text and NPC items */
         /*************************************/
 
-        NPCTextUpdateMain(RandomizedLairList, RandomizedItemList, ROMFile, Seed);
+        NPCTextUpdateMain(lairs, RandomizedItemList, ROMFile, Seed);
 
     }
 
 
-    void ROMUpdateLairs(const std::vector<Lair>& RandomizedLairList, std::fstream &ROMFile) {
+    void ROMUpdateLairs(const LairList& lairs, std::fstream &ROMFile) {
 
         ROMFile.seekp (MONSTER_LAIR_DATA_ADDRESS, std::ios::beg);
 

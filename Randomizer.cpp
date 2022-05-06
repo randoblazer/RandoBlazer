@@ -1,10 +1,12 @@
 #include "Randomizer.h"
 
+#include "Log.h"
+#include "Random.h"
 #include "ROMCheck.h"
 #include "ItemPool.h"
 #include "Locations.h"
 #include "Lairs.h"
-#include "Random.h"
+#include "ROMUpdate.h"
 
 #include <algorithm>
 #include <iomanip>
@@ -35,7 +37,7 @@ namespace Randomizer
             seed = Random::RandomInit(seed);
         }
 
-        bool romCheck = backupRom (InFile, OutFile);
+        bool romCheck = backupRom(InFile, OutFile);
         if (!romCheck) {
             cout << "There was a problem with the ROM file!\n";
             return false;
@@ -56,10 +58,34 @@ namespace Randomizer
         locations.populate();
         // locations.logAllLocations();
 
+        /* Modify the ROM with the randomized lists */
+        ROMUpdate::ROMUpdateLairs(lairs, ROMFile);
+        // ROMUpdate::ROMUpdateMapSprites(RandomizedSpriteList, ROMFile);
+        ROMUpdate::ROMUpdateTextAndItems(lairs,
+                                         locations,
+                                         ROMFile,
+                                         seedText);
+
+        /* Close the ROM file */
+        ROMFile.close();
+        ROMFile.clear();
+
+        std::cout << " . . . ROM modification complete.\n";
+
+        if (!options.race)
+        {
+            std::cout << "Starting Spoiler Log creation.\n";
+
+            /* Generate the Spoiler Log */
+            Log::CreateSpoilerLog(RandomizedLairList, RandomizedItemList);
+
+            std::cout << " . . . Spoiler Log created.\n";
+        }
+
         return true;
     }
 
-    ROMStatus CheckFile(const string &Filename)
+    ROMStatus CheckFile (const string &Filename)
     {
         /* Check that the ROM file is there, make the fstream instance */
         fstream ROMFile(Filename, ios::in | ios::out | ios::binary | ios::ate);

@@ -27,7 +27,6 @@
 #define TEXT_ENDTYPE_12   8
 
 
-
 /***** Macros to write into ROM *****/
 
 #define TEXT_WriteByte(_Byte_)        \
@@ -130,7 +129,6 @@
 
 
 namespace ROMUpdate {
-
     static int NPCToDisableAddressList[NB_NPC_TO_DISABLE_ADDRESSES] = {
         0x1815A, /* Old Woman */
         0x184BA, /* Tulip next to Village Chief's house */
@@ -510,8 +508,8 @@ namespace ROMUpdate {
         "Well done!\rBut the next seed\rwon`t be that easy!"
     };
 
-    static const char* ItemLocations[NUMBER_OF_ITEMS] =
-        {"Trial Room",
+    static const char* ItemLocations[NUMBER_OF_ITEMS] = {
+        "Trial Room",
          "Grass Valley\rsecret cave",
          "Grass Valley\rsecret cave",
          "Underground Castle",
@@ -720,9 +718,6 @@ namespace ROMUpdate {
         }
     };
 
-
-
-
     static int PickEndTextCode(int NPCItemID) {
         int EndTextCode = TEXT_ENDTYPE_44AA;
         if (NPCItemID <= 10) {
@@ -743,13 +738,11 @@ namespace ROMUpdate {
         return EndTextCode;
     }
 
-
     int ConvertToHex(int Dec) {
         /* Converts a decimal integer into its hex "equivalent"
            This is useful where the ROM stores the data as decimal values (like gems in chests). */
         return (((Dec / 10) << 4) + (Dec % 10)) & 0xFF;
     }
-
 
     void GeneralTextUpdate(const std::vector<Lair>& RandomizedLairList,
                            const std::vector<Item>& RandomizedItemList,
@@ -825,7 +818,7 @@ namespace ROMUpdate {
         TEXT_WriteString("RandoBlazer v0.5c  ");
         ROMFile.seekp(0x143B9, std::ios::beg);
         TEXT_WriteString("Seed ");
-	ROMFile.write(Seed.c_str(), 10);
+	    ROMFile.write(Seed.c_str(), 10);
         //TEXT_WriteString(Seed.c_str());
 
         /*** Correct Magic Flare typo + Greenwood/Actinidia leaves + "received" typo */
@@ -925,8 +918,7 @@ namespace ROMUpdate {
         TEXT_WriteString(" is\r");
         if (ItemIndex < NUMBER_OF_CHESTS) {
             TEXT_WriteString("in a chest in\r");
-        }
-        else {
+        } else {
             TEXT_WriteString("held by\r");
         }
         TEXT_YellowStyle;
@@ -1464,8 +1456,7 @@ namespace ROMUpdate {
         TEXT_WriteString(" is\r");
         if (ItemIndex < NUMBER_OF_CHESTS) {
             TEXT_WriteString("in a chest in\r");
-        }
-        else {
+        } else {
             TEXT_WriteString("held by\r");
         }
         TEXT_YellowStyle;
@@ -1586,11 +1577,25 @@ namespace ROMUpdate {
         TEXT_WriteString("I`ve got nothing\rfor you.");
         TEXT_WriteByte(0x11);
         TEXT_WriteByte(0x0C);
+
+       	/*** change message speed */
+	    unsigned int addrs[] = {
+		    0x2796C,
+		    0x25F0F,
+		    0x25F19,
+		    0x26004,
+		    0x2600E
+        };
+	    int addrCount = sizeof(addrs) / sizeof(addrs[0]);
+	    for (int i = 0; i < addrCount; i++) {
+	    	ROMFile.seekp(addrs[i], std::ios::beg);
+	    	// 0 for instant, 1 for fast like J version
+	    	TEXT_WriteByte(0x00);
+	    }
     }
 
 
     void NPCItemTextUpdate(int ItemIndex, ItemID itemID, std::fstream &ROMFile) {
-
         unsigned int Byte;
         const char* ItemName;
         int NPCItemIndex = ItemIndex - NUMBER_OF_CHESTS;
@@ -1598,8 +1603,7 @@ namespace ROMUpdate {
         /* Get the item name */
         if (itemID != ItemID::GEMS_EXP) {
             ItemName = ItemNameList[(size_t)itemID];
-        }
-        else {
+        } else {
             ItemName = "EXP";
         }
 
@@ -1619,8 +1623,7 @@ namespace ROMUpdate {
                 TEXT_EndStyle;
                 TEXT_WriteString(".");
                 TEXT_EndText(PickEndTextCode(NPCItemIndex));
-            }
-            else {
+            } else {
                 /* Normal case */
                 if (ItemIndex == ITEM_CRYSTAL_LOST_MARSH ||
                     ItemIndex == ITEM_CRYSTAL_WATER_SHRINE ||
@@ -1645,7 +1648,6 @@ namespace ROMUpdate {
 
         /* Update text when NPC doesn't give its item because the hero already has it */
         if (NPCAlreadyHaveItemTextAddressList[NPCItemIndex] != 0) {
-
             ROMFile.seekp(NPCAlreadyHaveItemTextAddressList[NPCItemIndex], std::ios::beg);
             if (ItemIndex == ITEM_BIRD_RED_HOT_MIRROR ||
                 ItemIndex == ITEM_SQUIRREL_PSYCHO_SWORD ||
@@ -1658,8 +1660,7 @@ namespace ROMUpdate {
                 TEXT_WriteByte(0xB5); /* "have " */
                 TEXT_WriteByte(0xC2); /* "my " */
                 TEXT_WriteString("item.");
-            }
-            else {
+            } else {
                 TEXT_WriteByte(0x95); /* "You " */
                 TEXT_WriteString("already ");
                 TEXT_WriteByte(0xB5); /* "have " */
@@ -1698,17 +1699,14 @@ namespace ROMUpdate {
                     GemsExpValue[0] = ConvertToHex(GemsExp_TensAndUnits);
                     GemsExpValue[1] = ConvertToHex((RandomizedItemList[i].GemsExp - GemsExp_TensAndUnits) / 100);
                     ROMFile.write((char*)(&GemsExpValue[0]), 2);
-                }
-                else {
+                } else {
                     /* If the NPC doesn't normally give EXP, let us turn the
                        prize into a Medical Herb for now. */
                     ROMFile.seekp (ItemAddress, std::ios::beg);
                     itemID = ItemID::MEDICAL_HERB;
                     ROMFile.write((char*)(&itemID), 1);
                 }
-            }
-            else {
-
+            } else {
                 if (ROMData::NPCOriginallyGivesEXP(i)) {
                     /* If the NPC is a crystal fairy which normally gives EXP,
                        we need to do some tweaking to make it give an item. */
@@ -1719,21 +1717,16 @@ namespace ROMUpdate {
                     if (i == ITEM_CRYSTAL_FIRE_SHRINE) {
                         /* This one is really weird, the textbox sometimes glitches out */
                         TEXT_WriteByte(0x02);
-                    }
-                    else {
+                    } else {
                         TEXT_WriteByte(0x00);
                     }
-                }
-                else {
+                } else {
                     ROMFile.seekp (ItemAddress, std::ios::beg);
                     ROMFile.write((char*)(&itemID), 1);
                 }
             }
-
             /* Update the NPC's text accordingly */
             NPCItemTextUpdate(i, itemID, ROMFile);
         }
-
     }
-
 }
