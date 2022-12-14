@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="UnattendedHostPersistenceState">
+    <option name="openedFilesInfos">
+      <list>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="0" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/www/index.html" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="1559" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/weeklySeed.php" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="5380" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/profile.php" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="945" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/manageAdmins.php" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="301" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/manageTimes.php" />
+        </OpenedFileInfo>
+      </list>
+    </option>
+  </component>
+</project>
