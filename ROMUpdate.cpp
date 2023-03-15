@@ -1,9 +1,8 @@
-#include "Map.h"
 #include "ROMUpdate.h"
-#include "ROMData.h"
 #include "TextUpdate.h"
 #include "Lairs.h"
 #include "Locations.h"
+#include "ItemPool.h"
 
 #include <iostream>
 #include <fstream>
@@ -13,10 +12,11 @@
 
 
 namespace ROMUpdate {
-    void ROMUpdateTextAndItems(LairList& randomizedLairs,
-                               Locations& locations,
+    void ROMUpdateTextAndItems(const LairList& randomizedLairs,
+                               const Locations& locations,
+                               const ItemPool& itemPool,
                                std::fstream &ROMFile,
-                               const std::string& Seed) {
+                               const std::string& seed) {
         unsigned char Byte;
 
         /*************************/
@@ -24,22 +24,23 @@ namespace ROMUpdate {
         /*************************/
 
         ROMFile.seekp (CHEST_DATA_ADDRESS, std::ios::beg);
-        bool DoubledChestDone = false;
-        for (int i=0; i<NUMBER_OF_CHESTS; i++) {
+        bool doubledChestDone = false;
+        for (int i = 0; i < NUMBER_OF_CHESTS; i++) {
             /* Put the cursor on the contents data for this chest */
             ROMFile.seekp (3, std::ios::cur);
 
             /* Update the contents */
-            ItemID ItemID = RandomizedItemList[i].Contents;
-            //ROMFile.write((char*)(&ItemID), 1);
-            ROMFile.put((char)ItemID);
-            ROMFile.put(ConvertToHex(RandomizedItemList[i].GemsExp % 100));
-            ROMFile.put(ConvertToHex(RandomizedItemList[i].GemsExp / 100));
+            // ItemID ItemID = RandomizedItemList[i].Contents;
+            Item* item = &ItemPool::allItems[(int)locations.allLocations[(int)locations.chestIdMap[i]].itemIndex];
+
+            ROMFile.put((char)item->itemId);
+            ROMFile.put(ConvertToBCD(item->ExpAmount % 100));
+            ROMFile.put(ConvertToBCD(item->ExpAmount / 100));
 
             /* Chest at index 22 is doubled, so we have to double its replacing one */
-            if (i==22 && DoubledChestDone==false) {
+            if (i == 22 && doubledChestDone == false) {
                 i--;
-                DoubledChestDone = true;
+                doubledChestDone = true;
             }
 
             /* Skip over FF bytes */
@@ -56,51 +57,74 @@ namespace ROMUpdate {
         /* Full update of text and NPC items */
         /*************************************/
 
-        NPCTextUpdateMain(lairs, RandomizedItemList, ROMFile, Seed);
-
+        NPCTextUpdateMain(randomizedLairs, locations, itemPool, ROMFile, seed);
     }
 
-
-    void ROMUpdateLairs(const LairList& lairs, std::fstream &ROMFile) {
-
+    void ROMUpdateLairs(const LairList& randomizedLairs,
+                        const Locations& locations,
+                        const ItemPool& itemPool,
+                        std::fstream &ROMFile) {
         ROMFile.seekp (MONSTER_LAIR_DATA_ADDRESS, std::ios::beg);
 
-        for (int i=0; i<NUMBER_OF_LAIRS; i++) {
+        /*
+            At this point randomizedLairs has enemies randomized. However we need to swap them
+            around to change what NPCs get released. That info is in locations.
+        */
 
+        LairList outputLairs;
+        for (int i = 0; i < NUMBER_OF_LAIRS; i++) {
+            outputLairs.lairList[i] = randomizedLairs.lairList[i];
+        }
+
+        Location* location;
+        NpcId origNpcId, newNpcId;
+        for (int i = 0; i < locations.allLocationsCount; i++) {
+            location = &locations.allLocations[i];
+            if (location->isLair) {
+                origNpcId = itemPool.allItems[(int)location->origItemIndex].npcId;
+                newNpcId = itemPool.allItems[(int)location->itemIndex].npcId;
+                outputLairs.lairList[(int)origNpcId] = randomizedLairs.lairList[(int)newNpcId];
+            }
+        }
+
+        Lair* lair;
+        for (int i = 0; i < NUMBER_OF_LAIRS; i++) {
             ROMFile.seekg(10, std::ios::cur);
 
             /* Update the contents of this Monster Lair */
-            ROMFile.write((char*)(&RandomizedLairList[i].Act), 1);
-            ROMFile.write((char*)(&(RandomizedLairList[i].PositionData[0])), POSITION_DATA_SIZE);
+            lair = &outputLairs.lairList[i];
+            ROMFile.write((char*)(&(lair->act)), 1);
+            ROMFile.write((char*)(&(lair->positionData[0])), POSITION_DATA_SIZE);
             ROMFile.seekp(2, std::ios::cur);
             unsigned char lairType[2] = {
-                static_cast<unsigned char>((static_cast<unsigned int>(RandomizedLairList[i].Type) >> 8) & 0xFF),
-                static_cast<unsigned char>(static_cast<unsigned int>(RandomizedLairList[i].Type) & 0xFF)
+                static_cast<unsigned char>((static_cast<unsigned int>(lair->spawnType) >> 8) & 0xFF),
+                static_cast<unsigned char>(static_cast<unsigned int>(lair->spawnType) & 0xFF)
             };
             ROMFile.write((char*)&lairType, sizeof(lairType));
             ROMFile.seekp(1, std::ios::cur);
-            ROMFile.write((char*)(&RandomizedLairList[i].NbEnemies), 1);
-            ROMFile.write((char*)(&RandomizedLairList[i].SpawnRate), 1);
-            ROMFile.write((char*)(&RandomizedLairList[i].Enemy), 1);
+            ROMFile.write((char*)(&(lair->numEnemies)), 1);
+            ROMFile.write((char*)(&(lair->spawnRate)), 1);
+            ROMFile.write((char*)(&(lair->enemy)), 1);
             ROMFile.seekp(1, std::ios::cur);
-            ROMFile.write((char*)(&RandomizedLairList[i].Orientation), 1);
+            ROMFile.write((char*)(&(lair->orientation)), 1);
             ROMFile.seekp(8, std::ios::cur);
         }
+        // std::cout << "Updated lairs" << endl;
     }
 
-
-    void ROMUpdateMapSprites(const std::vector<Sprite>& RandomizedSpriteList, std::fstream &ROMFile) {
-        int Address;
-        for (int SpriteIndex = 0; SpriteIndex < NUMBER_OF_SPRITES; ++SpriteIndex) {
+    void ROMUpdateMapSprites(const Sprite randomizedSpriteList[], std::fstream &ROMFile) {
+        int address;
+        for (int spriteIndex = 0; spriteIndex < NUMBER_OF_SPRITES; ++spriteIndex) {
             /* Get the ROM address of this sprite data */
-            Address = RandomizedSpriteList[SpriteIndex].Address;
+            address = randomizedSpriteList[spriteIndex].Address;
 
             /* Update the contents of this Sprite */
-            ROMFile.seekp (Address, std::ios::beg);
-            ROMFile.write((char*)(&RandomizedSpriteList[SpriteIndex].x), 1);
-            ROMFile.write((char*)(&RandomizedSpriteList[SpriteIndex].y), 1);
-            ROMFile.write((char*)(&RandomizedSpriteList[SpriteIndex].Orientation), 1);
-            ROMFile.write((char*)(&RandomizedSpriteList[SpriteIndex].Enemy), 1);
+            ROMFile.seekp (address, std::ios::beg);
+            ROMFile.write((char*)(&randomizedSpriteList[spriteIndex].x), 1);
+            ROMFile.write((char*)(&randomizedSpriteList[spriteIndex].y), 1);
+            ROMFile.write((char*)(&randomizedSpriteList[spriteIndex].Orientation), 1);
+            ROMFile.write((char*)(&randomizedSpriteList[spriteIndex].Enemy), 1);
         }
+        std::cout << "Updated sprites" << endl;
     }
 }

@@ -33,8 +33,8 @@ add_library(randoblazerlib STATIC
   #Item.h
   Lair.cpp
   Lair.h
-  Log.cpp
-  Log.h
+  #Log.cpp
+  #Log.h
   #Map.cpp
   #Map.h
   Random.cpp
@@ -45,12 +45,12 @@ add_library(randoblazerlib STATIC
   ROMCheck.h
   #ROMData.cpp
   #ROMData.h
-  #ROMUpdate.cpp
-  #ROMUpdate.h
-  #Sprite.cpp
-  #Sprite.h
-  #TextUpdate.cpp
-  #TextUpdate.h
+  ROMUpdate.cpp
+  ROMUpdate.h
+  Sprite.cpp
+  Sprite.h
+  TextUpdate.cpp
+  TextUpdate.h
 )
 target_link_libraries(randoblazerlib PRIVATE Boost::random)
 

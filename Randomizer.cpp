@@ -1,11 +1,12 @@
 #include "Randomizer.h"
 
-#include "Log.h"
+//#include "Log.h"
 #include "Random.h"
 #include "ROMCheck.h"
 #include "ItemPool.h"
 #include "Locations.h"
 #include "Lairs.h"
+#include "Sprite.h"
 #include "ROMUpdate.h"
 
 #include <algorithm>
@@ -45,26 +46,33 @@ namespace Randomizer
 
         std::fstream ROMFile(OutFile, std::ios::in | std::ios::out | std::ios::binary | std::ios::ate);
 
+        ItemPool::populate();
+        // ItemPool::logAllItems();
         ItemPool itemPool;
-        itemPool.populate();
-        // itemPool.logAllItems();
 
         LairList::readOriginalLairs(ROMFile);
-        LairList* lairs = new LairList();
-        lairs->copyOriginalLairs();
-        lairs->logLairs();
+        LairList lairs;
+        lairs.copyOriginalLairs();
+        // lairs.logLairs();
 
+        Locations::populate();
         Locations locations;
-        locations.populate();
         // locations.logAllLocations();
 
+        // To get started, just set each location to vanilla
+        for (int i = 0; i < ALL_LOCATIONS_SIZE; i++) {
+            locations.allLocations[i].itemIndex = locations.allLocations[i].origItemIndex;
+        }
+        // locations.logAllLocations();
+
+        // Randomize stray enemies not associated with a lair
+        Sprite randomizedSpriteList[NUMBER_OF_SPRITES];
+        GetOriginalMapSpriteData(randomizedSpriteList, ROMFile);
+
         /* Modify the ROM with the randomized lists */
-        ROMUpdate::ROMUpdateLairs(lairs, ROMFile);
-        // ROMUpdate::ROMUpdateMapSprites(RandomizedSpriteList, ROMFile);
-        ROMUpdate::ROMUpdateTextAndItems(lairs,
-                                         locations,
-                                         ROMFile,
-                                         seedText);
+        ROMUpdate::ROMUpdateLairs(lairs, locations, itemPool, ROMFile);
+        ROMUpdate::ROMUpdateMapSprites(randomizedSpriteList, ROMFile);
+        ROMUpdate::ROMUpdateTextAndItems(lairs, locations, itemPool, ROMFile, seedText);
 
         /* Close the ROM file */
         ROMFile.close();
@@ -72,16 +80,17 @@ namespace Randomizer
 
         std::cout << " . . . ROM modification complete.\n";
 
+/*  No spoiler log for now, need to avoid duplicate definition for Item
         if (!options.race)
         {
             std::cout << "Starting Spoiler Log creation.\n";
 
-            /* Generate the Spoiler Log */
+            // Generate the Spoiler Log
             Log::CreateSpoilerLog(RandomizedLairList, RandomizedItemList);
 
             std::cout << " . . . Spoiler Log created.\n";
         }
-
+*/
         return true;
     }
 

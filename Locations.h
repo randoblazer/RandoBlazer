@@ -406,7 +406,7 @@ enum class LocationID : unsigned int {
     CHEST_WORLD_OF_EVIL1_TELEPORTER,
     CHEST_WORLD_OF_EVIL2_RIGHT,
     CHEST_WORLD_OF_EVIL3_RIGHT,
-    CHEST_WORLD_OF_EVIL3_LEFT,
+    CHEST_WORLD_OF_EVIL3_LEFT
 };
 
 struct Location {
@@ -443,6 +443,7 @@ public:
     static LocationID npcIdMap[NPC_ID_MAX];
     static LocationID chestIdMap[66];
 
+    static bool NPCOriginallyGivesEXP(LocationID locationIndex);
     static void populateLair (LocationID locationIndex, ItemIndex origItemIndex, Location* flags, const char* name);
     static void populateNpcItem (LocationID locationIndex, ItemIndex origItemIndex, Location* flags, const char* name, NpcItemIndex npcItemIndex);
     static void populateChest (LocationID locationIndex, ItemIndex origItemIndex, Location* flags, const char* name, unsigned char chestId);

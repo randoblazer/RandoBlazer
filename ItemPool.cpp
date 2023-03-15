@@ -42,7 +42,7 @@ void logItem (const Item& item) {
 }
 
 ItemPool::ItemPool() {
-    ItemPool::listSize = 0;
+    listSize = 0;
 }
 ItemPool::~ItemPool() {}
 
@@ -131,9 +131,9 @@ void ItemPool::populate () {
     populateItem(ItemIndex::HARP_STRING, &flags, ItemId::HARP_STRING, "Harp String");
     populateItem(ItemIndex::PASS, &flags, ItemId::PASS, "Pass");
     populateItem(ItemIndex::DREAM_ROD, &flags, ItemId::DREAM_ROD, "Dream Rod");
-    populateItem(ItemIndex::LEOS_BRUSH, &flags, ItemId::LEOS_BRUSH, "Leo's Brush");
+    populateItem(ItemIndex::LEOS_BRUSH, &flags, ItemId::LEOS_BRUSH, "Leo`s Brush");
     populateItem(ItemIndex::GREENWOOD_LEAF, &flags, ItemId::GREENWOOD_LEAF, "Greenwood Leaf");
-    populateItem(ItemIndex::MOLES_RIBBON, &flags, ItemId::MOLES_RIBBON, "Mole's Ribbon");
+    populateItem(ItemIndex::MOLES_RIBBON, &flags, ItemId::MOLES_RIBBON, "Mole`s Ribbon");
     populateItem(ItemIndex::BIG_PEARL, &flags, ItemId::BIG_PEARL, "Big Pearl");
     populateItem(ItemIndex::MUSHROOM_SHOES, &flags, ItemId::MUSHROOM_SHOES, "Mushroom Shoes");
     populateItem(ItemIndex::MOBILE_KEY, &flags, ItemId::MOBILE_KEY, "Mobile Key");
@@ -165,7 +165,7 @@ void ItemPool::populate () {
 
     resetFlags(flags);
     flags.isUnique = true;
-    populateItem(ItemIndex::GOATS_FOOD, &flags, ItemId::GOATS_FOOD, "Goat food");
+    populateItem(ItemIndex::GOATS_FOOD, &flags, ItemId::GOATS_FOOD, "Goat`s food");
     populateItem(ItemIndex::MERMAIDS_TEARS, &flags, ItemId::MERMAIDS_TEARS, "Mermaid Tears");
     populateItem(ItemIndex::MAGIC_BELL, &flags, ItemId::MAGIC_BELL, "Magic Bell");
 

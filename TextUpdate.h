@@ -1,20 +1,34 @@
 #ifndef __TEXTUPDATE_H__
 #define __TEXTUPDATE_H__
 
+#include "Locations.h"
+#include "Lairs.h"
+#include "ItemPool.h"
+
 #include <fstream>
 #include <vector>
 
+#define NUMBER_OF_CHESTS     66
+#define NUMBER_OF_NPC_ITEMS  60 
+#define NUMBER_OF_ITEMS     126
+#define NUMBER_OF_LAIRS     420
+
 namespace ROMUpdate {
-    int ConvertToHex(int Dec);
-    void NPCTextUpdateMain(const std::vector<Lair>& RandomizedLairList,
-                           const std::vector<Item>& RandomizedItemList,
+    int ConvertToBCD(int dec);
+    void NPCTextUpdateMain(const LairList& randomizedLairs,
+                           const Locations& locations,
+                           const ItemPool& itemPool,
                            std::fstream &ROMFile,
-                           const std::string& Seed);
-    void GeneralTextUpdate(const std::vector<Lair>& RandomizedLairList,
-                           const std::vector<Item>& RandomizedItemList,
+                           const std::string& seed);
+    void GeneralTextUpdate(const LairList& randomizedLairs,
+                           const Locations& locations,
+                           const ItemPool& itemPool,
                            std::fstream &ROMFile,
-                           const std::string& Seed);
-    void NPCItemTextUpdate(int ItemIndex, int ItemID, std::fstream &ROMFile);
+                           const std::string& seed);
+    void NPCItemTextUpdate(int npcItemIndex,
+                           int itemIndex,
+                           const ItemPool& itemPool,
+                           std::fstream &ROMFile);
 }
 
 #endif // __TEXTUPDATE_H__

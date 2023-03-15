@@ -33,6 +33,28 @@ void Locations::logAllLocations () {
     }
 }
 
+bool Locations::NPCOriginallyGivesEXP (LocationID locationIndex) {
+    switch (locationIndex) {
+        case LocationID::CRYSTAL_GRASS_VALLEY_HYPE:
+        case LocationID::CRYSTAL_UNDERGROUND_CASTLE:
+        case LocationID::CRYSTAL_LOST_MARSH_END:
+        case LocationID::CRYSTAL_WATER_SHRINE2_SPEARS:
+        case LocationID::CRYSTAL_FIRE_SHRINE_BASEMENT:
+        case LocationID::CRYSTAL_MOUNTAIN_SUMMIT:
+        case LocationID::CRYSTAL_LUNE:
+        case LocationID::CRYSTAL_LEOS_BASEMENT:
+        case LocationID::CRYSTAL_MODEL_TOWN1:
+        case LocationID::CRYSTAL_POWER_PLANT:
+        case LocationID::CRYSTAL_ROCKBIRD:
+        case LocationID::CRYSTAL_BLESTER_SEABED_PATH:
+        case LocationID::CRYSTAL_DUREAN_SEABED_PATH:
+            return true;
+            break;
+        default:
+            return false;
+    }
+}
+
 void Locations::logLocation (const Location& location) {
     const Item item = ItemPool::getItemByIndex(location.origItemIndex);
     cout << location.name;
@@ -1976,7 +1998,7 @@ void Locations::populate () {
         LocationID::CHEST_WORLD_OF_EVIL1_TELEPORTER,
         ItemIndex::RED_HOT_BALL,
         &normalFlags,
-        "World of Evil first area left chest",
+        "World of Evil teleporter chest",
         62
     );
     populateChest(
