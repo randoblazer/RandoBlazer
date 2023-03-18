@@ -4,6 +4,18 @@
 #include <algorithm>
 
 namespace Random {
+    class WeightedPicker {
+    public:
+        WeightedPicker(int* initWeights, int num);
+        ~WeightedPicker();
+
+        int* weightSums;
+        int numWeights;
+        int totalWeight;
+
+        int pick();
+    };
+
     int RandomInit(unsigned int Seed);
     // Return [0, Range)
     int RandomInteger(int Range);

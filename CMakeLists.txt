@@ -29,22 +29,18 @@ add_library(randoblazerlib STATIC
   Locations.h
   Lairs.cpp
   Lairs.h
-  #Item.cpp
-  #Item.h
   Lair.cpp
   Lair.h
   #Log.cpp
   #Log.h
-  #Map.cpp
-  #Map.h
+  LogicGraph.cpp
+  LogicGraph.h
   Random.cpp
   Random.h
   Randomizer.cpp
   Randomizer.h
   ROMCheck.cpp
   ROMCheck.h
-  #ROMData.cpp
-  #ROMData.h
   ROMUpdate.cpp
   ROMUpdate.h
   Sprite.cpp

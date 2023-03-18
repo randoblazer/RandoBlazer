@@ -42,7 +42,9 @@ void logItem (const Item& item) {
 }
 
 ItemPool::ItemPool() {
-    listSize = 0;
+    for (int i = 0; i < MAX_POOL_SIZE; i++) {
+        itemList[i] = 0;
+    }
 }
 ItemPool::~ItemPool() {}
 
@@ -417,4 +419,16 @@ ItemIndex ItemPool::getItemIndexForGemsOrExp (int expAmount) {
 
 const Item& ItemPool::getItemByIndex (ItemIndex index) {
     return allItems[(int)index];
+}
+
+void ItemPool::addItem (ItemIndex i) {
+    itemList[static_cast<int>(i)]++;
+}
+void ItemPool::removeItem (ItemIndex i) {
+    if (itemList[static_cast<int>(i)] > 0) {
+        itemList[static_cast<int>(i)] -= 1;
+    };
+}
+bool ItemPool::hasItem (ItemIndex i) {
+    return itemList[static_cast<int>(i)] > 0;
 }

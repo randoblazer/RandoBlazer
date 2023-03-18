@@ -549,8 +549,10 @@ public:
     static ItemIndex itemIdMap[256];
     static ItemIndex npcIdMap[NPC_ID_MAX];
 
-    Item itemList[MAX_POOL_SIZE];
-    unsigned int listSize;
+    int itemList[MAX_POOL_SIZE];
+    void addItem (ItemIndex i);
+    void removeItem (ItemIndex i);
+    bool hasItem (ItemIndex i);
 
     static void logAllItems();
     static void logList();

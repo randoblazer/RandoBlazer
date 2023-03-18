@@ -7,6 +7,7 @@
 #include "Locations.h"
 #include "Lairs.h"
 #include "Sprite.h"
+#include "LogicGraph.h"
 #include "ROMUpdate.h"
 
 #include <algorithm>
@@ -58,6 +59,8 @@ namespace Randomizer
         Locations::populate();
         Locations locations;
         // locations.logAllLocations();
+
+        testLogicGraph();
 
         // To get started, just set each location to vanilla
         for (int i = 0; i < ALL_LOCATIONS_SIZE; i++) {

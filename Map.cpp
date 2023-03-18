@@ -1,43 +1,46 @@
 #include "Map.h"
 
+#define WEIGHT_CAP 8
 
-#define WEIGHT_CAP  8
-
-
-Element::Element(GoalType NewType, int NewIndex) {
-    Type  = NewType;
+Element::Element(GoalType NewType, int NewIndex)
+{
+    Type = NewType;
     Index = NewIndex;
 }
 
 Element::~Element() {}
 
-Region::Region()  {}
+Region::Region() {}
 Region::~Region() {}
 
-void Region::InsertElement(GoalType Type, int Index) {
+void Region::InsertElement(GoalType Type, int Index)
+{
     Element NewElement(Type, Index);
     Contents.push_back(NewElement);
 }
 
-void Region::InsertGoal(int Index) {
+void Region::InsertGoal(int Index)
+{
     NextGoals.push_back(Index);
 }
 
-Goal::Goal()  {
+Goal::Goal()
+{
     Weight = 0;
 }
 Goal::~Goal() {}
 
-void Goal::InsertElement(GoalType Type, int Index) {
+void Goal::InsertElement(GoalType Type, int Index)
+{
     Element NewElement(Type, Index);
     Requirements.push_back(NewElement);
 }
 
+namespace Map
+{
 
-
-namespace Map {
-
-    void InitMap(std::vector<Region> &RegionList, std::vector<Goal> &GoalList) {
+    void InitMap(std::vector<Region> &RegionList, std::vector<Goal> &GoalList)
+    {
 
         /******** REGIONS ********/
 
@@ -121,7 +124,7 @@ namespace Map {
         RegionList[4].InsertElement(GoalType::ITEM, 14);
         RegionList[4].InsertElement(GoalType::ITEM, 15);
         RegionList[4].InsertElement(GoalType::ITEM, 16);
-        //RegionList[4].InsertElement(GoalType::ITEM, 17);  WARNING: this (normally empty) chest can disappear!!!
+        // RegionList[4].InsertElement(GoalType::ITEM, 17);  WARNING: this (normally empty) chest can disappear!!!
         RegionList[4].InsertElement(GoalType::ITEM, 19);
         RegionList[4].InsertElement(GoalType::ITEM, 20);
         RegionList[4].InsertElement(GoalType::ITEM, ITEM_CRYSTAL_WATER_SHRINE);
@@ -490,11 +493,11 @@ namespace Map {
         RegionList[55].InsertElement(GoalType::ITEM, ITEM_MERMAID_HERB);
 
         /* Region 56 - Common Mermaid house */
-        RegionList[56].InsertElement(GoalType::ITEM, 22);  /* WARNING: I hope this chest is safe */
+        RegionList[56].InsertElement(GoalType::ITEM, 22); /* WARNING: I hope this chest is safe */
         RegionList[56].InsertElement(GoalType::ITEM, ITEM_MERMAID_BUBBLE_ARMOR);
         RegionList[56].InsertGoal(12); /* Last soul of Southerta */
         RegionList[56].InsertGoal(14); /* Big Pearl chest */
-        //RegionList[56].InsertGoal(22); /* Mermaid's Tears chest */
+        // RegionList[56].InsertGoal(22); /* Mermaid's Tears chest */
         RegionList[56].InsertGoal(57); /* Red-Hot Stick mermaid */
         RegionList[56].InsertGoal(58); /* Lue */
 
@@ -543,7 +546,7 @@ namespace Map {
         RegionList[69].InsertElement(GoalType::ITEM, ITEM_SOLDIER_ELEMENTAL_MAIL);
 
         /* Region 70 - Queen Magridd */
-        //RegionList[70].InsertElement(GoalType::ITEM, ITEM_QUEEN_MAGRIDD); WARNING: this item can be lost if the Queen is already dead
+        // RegionList[70].InsertElement(GoalType::ITEM, ITEM_QUEEN_MAGRIDD); WARNING: this item can be lost if the Queen is already dead
 
         /* Region 71 - Platinum Card soldier */
         RegionList[71].InsertElement(GoalType::ITEM, ITEM_SOLDIER_PLATINUM_CARD); /* Back into logic */
@@ -570,8 +573,6 @@ namespace Map {
 
         /* Region 78 - Chest of Drawers in Attic */
         RegionList[78].InsertElement(GoalType::ITEM, ITEM_CHEST_OF_DRAWERS_HERB);
-
-
 
         /******** GOALS ********/
 
@@ -678,7 +679,7 @@ namespace Map {
         GoalList[21].Target = 22;
 
         /* Goal 22 - Mermaid's Tears chest */
-        //GoalList[22].InsertElement(GoalType::LAIR, NPC_MERMAID_TEARS); /* We actually don't need this mermaid */
+        // GoalList[22].InsertElement(GoalType::LAIR, NPC_MERMAID_TEARS); /* We actually don't need this mermaid */
         GoalList[22].Target = 23;
 
         /* Goal 23 - Get Mushroom Shoes */
@@ -977,41 +978,47 @@ namespace Map {
         GoalList[77].Target = 78;
     }
 
-
-    void CalculateWeights(std::vector<Region> &RegionList, std::vector<Goal> &GoalList, int GoalID) {
+    void CalculateWeights(std::vector<Region> &RegionList, std::vector<Goal> &GoalList, int GoalID)
+    {
 
         int TargetRegionIndex = (GoalID == GOAL_TO_FIRST_REGION ? 0 : GoalList[GoalID].Target);
 
         /* If this region doesn't have any goal, the goal leading to it only has a weight of 1 */
-        if (RegionList[TargetRegionIndex].NextGoals.empty()) {
-            if (GoalID != GOAL_TO_FIRST_REGION) {
+        if (RegionList[TargetRegionIndex].NextGoals.empty())
+        {
+            if (GoalID != GOAL_TO_FIRST_REGION)
+            {
                 GoalList[GoalID].Weight = 1;
             }
             return;
         }
 
         int MaximumDepth = 1;
-        for (const auto& CurrentSubGoalID : RegionList[TargetRegionIndex].NextGoals) {
+        for (const auto &CurrentSubGoalID : RegionList[TargetRegionIndex].NextGoals)
+        {
             /* Calculate weights of all sub-goals, and keep the maximum depth found */
             CalculateWeights(RegionList, GoalList, CurrentSubGoalID);
-            if (GoalList[CurrentSubGoalID].Weight > MaximumDepth) {
+            if (GoalList[CurrentSubGoalID].Weight > MaximumDepth)
+            {
                 MaximumDepth = GoalList[CurrentSubGoalID].Weight;
             }
         }
 
-        if (GoalID != GOAL_TO_FIRST_REGION) {
+        if (GoalID != GOAL_TO_FIRST_REGION)
+        {
             /* This goal's weight will be the maximum depth of the attached sub-tree + 1 */
             GoalList[GoalID].Weight = MaximumDepth + 1;
 
             /* Cap the weight */
-            if (WEIGHT_CAP != 0 && GoalList[GoalID].Weight > WEIGHT_CAP) {
+            if (WEIGHT_CAP != 0 && GoalList[GoalID].Weight > WEIGHT_CAP)
+            {
                 GoalList[GoalID].Weight = WEIGHT_CAP;
             }
         }
     }
 
-
-    void GetNonKeyNPCList(std::vector<int> &NonKeyNPCList) {
+    void GetNonKeyNPCList(std::vector<int> &NonKeyNPCList)
+    {
         NonKeyNPCList.push_back(NPC_TULIP);
         NonKeyNPCList.push_back(NPC_TULIP2);
         NonKeyNPCList.push_back(NPC_GOAT);
@@ -1090,8 +1097,8 @@ namespace Map {
         NonKeyNPCList.push_back(NPC_SOLDIER11);
     }
 
-
-    void GetNonKeyItemList(std::vector<int> &NonKeyChestList) {
+    void GetNonKeyItemList(std::vector<int> &NonKeyChestList)
+    {
         NonKeyChestList.push_back(1);
         NonKeyChestList.push_back(2);
         NonKeyChestList.push_back(3);
@@ -1148,29 +1155,29 @@ namespace Map {
         NonKeyChestList.push_back(ITEM_GOAT_PEN);
         NonKeyChestList.push_back(ITEM_TEDDY);
         NonKeyChestList.push_back(ITEM_SECRET_CAVE_TILE);
-        //NonKeyChestList.push_back(ITEM_VILLAGE_CHIEF);
+        // NonKeyChestList.push_back(ITEM_VILLAGE_CHIEF);
         NonKeyChestList.push_back(ITEM_MAGICIAN);
         NonKeyChestList.push_back(ITEM_CRYSTAL_RECOVERY_SWORD);
         NonKeyChestList.push_back(ITEM_CRYSTAL_MAGIC_BELL);
         NonKeyChestList.push_back(ITEM_WOODSTIN_TRIO);
-        //NonKeyChestList.push_back(ITEM_GREENWOODS_GUARDIAN);
+        // NonKeyChestList.push_back(ITEM_GREENWOODS_GUARDIAN);
         NonKeyChestList.push_back(ITEM_MOLE_SHIELD_BRACELET);
         NonKeyChestList.push_back(ITEM_SQUIRREL_PSYCHO_SWORD);
         NonKeyChestList.push_back(ITEM_WATER_SHRINE_TILE);
         NonKeyChestList.push_back(ITEM_CRYSTAL_LIGHT_ARROW);
-        //NonKeyChestList.push_back(ITEM_NOME);
+        // NonKeyChestList.push_back(ITEM_NOME);
         NonKeyChestList.push_back(ITEM_CHEST_OF_DRAWERS_MYSTIC_ARMOR);
         NonKeyChestList.push_back(ITEM_PLANT_HERB);
         NonKeyChestList.push_back(ITEM_CHEST_OF_DRAWERS_HERB);
-        //NonKeyChestList.push_back(ITEM_MARIE);
+        // NonKeyChestList.push_back(ITEM_MARIE);
         NonKeyChestList.push_back(ITEM_MOUSE_SPARK_BOMB);
         NonKeyChestList.push_back(ITEM_SOLDIER_ELEMENTAL_MAIL);
         NonKeyChestList.push_back(ITEM_SUPER_BRACELET);
         NonKeyChestList.push_back(ITEM_MAID_HERB);
-        //NonKeyChestList.push_back(ITEM_KING_MAGRIDD);
+        // NonKeyChestList.push_back(ITEM_KING_MAGRIDD);
         NonKeyChestList.push_back(ITEM_MERMAID_HERB);
         NonKeyChestList.push_back(ITEM_MERMAID_MAGIC_FLARE);
-        //NonKeyChestList.push_back(ITEM_MERMAID_QUEEN);
+        // NonKeyChestList.push_back(ITEM_MERMAID_QUEEN);
         NonKeyChestList.push_back(ITEM_CRYSTAL_GRASS_VALLEY);
         NonKeyChestList.push_back(ITEM_CRYSTAL_UNDERGROUND_CASTLE);
         NonKeyChestList.push_back(ITEM_CRYSTAL_LOST_MARSH);
