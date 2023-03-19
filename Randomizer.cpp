@@ -60,7 +60,7 @@ namespace Randomizer
         Locations locations;
         // locations.logAllLocations();
 
-        testLogicGraph();
+        testMaps(locations);
 
         // To get started, just set each location to vanilla
         for (int i = 0; i < ALL_LOCATIONS_SIZE; i++) {

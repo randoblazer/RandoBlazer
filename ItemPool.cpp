@@ -42,9 +42,7 @@ void logItem (const Item& item) {
 }
 
 ItemPool::ItemPool() {
-    for (int i = 0; i < MAX_POOL_SIZE; i++) {
-        itemList[i] = 0;
-    }
+    clear();
 }
 ItemPool::~ItemPool() {}
 
@@ -431,4 +429,9 @@ void ItemPool::removeItem (ItemIndex i) {
 }
 bool ItemPool::hasItem (ItemIndex i) {
     return itemList[static_cast<int>(i)] > 0;
+}
+void ItemPool::clear () {
+    for (int i = 0; i < MAX_POOL_SIZE; i++) {
+        itemList[i] = 0;
+    }
 }

@@ -48,6 +48,17 @@ public:
     bool isMet(ItemPool inventory);
 };
 
+class MapLink;
+
+struct MapNodeLocationNode {
+    LocationID location;
+    MapNodeLocationNode* next;
+};
+struct MapNodeLinkNode {
+    MapLink* link;
+    MapNodeLinkNode* next;
+};
+
 class MapNode {
 public:
     MapNode();
@@ -55,22 +66,28 @@ public:
 
     int numLocations;
     int numFilled;
-    LocationID* nodeLocations;
-    LocationID* filledLocations;
-    LocationID* emptyLocations;
+    MapNodeLocationNode* emptyLocations;
+    MapNodeLocationNode* filledLocations;
+    MapNodeLinkNode* links;
+
+    MapNode* addLocation (LocationID newLocation);
+    MapNode* addLink (MapLink* newLink);
+    void fillLocation (LocationID fillLocation);
 };
 
 class MapLink {
 public:
     MapLink();
+    MapLink(MapNode* sourceNode, MapNode* destNode, LinkRequirement* linkReq);
     ~MapLink();
 
     MapNode* source;
     MapNode* dest;
-    LinkRequirement req;
+    LinkRequirement* req;
 };
 
 void testLogicGraph();
+void testMaps(Locations locations);
 
 
 #endif // __LOGICGRAPH_H__

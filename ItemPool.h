@@ -553,6 +553,7 @@ public:
     void addItem (ItemIndex i);
     void removeItem (ItemIndex i);
     bool hasItem (ItemIndex i);
+    void clear ();
 
     static void logAllItems();
     static void logList();
