@@ -9,6 +9,7 @@
 #include "Sprite.h"
 #include "LogicGraph.h"
 #include "ROMUpdate.h"
+#include "Filler.h"
 
 #include <algorithm>
 #include <iomanip>
@@ -60,7 +61,8 @@ namespace Randomizer
         Locations locations;
         // locations.logAllLocations();
 
-        testMaps(locations);
+        // testMaps(locations);
+        Filler::testPlacement();
 
         // To get started, just set each location to vanilla
         for (int i = 0; i < ALL_LOCATIONS_SIZE; i++) {
@@ -83,7 +85,7 @@ namespace Randomizer
 
         std::cout << " . . . ROM modification complete.\n";
 
-/*  No spoiler log for now, need to avoid duplicate definition for Item
+/*  No spoiler log for now, need to avoid duplicate definitions
         if (!options.race)
         {
             std::cout << "Starting Spoiler Log creation.\n";

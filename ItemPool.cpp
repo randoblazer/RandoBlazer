@@ -435,3 +435,6 @@ void ItemPool::clear () {
         itemList[i] = 0;
     }
 }
+void ItemPool::copyFrom (ItemPool* source) {
+    memcpy(itemList, source->itemList, sizeof(itemList));
+}

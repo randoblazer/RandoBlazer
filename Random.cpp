@@ -86,4 +86,18 @@ namespace Random {
             std::cout << i << " - " << results[i] << std::endl;
         }
     }
+
+    void testRandomInteger () {
+        int buckets[10];
+        for (int i = 0; i < 10; i++) {
+            buckets[i] = 0;
+        }
+        for (int i = 0; i < 1000; i++) {
+            buckets[Random::RandomInteger(10)]++;
+        }
+        for (int i = 0; i < 10; i++) {
+            std::cout << buckets[i] << "  ";
+        }
+        std::cout << endl;
+    }
 }

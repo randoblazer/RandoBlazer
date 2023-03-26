@@ -32,6 +32,19 @@ namespace Random {
             std::swap(first[i], first[RandomIntegerRange(0, static_cast<int>(i))]);
         }
     }
+
+    template<class ItemClass>
+    void shuffleArray(ItemClass array[], int size) {
+        ItemClass temp;
+        int pick;
+        for (int i = size-1; i > 0; --i) {
+            pick = RandomInteger(i);
+            temp = array[i];
+            array[i] = array[pick];
+            array[pick] = temp;
+            // std::swap(array[i], RandomInteger(i));
+        }
+    }
 }
 
 #endif // __RANDOM_H__

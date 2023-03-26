@@ -12,7 +12,7 @@ public:
     LinkRequirement ();
     virtual ~LinkRequirement();
 
-    virtual bool isMet(ItemPool inventory);
+    virtual bool isMet(ItemPool& inventory);
     virtual LinkRequirement* addReq(LinkRequirement* newReq);
 };
 
@@ -23,7 +23,7 @@ public:
 
     ItemIndex checkItem;
 
-    bool isMet(ItemPool inventory);
+    bool isMet(ItemPool& inventory);
     LinkRequirement* addReq(LinkRequirement* newReq);
 };
 
@@ -40,12 +40,12 @@ public:
     LinkReqNode* reqs;
 
     LinkRequirement* addReq(LinkRequirement* newReq);
-    bool isMet(ItemPool inventory);
+    bool isMet(ItemPool& inventory);
 };
 
 class LinkReqOr : public LinkReqAnd {
 public:
-    bool isMet(ItemPool inventory);
+    bool isMet(ItemPool& inventory);
 };
 
 class MapLink;
@@ -69,6 +69,7 @@ public:
     MapNodeLocationNode* emptyLocations;
     MapNodeLocationNode* filledLocations;
     MapNodeLinkNode* links;
+    bool processed;
 
     MapNode* addLocation (LocationID newLocation);
     MapNode* addLink (MapLink* newLink);
@@ -84,6 +85,24 @@ public:
     MapNode* source;
     MapNode* dest;
     LinkRequirement* req;
+};
+
+class LogicMap {
+public:
+    LogicMap (MapNode* node);
+    ~LogicMap ();
+
+    MapNode* map;
+    MapNode* nodeList[ALL_LOCATIONS_SIZE];
+    int nodeCount;
+    MapNode* locationList[ALL_LOCATIONS_SIZE];
+
+    void printMap (ItemPool& inventory);
+    void initNodeListProcessNode (MapNode* node);
+    void initNodeList ();
+    void initLocationList ();
+    void clearProcessed ();
+    void fillLocation (LocationID fillLocation);
 };
 
 void testLogicGraph();

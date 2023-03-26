@@ -8,7 +8,7 @@ using namespace std;
 
 LinkRequirement::LinkRequirement() {};
 LinkRequirement::~LinkRequirement() {};
-bool LinkRequirement::isMet(ItemPool inventory) {
+bool LinkRequirement::isMet(ItemPool& inventory) {
     return false;
 };
 LinkRequirement* LinkRequirement::addReq(LinkRequirement* newReq) {
@@ -22,7 +22,7 @@ LinkReqCheck::~LinkReqCheck () {}
 LinkRequirement* LinkReqCheck::addReq(LinkRequirement* newReq) {
     return this;
 };
-bool LinkReqCheck::isMet (ItemPool inventory) {
+bool LinkReqCheck::isMet (ItemPool& inventory) {
     return inventory.itemList[static_cast<int>(checkItem)] > 0;
 }
 
@@ -46,7 +46,7 @@ LinkReqAnd::~LinkReqAnd () {
         node = nextNode;
     }
 }
-bool LinkReqAnd::isMet (ItemPool inventory) {
+bool LinkReqAnd::isMet (ItemPool& inventory) {
     LinkReqNode* node = reqs;
     while (node != NULL) {
         if (!node->req->isMet(inventory)) {
@@ -57,7 +57,7 @@ bool LinkReqAnd::isMet (ItemPool inventory) {
     return true;
 }
 
-bool LinkReqOr::isMet (ItemPool inventory) {
+bool LinkReqOr::isMet (ItemPool& inventory) {
     LinkReqNode* node = reqs;
     while (node != NULL) {
         if (node->req->isMet(inventory)) {
@@ -146,6 +146,7 @@ MapNode* MapNode::addLink (MapLink* newLink) {
     return this;
 }
 void MapNode::fillLocation (LocationID fillLocation) {
+    // cout << "fillLocation" << endl;
     MapNodeLocationNode* node;
     MapNodeLocationNode* nextNode;
     if (emptyLocations == NULL) {
@@ -176,19 +177,124 @@ MapLink::MapLink () {
     source = NULL;
     dest = NULL;
     req = NULL;
-};
+}
 MapLink::MapLink (MapNode* sourceNode, MapNode* destNode, LinkRequirement* linkReq) {
     source = sourceNode;
     dest = destNode;
     req = linkReq;
-};
+}
 MapLink::~MapLink () {
     if (req != NULL) {
         delete req;
     }
-};
+}
 
-void printEmptyLocationsRec (MapNode* startNode, ItemPool inventory, Locations locations) {
+LogicMap::LogicMap (MapNode* node) {
+    map = node;
+    nodeCount = 0;
+    for (int i = 0; i < ALL_LOCATIONS_SIZE; i++) {
+        locationList[i] = NULL;
+    }
+    initNodeList();
+    initLocationList();
+}
+LogicMap::~LogicMap () {}
+
+void LogicMap::initNodeListProcessNode (MapNode* node) {
+    // cout << "initNodeListProcessNode node" << endl;
+    // ensure that this node is not in nodeList
+    for (int i = 0; i < nodeCount; i++) {
+        if (node == nodeList[i]) {
+            // cout << "Already processed node" << endl;
+            return;
+        }
+    }
+    nodeList[nodeCount] = node;
+    nodeCount++;
+    MapNodeLinkNode* lnode = node->links;
+    while (lnode != NULL) {
+        this->initNodeListProcessNode(lnode->link->dest);
+        lnode = lnode->next;
+    }
+}
+
+void LogicMap::initNodeList () {
+    this->initNodeListProcessNode(map);
+}
+void LogicMap::initLocationList () {
+    MapNodeLocationNode* lnode;
+    LocationID loc;
+    for (int i = 0; i < nodeCount; i++) {
+        lnode = nodeList[i]->emptyLocations;
+        while (lnode != NULL) {
+            // loc = lnode->location;
+            // cout << "Process empty location " << static_cast<int>(loc) << endl;
+            locationList[static_cast<int>(lnode->location)] = nodeList[i];
+            lnode = lnode->next;
+        }
+        lnode = nodeList[i]->filledLocations;
+        while (lnode != NULL) {
+            // loc = lnode->location;
+            // cout << "Process filled location " << static_cast<int>(loc) << endl;
+            locationList[static_cast<int>(lnode->location)] = nodeList[i];
+            lnode = lnode->next;
+        }
+    }
+}
+void LogicMap::clearProcessed () {
+    for (int i = 0; i < nodeCount; i++) {
+        nodeList[i]->processed = false;
+    }
+}
+void LogicMap::fillLocation (LocationID fillLocation) {
+    MapNode* node = locationList[static_cast<int>(fillLocation)];
+    if (node == NULL) {
+        cout << "NULL node for location " << static_cast<int>(fillLocation) << endl;
+    } else {
+        locationList[static_cast<int>(fillLocation)]->fillLocation(fillLocation);
+    }
+}
+
+void printLogicMapRec (MapNode* map, ItemPool& inventory) {
+    if (map->processed) {
+        std::cout << "Node has been processed" << endl;
+    } else {
+        std::cout << "Node has not been processed" << endl;
+    }
+    MapNodeLocationNode* locNode = map->emptyLocations;
+    // std::cout << "empty locations:" << endl;;
+    while (locNode != NULL) {
+        std::cout << "  " << Locations::allLocations[static_cast<int>(locNode->location)].name << endl;
+        locNode = locNode->next;
+    }
+    // std::cout << endl << "filled locations:" << endl;
+    locNode = map->filledLocations;
+    ItemIndex fillItem;
+    while (locNode != NULL) {
+        // cout << "location number is " << static_cast<int>(locNode->location) << endl;;
+        std::cout << "  " << Locations::allLocations[static_cast<int>(locNode->location)].name;
+        fillItem = Locations::allLocations[static_cast<int>(locNode->location)].itemIndex;
+        // cout << "fill item number is " << static_cast<int>(fillItem) << endl;;
+        std::cout << " -- " << ItemPool::allItems[static_cast<int>(fillItem)].name << endl;
+        locNode = locNode->next;
+    }
+    std::cout << endl;
+    MapNodeLinkNode* lnode = map->links;
+    while (lnode != NULL) {
+        if (lnode->link != NULL && lnode->link->req->isMet(inventory)) {
+            printLogicMapRec(lnode->link->dest, inventory);
+        } else {
+            std::cout << "link requirement not met" << std::endl;
+        }
+        lnode = lnode->next;
+    }
+}
+
+void LogicMap::printMap (ItemPool& inventory) {
+    printLogicMapRec(map, inventory);
+}
+
+void printEmptyLocationsRec (MapNode* startNode, ItemPool& inventory, Locations& locations) {
     // This is a simplified test that only considers a static inventory.
     // If we 'pick up' things on the way it gets a lot more complicated.
 
@@ -209,16 +315,18 @@ void printEmptyLocationsRec (MapNode* startNode, ItemPool inventory, Locations l
         lnode = lnode->next;
     }
 }
-void printEmptyLocationsMain (MapNode* startNode, Locations locations) {
-    ItemPool inventory;
-    inventory.addItem(ItemIndex::NPC_BRIDGE_GUARD);
-    inventory.addItem(ItemIndex::NPC_WATER_MILL);
-    inventory.addItem(ItemIndex::NPC_LISA);
-    inventory.addItem(ItemIndex::NPC_DR_LEO);
-    // inventory.addItem(ItemIndex::DREAM_ROD);
-    inventory.addItem(ItemIndex::NPC_TOOL_SHOP_OWNER);
-
+void printEmptyLocationsMain (MapNode* startNode, ItemPool& inventory, Locations& locations) {
     printEmptyLocationsRec(startNode, inventory, locations);
+}
+
+int countProcessed (LogicMap* map) {
+    int numProcessed = 0;
+    for (int i = 0; i < map->nodeCount; i++) {
+        if (map->nodeList[i]->processed) {
+            numProcessed++;
+        }
+    }
+    return numProcessed;
 }
 
 void testMaps (Locations locations) {
@@ -260,12 +368,32 @@ void testMaps (Locations locations) {
         (new LinkReqCheck(ItemIndex::NPC_TOOL_SHOP_OWNER))
     ));
     miningSite->addLink(new MapLink(miningSite, 
-        (new MapNode())->addLocation(LocationID::NPC_TOOL_SHOP_OWNER),
+        (new MapNode())->addLocation(LocationID::NPC_VILLAGE_CHIEF),
         (new LinkReqAnd())
             ->addReq(new LinkReqCheck(ItemIndex::NPC_VILLAGE_CHIEF))
             ->addReq(new LinkReqCheck(ItemIndex::NPC_OLD_WOMAN))
     ));
 
-    printEmptyLocationsMain(miningSite, locations);
+    LogicMap* logicMap = new LogicMap(miningSite);
+    logicMap->clearProcessed();
+
+    ItemPool inventory;
+    inventory.addItem(ItemIndex::NPC_BRIDGE_GUARD);
+    inventory.addItem(ItemIndex::NPC_WATER_MILL);
+    inventory.addItem(ItemIndex::NPC_LISA);
+    inventory.addItem(ItemIndex::NPC_DR_LEO);
+    inventory.addItem(ItemIndex::DREAM_ROD);
+    inventory.addItem(ItemIndex::NPC_TOOL_SHOP_OWNER);
+
+    // printEmptyLocationsMain(miningSite, inventory, locations);
+    cout << "Num processed: " << countProcessed(logicMap) << endl;
+    logicMap->fillLocation(LocationID::CHEST_UNDERGROUND_CASTLE_LISA);
+    Locations::allLocations[static_cast<int>(LocationID::CHEST_UNDERGROUND_CASTLE_LISA)].itemIndex = ItemIndex::SOUL_BLADE;
+    logicMap->locationList[static_cast<int>(LocationID::CHEST_UNDERGROUND_CASTLE_LISA)]->processed = true;
+    cout << "Num processed: " << countProcessed(logicMap) << endl;
+    // printEmptyLocationsMain(miningSite, locations);
+    logicMap->printMap(inventory);
+
+    delete logicMap;
     delete miningSite;
 }

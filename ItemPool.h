@@ -554,6 +554,7 @@ public:
     void removeItem (ItemIndex i);
     bool hasItem (ItemIndex i);
     void clear ();
+    void copyFrom (ItemPool* ItemPool);
 
     static void logAllItems();
     static void logList();
