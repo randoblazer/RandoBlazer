@@ -17,6 +17,8 @@ namespace Filler {
         int size;
 
         void init (ItemIndex* initItems, int count);
+        void clear ();
+        PlacementSet* add (ItemIndex itemIndex);
         void shuffle ();
         ItemIndex take ();
     };
@@ -30,10 +32,13 @@ namespace Filler {
         int size;
 
         void clear ();
-        void add (LocationID location);
+        void copyFrom (LocationSet* source);
+        LocationSet* add (LocationID location);
         // Filter to locations where the item can be placed
         void filter (ItemIndex item);
         LocationID pick ();
+        LocationID take ();
+        void removeLocation (LocationID location);
     };
 
     class LinkSet {
@@ -52,7 +57,10 @@ namespace Filler {
         MapLink* pick (ItemPool inventory);
     };
 
-    bool placeItems (LogicMap* map, PlacementSet* placementSet, ItemPool* inventory);
+    void getEmptyLocations (LogicMap* map, LocationSet& locationSet);
+    bool placeItems (LogicMap* map, PlacementSet& placementSet, ItemPool& inventory);
+    bool dummyPlacement (LogicMap* map, PlacementSet& placementSet, LocationSet& locationSet);
+    bool dummyPlacementWithFilter (LogicMap* map, PlacementSet& placementSet, LocationSet& locationSet);
 
     void testPlacement ();
 }

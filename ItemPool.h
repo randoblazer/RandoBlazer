@@ -550,7 +550,7 @@ public:
     static ItemIndex npcIdMap[NPC_ID_MAX];
 
     int itemList[MAX_POOL_SIZE];
-    void addItem (ItemIndex i);
+    ItemPool* addItem (ItemIndex i);
     void removeItem (ItemIndex i);
     bool hasItem (ItemIndex i);
     void clear ();

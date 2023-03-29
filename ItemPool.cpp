@@ -419,8 +419,9 @@ const Item& ItemPool::getItemByIndex (ItemIndex index) {
     return allItems[(int)index];
 }
 
-void ItemPool::addItem (ItemIndex i) {
+ItemPool* ItemPool::addItem (ItemIndex i) {
     itemList[static_cast<int>(i)]++;
+    return this;
 }
 void ItemPool::removeItem (ItemIndex i) {
     if (itemList[static_cast<int>(i)] > 0) {

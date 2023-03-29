@@ -10,7 +10,7 @@
 namespace Filler {
 
 PlacementSet::PlacementSet () {
-    size = 0;
+    this->clear();
 }
 PlacementSet::~PlacementSet () {}
 
@@ -20,16 +20,21 @@ void PlacementSet::init (ItemIndex* initItems, int count) {
     }
     size = count;
 }
-
+void PlacementSet::clear () {
+    size = 0;
+}
+PlacementSet* PlacementSet::add (ItemIndex itemIndex) {
+    set[size] = itemIndex;
+    size++;
+    return this;
+}
 void PlacementSet::shuffle () {
     Random::shuffleArray(set, size);
 }
-
 ItemIndex PlacementSet::take () {
     size--;
     return set[size];
 }
-
 LocationSet::LocationSet () {
     size = 0;
 }
@@ -38,9 +43,16 @@ LocationSet::~LocationSet () {}
 void LocationSet::clear () {
     size = 0;
 }
-void LocationSet::add (LocationID location) {
+void LocationSet::copyFrom (LocationSet* source) {
+    size = source->size;
+    for (int i = 0; i < size; i++) {
+        set[i] = source->set[i];
+    }
+}
+LocationSet* LocationSet::add (LocationID location) {
     set[size] = location;
     size++;
+    return this;
 }
 void LocationSet::filter (ItemIndex itemIndex) {
     // std::cout << "Before filter " << size << " possible locations" << endl;
@@ -72,10 +84,23 @@ void LocationSet::filter (ItemIndex itemIndex) {
     // }
 }
 LocationID LocationSet::pick () {
-    // int pick = Random::RandomIntegerRange(0, size);
-    // cout << "Pick index " << pick << endl;
-    // return set[pick];
     return set[Random::RandomInteger(size)];
+}
+LocationID LocationSet::take () {
+    int pickIndex = Random::RandomInteger(size);
+    LocationID pickLocation = set[pickIndex];
+    size--;
+    set[pickIndex] = set[size];
+    return pickLocation;
+}
+void LocationSet::removeLocation (LocationID location) {
+    for (int i = 0; i < size; i++) {
+        if (set[i] == location) {
+            size--;
+            set[i] = set[size];
+            break;
+        }
+    }
 }
 
 LinkSet::LinkSet () {
@@ -103,6 +128,19 @@ MapLink* LinkSet::pick (ItemPool inventory) {
     return NULL;
 }
 
+void getEmptyLocations (LogicMap* map, LocationSet& locationSet) {
+    MapNodeLocationNode* lnode;
+    locationSet.clear();
+    int nodeCount = map->nodeCount;
+    for (int i = 0; i < nodeCount; i++) {
+        lnode = map->nodeList[i]->emptyLocations;
+        while (lnode != NULL) {
+            locationSet.add(lnode->location);
+            lnode = lnode->next;
+        }
+    }
+}
+
 void processNode (MapNode* node, LocationSet& locationSet, LinkSet& linkSet, ItemPool& inventory) {
     if (!node->processed) {
         MapNodeLocationNode* locNode = node->emptyLocations;
@@ -124,7 +162,7 @@ void processNode (MapNode* node, LocationSet& locationSet, LinkSet& linkSet, Ite
     }
 }
 
-bool placeItems (LogicMap& map, PlacementSet& placementSet, ItemPool& initialInventory) {
+bool placeItems (LogicMap* map, PlacementSet& placementSet, ItemPool& initialInventory) {
     LinkSet linkSet;
     LocationSet locationSet;
     ItemPool inventory;
@@ -135,7 +173,7 @@ bool placeItems (LogicMap& map, PlacementSet& placementSet, ItemPool& initialInv
     while (placementSet.size > 0) {
         locationSet.clear();
         linkSet.clear();
-        map.clearProcessed();
+        map->clearProcessed();
 
         inventory.copyFrom(&initialInventory);
         ItemIndex placementItem = placementSet.take();
@@ -144,7 +182,7 @@ bool placeItems (LogicMap& map, PlacementSet& placementSet, ItemPool& initialInv
         }
         // std::cout << "Placing " << ItemPool::allItems[static_cast<int>(placementItem)].name << endl;
 
-        nextNode = map.map;
+        nextNode = map->map;
         while (nextNode != NULL) {
             processNode(nextNode, locationSet, linkSet, inventory);
             nextLink = linkSet.pick(inventory);
@@ -163,8 +201,42 @@ bool placeItems (LogicMap& map, PlacementSet& placementSet, ItemPool& initialInv
             // " at " << Locations::allLocations[static_cast<int>(placementLocation)].name << endl;
         // std::cout << endl;
 
-        map.fillLocation(placementLocation);
+        map->fillLocation(placementLocation);
         Locations::allLocations[static_cast<int>(placementLocation)].itemIndex = placementItem;
+    }
+    return true;
+}
+
+/*
+    Dummy Placement
+    All of the placement items will be placed at randomly picked locations from the locationSet.
+    There is no validity check i.e. lairs vs items.
+    The idea is that this happens before logical placement so empty/filled state is not a concern
+    and with items and locations such that any of the items can go in any location.
+*/
+bool dummyPlacement (LogicMap* map, PlacementSet& placementSet, LocationSet& locationSet) {
+    ItemIndex placementItem;
+    LocationID placementLocation;
+    while (placementSet.size > 0) {
+        placementItem = placementSet.take();
+        placementLocation = locationSet.take();
+        Locations::allLocations[static_cast<int>(placementLocation)].itemIndex = placementItem;
+        map->fillLocation(placementLocation);
+    }
+    return true;
+}
+bool dummyPlacementWithFilter (LogicMap* map, PlacementSet& placementSet, LocationSet& locationSet) {
+    ItemIndex placementItem;
+    LocationID placementLocation;
+    LocationSet filteredLocationSet;
+    while (placementSet.size > 0) {
+        placementItem = placementSet.take();
+        filteredLocationSet.copyFrom(&locationSet);
+        filteredLocationSet.filter(placementItem);
+        placementLocation = filteredLocationSet.pick();
+        locationSet.removeLocation(placementLocation);
+        Locations::allLocations[static_cast<int>(placementLocation)].itemIndex = placementItem;
+        map->fillLocation(placementLocation);
     }
     return true;
 }
@@ -234,7 +306,7 @@ void testPlacement () {
 
     LogicMap miningSiteTestMap(miningSite);
 
-    bool result = placeItems (miningSiteTestMap, placementSet, initialInventory);
+    bool result = placeItems (&miningSiteTestMap, placementSet, initialInventory);
 
     ItemPool testInventory;
     for (int i = 0; i < 7; i++) {

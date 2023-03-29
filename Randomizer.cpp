@@ -10,6 +10,7 @@
 #include "LogicGraph.h"
 #include "ROMUpdate.h"
 #include "Filler.h"
+#include "World.h"
 
 #include <algorithm>
 #include <iomanip>
@@ -62,7 +63,8 @@ namespace Randomizer
         // locations.logAllLocations();
 
         // testMaps(locations);
-        Filler::testPlacement();
+        // Filler::testPlacement();
+        testTheWorld();
 
         // To get started, just set each location to vanilla
         for (int i = 0; i < ALL_LOCATIONS_SIZE; i++) {

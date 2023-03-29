@@ -14,6 +14,7 @@ public:
 
     virtual bool isMet(ItemPool& inventory);
     virtual LinkRequirement* addReq(LinkRequirement* newReq);
+    virtual void print ();
 };
 
 class LinkReqCheck : public LinkRequirement {
@@ -25,6 +26,7 @@ public:
 
     bool isMet(ItemPool& inventory);
     LinkRequirement* addReq(LinkRequirement* newReq);
+    void print ();
 };
 
 struct LinkReqNode {
@@ -41,11 +43,13 @@ public:
 
     LinkRequirement* addReq(LinkRequirement* newReq);
     bool isMet(ItemPool& inventory);
+    void print ();
 };
 
 class LinkReqOr : public LinkReqAnd {
 public:
     bool isMet(ItemPool& inventory);
+    void print ();
 };
 
 class MapLink;
@@ -103,6 +107,8 @@ public:
     void initLocationList ();
     void clearProcessed ();
     void fillLocation (LocationID fillLocation);
+    int countEmpty ();
+    int countFilled ();
 };
 
 void testLogicGraph();

@@ -37,6 +37,8 @@ add_library(randoblazerlib STATIC
   LogicGraph.h
   Filler.cpp
   Filler.h
+  World.cpp
+  World.h
   Random.cpp
   Random.h
   Randomizer.cpp

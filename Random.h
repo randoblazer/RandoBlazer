@@ -37,12 +37,11 @@ namespace Random {
     void shuffleArray(ItemClass array[], int size) {
         ItemClass temp;
         int pick;
-        for (int i = size-1; i > 0; --i) {
-            pick = RandomInteger(i);
+        for (int i = size - 1; i > 0; i--) {
+            pick = RandomInteger(i + 1);
             temp = array[i];
             array[i] = array[pick];
             array[pick] = temp;
-            // std::swap(array[i], RandomInteger(i));
         }
     }
 }

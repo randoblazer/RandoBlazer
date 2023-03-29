@@ -6,14 +6,15 @@
 
 using namespace std;
 
-LinkRequirement::LinkRequirement() {};
-LinkRequirement::~LinkRequirement() {};
+LinkRequirement::LinkRequirement() {}
+LinkRequirement::~LinkRequirement() {}
 bool LinkRequirement::isMet(ItemPool& inventory) {
     return false;
 };
 LinkRequirement* LinkRequirement::addReq(LinkRequirement* newReq) {
     return this;
 };
+void LinkRequirement::print() {}
 
 LinkReqCheck::LinkReqCheck (ItemIndex check) {
     checkItem = check;
@@ -24,6 +25,9 @@ LinkRequirement* LinkReqCheck::addReq(LinkRequirement* newReq) {
 };
 bool LinkReqCheck::isMet (ItemPool& inventory) {
     return inventory.itemList[static_cast<int>(checkItem)] > 0;
+}
+void LinkReqCheck::print() {
+    cout << ItemPool::allItems[static_cast<int>(checkItem)].name;
 }
 
 LinkReqAnd::LinkReqAnd () {
@@ -56,6 +60,18 @@ bool LinkReqAnd::isMet (ItemPool& inventory) {
     }
     return true;
 }
+void LinkReqAnd::print() {
+    LinkReqNode* node = reqs;
+    cout << "And( ";
+    while (node != NULL) {
+        node->req->print();
+        node = node->next;
+        if (node != NULL) {
+            cout << ", ";
+        }
+    }
+    cout << " )";
+}
 
 bool LinkReqOr::isMet (ItemPool& inventory) {
     LinkReqNode* node = reqs;
@@ -66,6 +82,18 @@ bool LinkReqOr::isMet (ItemPool& inventory) {
         node = node->next;
     }
     return false;
+}
+void LinkReqOr::print() {
+    LinkReqNode* node = reqs;
+    cout << "Or( ";
+    while (node != NULL) {
+        node->req->print();
+        node = node->next;
+        if (node != NULL) {
+            cout << ", ";
+        }
+    }
+    cout << " )";
 }
 
 void testLogicGraph() {
@@ -254,13 +282,37 @@ void LogicMap::fillLocation (LocationID fillLocation) {
         locationList[static_cast<int>(fillLocation)]->fillLocation(fillLocation);
     }
 }
+int LogicMap::countEmpty () {
+    MapNodeLocationNode* lnode;
+    int emptyCount = 0;
+    for (int i = 0; i < nodeCount; i++) {
+        lnode = nodeList[i]->emptyLocations;
+        while (lnode != NULL) {
+            emptyCount++;
+            lnode = lnode->next;
+        }
+    }
+    return emptyCount;
+}
+int LogicMap::countFilled () {
+    MapNodeLocationNode* lnode;
+    int filledCount = 0;
+    for (int i = 0; i < nodeCount; i++) {
+        lnode = nodeList[i]->filledLocations;
+        while (lnode != NULL) {
+            filledCount++;
+            lnode = lnode->next;
+        }
+    }
+    return filledCount;
+}
 
 void printLogicMapRec (MapNode* map, ItemPool& inventory) {
-    if (map->processed) {
-        std::cout << "Node has been processed" << endl;
-    } else {
-        std::cout << "Node has not been processed" << endl;
-    }
+    // if (map->processed) {
+        // std::cout << "Node has been processed" << endl;
+    // } else {
+        // std::cout << "Node has not been processed" << endl;
+    // }
     MapNodeLocationNode* locNode = map->emptyLocations;
     // std::cout << "empty locations:" << endl;;
     while (locNode != NULL) {
@@ -285,6 +337,8 @@ void printLogicMapRec (MapNode* map, ItemPool& inventory) {
             printLogicMapRec(lnode->link->dest, inventory);
         } else {
             std::cout << "link requirement not met" << std::endl;
+            lnode->link->req->print();
+            std::cout << std::endl;
         }
         lnode = lnode->next;
     }
