@@ -55,22 +55,27 @@ namespace Randomizer
 
         LairList::readOriginalLairs(ROMFile);
         LairList lairs;
-        lairs.copyOriginalLairs();
+        // lairs.copyOriginalLairs();
         // lairs.logLairs();
 
         Locations::populate();
         Locations locations;
         // locations.logAllLocations();
 
-        // testMaps(locations);
-        // Filler::testPlacement();
-        testTheWorld();
+        WorldFlags worldFlags;
+        worldFlags.roll();
 
         // To get started, just set each location to vanilla
         for (int i = 0; i < ALL_LOCATIONS_SIZE; i++) {
             locations.allLocations[i].itemIndex = locations.allLocations[i].origItemIndex;
         }
         // locations.logAllLocations();
+
+        // testMaps(locations);
+        // Filler::testPlacement();
+        testTheWorld(worldFlags);
+
+        randomizeLairs(lairs, worldFlags);
 
         // Randomize stray enemies not associated with a lair
         Sprite randomizedSpriteList[NUMBER_OF_SPRITES];
@@ -99,6 +104,17 @@ namespace Randomizer
         }
 */
         return true;
+    }
+
+    void randomizeLairs (LairList& lairs, WorldFlags& worldFlags) {
+        LairProfileClassic classicProfile;
+        LairProfileTwo twoProfile;
+
+        cout << "Randomizing lairs" << endl;
+
+        for (int i = 0; i < NUMBER_OF_LAIRS; i++) {
+            twoProfile.roll(lairs.lairList[i], lairs.originalLairs[i]);
+        }
     }
 
     ROMStatus CheckFile (const string &Filename)

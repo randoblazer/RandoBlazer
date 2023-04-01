@@ -40,6 +40,6 @@ public:
     void createWorld (WorldFlags& creationFlags);
 };
 
-void testTheWorld ();
+void testTheWorld (WorldFlags& worldFlags);
 
 #endif // __WORLD_H__

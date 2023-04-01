@@ -39,6 +39,7 @@ namespace Filler {
         LocationID pick ();
         LocationID take ();
         void removeLocation (LocationID location);
+        void print ();
     };
 
     class LinkSet {

@@ -1,7 +1,9 @@
 #ifndef __RANDOMIZER_H__
 #define __RANDOMIZER_H__
 
+#include "Lairs.h"
 #include "ItemPool.h"
+#include "World.h"
 #include "ROMCheck.h"
 
 #include <fstream>
@@ -17,6 +19,7 @@ namespace Randomizer {
         bool race = false;
     };
 
+    void randomizeLairs(LairList& lairs, WorldFlags& worldFlags);
     ROMStatus CheckFile(const std::string& Filename);
     bool backupRom (const std::string &InFile, const std::string &OutFile);
     bool Randomize(const std::string& InFile, const std::string& OutFile, unsigned int seed, const Options& options, std::string* seed_name = 0);

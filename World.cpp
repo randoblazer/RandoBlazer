@@ -227,7 +227,7 @@ void WorldMap::createWorld (WorldFlags& creationFlags) {
         ->addLocation(LocationID::CHEST_WATER_SHRINE_FLOOR3_SOUTHEAST)
         ->addLocation(LocationID::SECRET_WATER_SHRINE_BASEMENT)
         ->addLocation(LocationID::CRYSTAL_WATER_SHRINE2_SPEARS);
-    MapNode* fireShrine = greenwood
+    MapNode* fireShrine = (new MapNode())
         ->addLocation(LocationID::LAIR_LOST_MARSH_BETWEEN_WATER_AND_FIRE)
         ->addLocation(LocationID::LAIR_FIRE_SHRINE_B1)
         ->addLocation(LocationID::LAIR_FIRE_SHRINE_B2_NORTHWEST)
@@ -245,7 +245,7 @@ void WorldMap::createWorld (WorldFlags& creationFlags) {
         ->addLocation(LocationID::CHEST_FIRE_SHRINE_FLOOR3_SECOND)
         ->addLocation(LocationID::CRYSTAL_FIRE_SHRINE_BASEMENT);
     MapNode* fireShrineMetal = (new MapNode())
-        ->addLocation(LocationID::LAIR_FIRE_SHRINE_B3_METAL)
+        ->addLocation(LocationID::CRYSTAL_FIRE_SHRINE_FLOOR1_METAL)
         ->addLocation(LocationID::CHEST_FIRE_SHRINE_FLOOR2_METAL)
         ->addLocation(LocationID::LAIR_FIRE_SHRINE_B3_METAL);
     MapNode* lightShrine = (new MapNode())
@@ -320,6 +320,9 @@ void WorldMap::createWorld (WorldFlags& creationFlags) {
         (new LinkReqAnd())
             ->addReq(new LinkReqCheck(ItemIndex::NPC_VILLAGE_CHIEF))
             ->addReq(new LinkReqCheck(ItemIndex::NPC_OLD_WOMAN))
+    ));
+    greenwood->addLink(new MapLink(greenwood, fireShrine,
+        (new LinkReqFree())
     ));
     fireShrine->addLink(new MapLink(fireShrine, fireShrineMetal,
         (new LinkReqCheck(ItemIndex::ZANTETSU_SWORD))
@@ -406,20 +409,26 @@ void WorldMap::createWorld (WorldFlags& creationFlags) {
     map = new LogicMap(grassValley);
 }
 
-void testTheWorld () {
-    WorldMap theWorld;
-    WorldFlags creationFlags;
-    creationFlags.roll();
+void logMap (WorldMap& map) {
+    std::cout << map.map->countFilled() << " filled locations" << std::endl;
+    std::cout << map.map->countEmpty() << " empty locations" << std::endl;
+    Filler::LocationSet emptyLocations;
+    Filler::getEmptyLocations(map.map, emptyLocations);
+    emptyLocations.filter(ItemIndex::NPC_KING_MAGRIDD);
+    std::cout << emptyLocations.size << " empty lairs\n" << std::endl;
+}
 
-    theWorld.createWorld(creationFlags);
+void testTheWorld (WorldFlags& worldFlags) {
+    WorldMap theWorld;
+
+    theWorld.createWorld(worldFlags);
 
     cout << "Progression: " << theWorld.progressionItems.size << endl;
     cout << "Equipment: " << theWorld.equipmentItems.size << endl;
     cout << "Extra items: " << theWorld.extraItems.size << endl;
     cout << "Extra npcs: " << theWorld.extraNpcs.size << endl;
 
-    // std::cout << theWorld.map->countEmpty() << " empty locations" << std::endl;
-    // std::cout << theWorld.map->countFilled() << " filled locations" << std::endl;
+    logMap(theWorld);
 
     Filler::LocationSet dummyLocations;
     dummyLocations.clear();
@@ -441,8 +450,7 @@ void testTheWorld () {
     Filler::dummyPlacement(theWorld.map, dummyPlacementItems, dummyLocations);
 
     cout << "After dummy placement" << endl;
-    std::cout << theWorld.map->countEmpty() << " empty locations" << std::endl;
-    std::cout << theWorld.map->countFilled() << " filled locations" << std::endl;
+    logMap(theWorld);
 
     ItemPool progressionPool;
     for (int i = 0; i < theWorld.progressionItems.size; i++) {
@@ -454,11 +462,8 @@ void testTheWorld () {
     inventory.addItem(ItemIndex::SWORD_OF_LIFE);
 
     bool success = Filler::placeItems(theWorld.map, theWorld.progressionItems, inventory);
-    cout << (success ? "Progression placement succeeded" : "Placement failed") << endl;
-
-    cout << "After progression placement" << endl;
-    std::cout << theWorld.map->countEmpty() << " empty locations" << std::endl;
-    std::cout << theWorld.map->countFilled() << " filled locations" << std::endl;
+    cout << "Progression placement " << (success ? "succeeded" : "failed") << endl;
+    logMap(theWorld);
 
     progressionPool
         .addItem(ItemIndex::EMBLEM_B)
@@ -472,16 +477,22 @@ void testTheWorld () {
 
     Filler::LocationSet emptyLocations;
     Filler::getEmptyLocations(theWorld.map, emptyLocations);
+    cout << "Placing " << theWorld.equipmentItems.size << " equipment items" << endl;
     success = Filler::dummyPlacementWithFilter(theWorld.map, theWorld.equipmentItems, emptyLocations);
-    cout << (success ? "Equipment placement succeeded" : "Placement failed") << endl;
-    success = Filler::dummyPlacementWithFilter(theWorld.map, theWorld.extraItems, emptyLocations);
-    cout << (success ? "Extra item placement succeeded" : "Placement failed") << endl;
-    success = Filler::dummyPlacementWithFilter(theWorld.map, theWorld.extraNpcs, emptyLocations);
-    cout << (success ? "Extra NPC placement succeeded" : "Placement failed") << endl;
+    cout << "Equipment placement " << (success ? "succeeded" : "failed") << endl;
+    logMap(theWorld);
 
-    cout << "After all placement" << endl;
-    std::cout << theWorld.map->countEmpty() << " empty locations" << std::endl;
-    std::cout << theWorld.map->countFilled() << " filled locations" << std::endl;
+    cout << "Placing " << theWorld.extraItems.size << " extra items" << endl;
+    success = Filler::dummyPlacementWithFilter(theWorld.map, theWorld.extraItems, emptyLocations);
+    cout << "Extra item placement " << (success ? "succeeded" : "failed") << endl;
+    logMap(theWorld);
+
+    cout << "Placing " << theWorld.extraNpcs.size << " extra NPCs" << endl;
+    success = Filler::dummyPlacementWithFilter(theWorld.map, theWorld.extraNpcs, emptyLocations);
+    cout << "Extra NPC placement " << (success ? "succeeded" : "failed") << endl;
+    logMap(theWorld);
+
+    emptyLocations.print();
 
     theWorld.map->printMap(progressionPool);
 }

@@ -17,6 +17,15 @@ public:
     virtual void print ();
 };
 
+class LinkReqFree : public LinkRequirement {
+public:
+    LinkReqFree ();
+    ~LinkReqFree ();
+
+    bool isMet(ItemPool& inventory);
+    void print ();
+};
+
 class LinkReqCheck : public LinkRequirement {
 public:
     LinkReqCheck (ItemIndex check);

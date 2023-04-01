@@ -62,7 +62,7 @@ void LocationSet::filter (ItemIndex itemIndex) {
     int start = size - 1;
     Location location;
     Item item = ItemPool::allItems[static_cast<int>(itemIndex)];
-    for (int i = start; i > 0; i--) {
+    for (int i = start; i >= 0; i--) {
         location = Locations::allLocations[static_cast<int>(set[i])];
         if (item.isNPC) {
             if (!location.isLair) {
@@ -100,6 +100,11 @@ void LocationSet::removeLocation (LocationID location) {
             set[i] = set[size];
             break;
         }
+    }
+}
+void LocationSet::print () {
+    for (int i = 0; i < size; i++) {
+        std::cout << "  " << Locations::allLocations[static_cast<int>(set[i])].name << std::endl;
     }
 }
 
@@ -192,14 +197,18 @@ bool placeItems (LogicMap* map, PlacementSet& placementSet, ItemPool& initialInv
         // std::cout << "Before filter " << locationSet.size << " possible locations" << endl;
         locationSet.filter(placementItem);
         // std::cout << "After filter " << locationSet.size << " possible locations" << endl;
+        // locationSet.print();
         if (locationSet.size == 0) {
             return false; // we failed...
         }
         placementLocation = locationSet.pick();
 
-        // std::cout << "Placing " << ItemPool::allItems[static_cast<int>(placementItem)].name <<
-            // " at " << Locations::allLocations[static_cast<int>(placementLocation)].name << endl;
-        // std::cout << endl;
+        // if (ItemPool::allItems[static_cast<int>(Locations::allLocations[static_cast<int>(placementLocation)].origItemIndex)].isNPC &&
+            // !ItemPool::allItems[static_cast<int>(placementItem)].isNPC) {
+            // std::cout << "Placing " << ItemPool::allItems[static_cast<int>(placementItem)].name <<
+                // " at " << Locations::allLocations[static_cast<int>(placementLocation)].name << endl;
+            // std::cout << endl;
+        // }
 
         map->fillLocation(placementLocation);
         Locations::allLocations[static_cast<int>(placementLocation)].itemIndex = placementItem;
@@ -229,10 +238,16 @@ bool dummyPlacementWithFilter (LogicMap* map, PlacementSet& placementSet, Locati
     ItemIndex placementItem;
     LocationID placementLocation;
     LocationSet filteredLocationSet;
+
+    // cout << "dummyPlacementWithFilter: " << placementSet.size << " items in " << locationSet.size << " locations" << endl;
+
     while (placementSet.size > 0) {
         placementItem = placementSet.take();
         filteredLocationSet.copyFrom(&locationSet);
         filteredLocationSet.filter(placementItem);
+        if (filteredLocationSet.size == 0) {
+            return false;
+        }
         placementLocation = filteredLocationSet.pick();
         locationSet.removeLocation(placementLocation);
         Locations::allLocations[static_cast<int>(placementLocation)].itemIndex = placementItem;

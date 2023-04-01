@@ -1,4 +1,5 @@
 #include "Lairs.h"
+#include "Random.h"
 
 #include <fstream>
 #include <stdio.h>
@@ -7,6 +8,72 @@
 #include <cstring>
 
 using namespace std;
+
+namespace EnemyGroups {
+    static EnemyType UndergroundCastleEnemies[6] =
+        {EnemyType::ACT1_GOBLIN, EnemyType::ACT1_IMP, EnemyType::ACT1_FLY, EnemyType::ACT1_PLANT, EnemyType::ACT1_SLIME, EnemyType::ACT1_TORCH};
+    static EnemyType LeosPaintingsEnemies[4] =
+        {EnemyType::ACT1_ARMOR, EnemyType::ACT1_BIRD, EnemyType::ACT1_TORCH2, EnemyType::ACT1_BLOCK};
+    static EnemyType WaterShrineEnemies[5] =
+        {EnemyType::ACT2_WATER_DRAGON, EnemyType::ACT2_MUDMAN, EnemyType::ACT2_BUSH, EnemyType::ACT2_STATUE, EnemyType::ACT2_FLOWER};
+    static EnemyType FireLightShrineEnemies[5] =
+        {EnemyType::ACT2_FIRE_SPIRIT, EnemyType::ACT2_GHOST, EnemyType::ACT2_LIZARDMAN, EnemyType::ACT2_TP_LIZARDMAN, EnemyType::ACT2_FIREMAN};
+    static EnemyType FireLightShrineEnemiesNoFireSpirit[4] =
+        {EnemyType::ACT2_GHOST, EnemyType::ACT2_LIZARDMAN, EnemyType::ACT2_TP_LIZARDMAN, EnemyType::ACT2_FIREMAN};
+    static EnemyType SeabedEnemies[5] =
+        {EnemyType::ACT3_URCHIN, EnemyType::ACT3_JELLYFISH, EnemyType::ACT3_CRAB, EnemyType::ACT3_RAY, EnemyType::ACT3_SEAHORSE};
+    static EnemyType IslandsEnemies[5] =
+        {EnemyType::ACT3_PALM_TREE, EnemyType::ACT3_ROCK, EnemyType::ACT3_FISH, EnemyType::ACT3_GORILLA, EnemyType::ACT3_EAGLE};
+    static EnemyType IslandsEnemiesNoFish[4] =
+        {EnemyType::ACT3_PALM_TREE, EnemyType::ACT3_ROCK, EnemyType::ACT3_GORILLA, EnemyType::ACT3_EAGLE};
+    static EnemyType MountainEnemies[5] =
+        {EnemyType::ACT4_RAT, EnemyType::ACT4_MOOSE, EnemyType::ACT4_YETI, EnemyType::ACT4_BAT, EnemyType::ACT4_SNOWBALL};
+    static EnemyType MountainEnemiesNoSnowball[4] =
+        {EnemyType::ACT4_RAT, EnemyType::ACT4_MOOSE, EnemyType::ACT4_YETI, EnemyType::ACT4_BAT};
+    static EnemyType LaynoleLuneEnemies[6] =
+        {EnemyType::ACT4_PURPLE_WIZARD, EnemyType::ACT4_RED_WIZARD, EnemyType::ACT4_ICE_HEAD, EnemyType::ACT4_ICE_BLOCK, EnemyType::ACT4_CIRCLING_BAT, EnemyType::ACT4_SLIME};
+    static EnemyType LaynoleLuneEnemiesNoIceBlock[5] =
+        {EnemyType::ACT4_PURPLE_WIZARD, EnemyType::ACT4_RED_WIZARD, EnemyType::ACT4_ICE_HEAD, EnemyType::ACT4_CIRCLING_BAT, EnemyType::ACT4_SLIME};
+    static EnemyType LeosBasementEnemies[5] =
+        {EnemyType::ACT5_METAL_MOUSE, EnemyType::ACT5_BULLDOZER, EnemyType::ACT5_HELICOPTER, EnemyType::ACT5_WORM, EnemyType::ACT5_ROBOT};
+    static EnemyType LeosBasementEnemiesMetalOnly[3] =
+        {EnemyType::ACT5_METAL_MOUSE, EnemyType::ACT5_BULLDOZER, EnemyType::ACT5_HELICOPTER};
+    static EnemyType LeosBasementEnemiesNoMetal[2] =
+        {EnemyType::ACT5_WORM, EnemyType::ACT5_ROBOT};
+    static EnemyType ModelTownsEnemies[5] =
+        {EnemyType::ACT5_MINI_KNIGHT, EnemyType::ACT5_MINI_ARCHER, EnemyType::ACT5_MINI_HORSEMAN, EnemyType::ACT5_CATAPULT, EnemyType::ACT5_TOWER};
+    static EnemyType CastleBasementEnemies[4] =
+        {EnemyType::ACT6_ORB, EnemyType::ACT6_GHOST, EnemyType::ACT6_SNAKE, EnemyType::ACT6_SKELETON};
+    static EnemyType CastleBasementEnemiesNoGhost[3] =
+        {EnemyType::ACT6_ORB, EnemyType::ACT6_SNAKE, EnemyType::ACT6_SKELETON};
+    static EnemyType CastleBasementEnemiesFull[6] =
+        {EnemyType::ACT6_SKULL, EnemyType::ACT6_ORB, EnemyType::ACT6_GHOST, EnemyType::ACT6_SNAKE, EnemyType::ACT6_FIRE, EnemyType::ACT6_SKELETON};
+    static EnemyType CastleTowersEnemies[5] =
+        {EnemyType::ACT6_PURPLE_KNIGHT, EnemyType::ACT6_RED_KNIGHT, EnemyType::ACT6_MIMIC, EnemyType::ACT6_DOLL, EnemyType::ACT6_CHESS_KNIGHT};
+    static EnemyType CastleTowersEnemiesFull[7] =
+        {EnemyType::ACT6_PURPLE_KNIGHT, EnemyType::ACT6_RED_KNIGHT, EnemyType::ACT6_FIRE2, EnemyType::ACT6_SKULL2, EnemyType::ACT6_MIMIC, EnemyType::ACT6_DOLL, EnemyType::ACT6_CHESS_KNIGHT};
+    static EnemyType WorldOfEvilEnemies[3] =
+        {EnemyType::ACT7_DEMON, EnemyType::ACT7_FLY, EnemyType::ACT7_BRICK};
+    static EnemyType WorldOfEvilEnemiesNoBrick[2] =
+        {EnemyType::ACT7_DEMON, EnemyType::ACT7_FLY};
+
+    static OrientationType orientationList[4] = {
+        OrientationType::DOWN,
+        OrientationType::LEFT,
+        OrientationType::RIGHT,
+        OrientationType::UP
+    };
+    
+    static LairType SpawnTypeList[4] = {
+        LairType::LAIR_MULTISPAWN,
+        LairType::LAIR_ONE_BY_ONE,
+        LairType::LAIR_ONE_BY_ONE_PROX,
+        LairType::LAIR_TWO_UP_TWO_DOWN
+    };
+}
+
+using namespace EnemyGroups;
+
 
 // static declarations
 Lair LairList::originalLairs[NUMBER_OF_LAIRS];
@@ -314,6 +381,20 @@ bool Lair::MustNotBeUpwardsLairPosition() {
     return (positionData[0] == 0x1B && positionData[1] == 0x25 && positionData[2] == 0x05);
 }
 
+bool Lair::canRandomizeOrientation (ActID act, EnemyType enemy) {
+    return ((act == ActID::ACT_2 && enemy == EnemyType::ACT2_WATER_DRAGON) ||
+            (act == ActID::ACT_4 && enemy == EnemyType::ACT4_RAT) ||
+            (act == ActID::ACT_4 && enemy == EnemyType::ACT4_SNOWBALL) ||
+            (act == ActID::ACT_5 && enemy == EnemyType::ACT5_METAL_MOUSE) ||
+            (act == ActID::ACT_5 && enemy == EnemyType::ACT5_ROBOT) ||
+            (act == ActID::ACT_5 && enemy == EnemyType::ACT5_WORM) ||
+            (act == ActID::ACT_5 && enemy == EnemyType::ACT5_TOWER) ||
+            (act == ActID::ACT_6 && enemy == EnemyType::ACT6_SKULL) ||
+            (act == ActID::ACT_6 && enemy == EnemyType::ACT6_SNAKE) ||
+            (act == ActID::ACT_6 && enemy == EnemyType::ACT6_SKULL2) ||
+            (act == ActID::ACT_7 && enemy == EnemyType::ACT7_BRICK) );
+}
+
 bool Lair::isMetal() {
     switch (act) {
         case ActID::ACT_1:
@@ -392,5 +473,182 @@ void LairList::logLairs () {
 void LairList::copyOriginalLairs () {
     for (int i = 0; i < NUMBER_OF_LAIRS; i++) {
         lairList[i] = originalLairs[i];
+    }
+}
+
+EnemyType pickEnemyType (Lair& originalLair) {
+    if (originalLair.spawnType == LairType::LAIR_TWO_UP_TWO_DOWN ||
+        originalLair.MustNotRandomizeLairPosition()
+    ) {
+        return originalLair.enemy;
+    }
+    EnemyType* group;
+    int groupSize;
+    EnemyType origEnemy = originalLair.enemy;
+
+    switch (originalLair.act) {
+    case ActID::ACT_1:
+        if (origEnemy != EnemyType::ACT1_SPIKEY &&
+            origEnemy != EnemyType::SOLID_ARM) {
+            if (origEnemy < EnemyType::ACT1_ARMOR) {
+                group = UndergroundCastleEnemies;
+                groupSize = sizeof(UndergroundCastleEnemies) / sizeof(EnemyType);
+            } else {
+                group = LeosPaintingsEnemies;
+                groupSize = sizeof(LeosPaintingsEnemies) / sizeof(EnemyType);
+            }
+        }
+        break;
+    case ActID::ACT_2:
+        if (origEnemy != EnemyType::ACT2_SCORPION &&
+            origEnemy != EnemyType::ACT2_FIRE_SPIRIT &&
+            origEnemy != EnemyType::ELEMENTAL_STATUE) {
+            if (origEnemy < EnemyType::ACT2_FIRE_SPIRIT) {
+                group = WaterShrineEnemies;
+                groupSize = sizeof(WaterShrineEnemies) / sizeof(EnemyType);
+            } else {
+                group = FireLightShrineEnemiesNoFireSpirit;
+                groupSize = sizeof(FireLightShrineEnemiesNoFireSpirit) / sizeof(EnemyType);
+            }
+        }
+        break;
+    case ActID::ACT_3:
+        if (origEnemy != EnemyType::ACT3_METAL_GORILLA &&
+            origEnemy != EnemyType::FLOATING_SKULL) {
+            if (origEnemy < EnemyType::ACT3_PALM_TREE) {
+                group = SeabedEnemies;
+                groupSize = sizeof(SeabedEnemies) / sizeof(EnemyType);
+            } else {
+                if (originalLair.NoFishLairPosition()) {
+                    group = IslandsEnemiesNoFish;
+                    groupSize = sizeof(IslandsEnemiesNoFish) / sizeof(EnemyType);
+                } else {
+                    group = IslandsEnemies;
+                    groupSize = sizeof(IslandsEnemies) / sizeof(EnemyType);
+                }
+            }
+        }
+        break;
+    case ActID::ACT_4:
+        if (origEnemy != EnemyType::POSEIDON) {
+            if (origEnemy < EnemyType::ACT4_PURPLE_WIZARD) {
+                group = MountainEnemiesNoSnowball;
+                groupSize = sizeof(MountainEnemiesNoSnowball) / sizeof(EnemyType);
+            } else {
+                group = LaynoleLuneEnemiesNoIceBlock;
+                groupSize = sizeof(LaynoleLuneEnemiesNoIceBlock) / sizeof(EnemyType);
+            }
+        }
+        break;
+    case ActID::ACT_5:
+        if (origEnemy != EnemyType::TIN_DOLL) {
+            if (origEnemy < EnemyType::ACT5_MINI_KNIGHT) {
+                /* Lair is in Leo's Lab Basement or Power Plant */
+                if (originalLair.NoMetalLairPosition()) {
+                    group = LeosBasementEnemiesNoMetal;
+                    groupSize = sizeof(LeosBasementEnemiesNoMetal) / sizeof(EnemyType);
+                } else if (originalLair.MustBeMetalLairPosition()) {
+                    group = LeosBasementEnemiesMetalOnly;
+                    groupSize = sizeof(LeosBasementEnemiesMetalOnly) / sizeof(EnemyType);
+                } else {
+                    group = LeosBasementEnemies;
+                    groupSize = sizeof(LeosBasementEnemies) / sizeof(EnemyType);
+                }
+            } else {
+                group = ModelTownsEnemies;
+                groupSize = sizeof(ModelTownsEnemies) / sizeof(EnemyType);
+            }
+        }
+        break;
+    case ActID::ACT_6:
+        if (origEnemy != EnemyType::DEMON_BIRD) {
+            if (origEnemy < EnemyType::ACT6_PURPLE_KNIGHT) {
+                if (originalLair.NoGhostLairPosition()) {
+                    group = CastleBasementEnemiesNoGhost;
+                    groupSize = sizeof(CastleBasementEnemiesNoGhost) / sizeof(EnemyType);
+                } else if (originalLair.MustBeGhostLairPosition()) {
+                    return EnemyType::ACT6_GHOST;
+                } else {
+                    group = CastleBasementEnemies;
+                    groupSize = sizeof(CastleBasementEnemies) / sizeof(EnemyType);
+                }
+            }
+            else {
+                group = CastleTowersEnemies;
+                groupSize = sizeof(CastleTowersEnemies) / sizeof(EnemyType);
+            }
+        }
+        break;
+    case ActID::ACT_7:
+        group = WorldOfEvilEnemiesNoBrick;
+        groupSize = sizeof(WorldOfEvilEnemiesNoBrick) / sizeof(EnemyType);
+        break;
+    default:
+        /* Should not happen! */
+        return origEnemy;
+        break;
+    }
+    return group[Random::RandomInteger(groupSize)];
+}
+
+LairProfile::LairProfile () {}
+LairProfile::~LairProfile () {}
+void LairProfile::roll (Lair& lair, Lair& originalLair) {
+    lair = originalLair;
+}
+
+LairProfileClassic::LairProfileClassic () {
+    int typeWeights[4] = { 15, 4, 1, 0 };
+    typePicker = new Random::WeightedPicker(typeWeights, 3);
+    int typeWeights2[4] = { 1, 1, 1, 1 };
+    typePicker2 = new Random::WeightedPicker(typeWeights2, 4);
+}
+LairProfileClassic::~LairProfileClassic () {
+    delete typePicker;
+    delete typePicker2;
+}
+void LairProfileClassic::roll (Lair& lair, Lair& originalLair) {
+    lair = originalLair;
+    lair.enemy = pickEnemyType(originalLair);
+    if (Lair::canRandomizeOrientation(lair.act, lair.enemy)) {
+        if (originalLair.MustNotBeUpwardsLairPosition()) {
+            lair.orientation = static_cast<unsigned char>(EnemyGroups::orientationList[Random::RandomInteger(3)]);
+        } else {
+            lair.orientation = static_cast<unsigned char>(EnemyGroups::orientationList[Random::RandomInteger(4)]);
+        }
+    } else {
+        lair.orientation = 0;
+    }
+    if (lair.spawnType == LairType::LAIR_ONE_BY_ONE ||
+        lair.spawnType == LairType::LAIR_MULTISPAWN ||
+        lair.spawnType == LairType::LAIR_ONE_BY_ONE_PROX
+    ) {
+        lair.spawnType = EnemyGroups::SpawnTypeList[typePicker->pick()];
+    } else if (lair.spawnType == LairType::LAIR_TWO_UP_TWO_DOWN) {
+        lair.spawnType = EnemyGroups::SpawnTypeList[typePicker2->pick()];
+    }
+    if (lair.spawnType == LairType::LAIR_ONE_BY_ONE ||
+        lair.spawnType == LairType::LAIR_ONE_BY_ONE_PROX
+    ) {
+        lair.numEnemies = Random::RandomIntegerRange(2, 6);
+        lair.spawnRate = 0;
+    } else if (lair.spawnType == LairType::LAIR_MULTISPAWN ||
+        lair.spawnType == LairType::LAIR_TWO_UP_TWO_DOWN
+    ) {
+        lair.numEnemies = Random::RandomIntegerRange(4, 12);
+        lair.spawnRate = Random::RandomIntegerRange(0x03, 0x20);
+    }
+}
+
+LairProfileTwo::LairProfileTwo () {}
+LairProfileTwo::~LairProfileTwo () {}
+void LairProfileTwo::roll (Lair& lair, Lair& originalLair) {
+    lair = originalLair;
+    // lair.log();
+    if (originalLair.numEnemies > 2) {
+        lair.numEnemies = 2;
+        if (originalLair.spawnType != LairType::LAIR_ALREADY_THERE && originalLair.spawnRate > 0x02) {
+            lair.spawnRate = 0x02;
+        }
     }
 }

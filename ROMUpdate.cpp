@@ -76,14 +76,25 @@ namespace ROMUpdate {
             outputLairs.lairList[i] = randomizedLairs.lairList[i];
         }
 
+        std::cout << "update lairs" << std::endl;
+
         Location* location;
         NpcId origNpcId, newNpcId;
         for (int i = 0; i < locations.allLocationsCount; i++) {
             location = &locations.allLocations[i];
             if (location->isLair) {
-                origNpcId = itemPool.allItems[(int)location->origItemIndex].npcId;
-                newNpcId = itemPool.allItems[(int)location->itemIndex].npcId;
-                outputLairs.lairList[(int)origNpcId] = randomizedLairs.lairList[(int)newNpcId];
+                /*
+                std::cout << location->name << ": ";
+                std::cout << itemPool.allItems[static_cast<int>(location->origItemIndex)].name << " -> ";
+                std::cout << itemPool.allItems[static_cast<int>(location->itemIndex)].name << std::endl;
+                if (!std::cout << itemPool.allItems[static_cast<int>(location->itemIndex)].isNPC) {
+                    std::cout << " !! Not an NPC !!" << endl;
+                }
+                */
+
+                origNpcId = itemPool.allItems[static_cast<int>(location->origItemIndex)].npcId;
+                newNpcId = itemPool.allItems[static_cast<int>(location->itemIndex)].npcId;
+                outputLairs.lairList[static_cast<int>(newNpcId)] = randomizedLairs.lairList[static_cast<int>(origNpcId)];
             }
         }
 
@@ -109,7 +120,7 @@ namespace ROMUpdate {
             ROMFile.write((char*)(&(lair->orientation)), 1);
             ROMFile.seekp(8, std::ios::cur);
         }
-        // std::cout << "Updated lairs" << endl;
+        std::cout << "Updated lairs" << endl;
     }
 
     void ROMUpdateMapSprites(const Sprite randomizedSpriteList[], std::fstream &ROMFile) {

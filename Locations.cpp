@@ -139,17 +139,17 @@ void Locations::populate () {
         2
     );
     populateChest(
-        LocationID::CHEST_UNDERGROUND_CASTLE_FIRST,
+        LocationID::CHEST_UNDERGROUND_CASTLE_SECOND,
         ItemIndex::GEMS_EXP_12,
         &normalFlags,
-        "Underground Castle first chest",
+        "Underground Castle second chest",
         3
     );
     populateChest(
-        LocationID::CHEST_UNDERGROUND_CASTLE_SECOND,
+        LocationID::CHEST_UNDERGROUND_CASTLE_FIRST,
         ItemIndex::MEDICAL_HERB,
         &normalFlags,
-        "Underground Castle second chest",
+        "Underground Castle first chest",
         4
     );
     populateChest(
@@ -573,7 +573,7 @@ void Locations::populate () {
         LocationID::SECRET_WATER_SHRINE_BASEMENT,
         ItemIndex::STRANGE_BOTTLE,
         &normalFlags,
-        "Water Shrine B2 secret",
+        "Water Shrine B3 secret",
         NpcItemIndex::ITEM_WATER_SHRINE_TILE
     );
     populateNpcItem(

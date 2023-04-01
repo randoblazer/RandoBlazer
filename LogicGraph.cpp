@@ -30,6 +30,15 @@ void LinkReqCheck::print() {
     cout << ItemPool::allItems[static_cast<int>(checkItem)].name;
 }
 
+LinkReqFree::LinkReqFree () {};
+LinkReqFree::~LinkReqFree () {};
+bool LinkReqFree::isMet (ItemPool& inventory) {
+    return true;
+}
+void LinkReqFree::print() {
+    cout << "Free";
+}
+
 LinkReqAnd::LinkReqAnd () {
     reqs = NULL;
 }

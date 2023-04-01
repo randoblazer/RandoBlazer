@@ -1,6 +1,8 @@
 #ifndef __LAIRS_H__
 #define __LAIRS_H__
 
+#include "Random.h"
+
 #include <fstream>
 
 using namespace std;
@@ -28,6 +30,13 @@ enum class LairType : unsigned short {
     LAIR_ONE_BY_ONE_PROX = 0x13A8,
     LAIR_TWO_UP_TWO_DOWN = 0xD2A7,
     LAIR_ALREADY_THERE   = 0x52A7
+};
+
+enum class OrientationType : unsigned char {
+    DOWN  = 0x00,
+    LEFT  = 0x40,
+    RIGHT = 0x80,
+    UP    = 0xC0
 };
 
 enum class EnemyType : unsigned char {
@@ -131,6 +140,8 @@ public:
     bool isSoul ();
     const char* enemyName ();
 
+    static bool canRandomizeOrientation (ActID act, EnemyType enemy);
+
     void log ();
 
     ActID         act;                              /* 0A */
@@ -155,5 +166,34 @@ public:
     void logLairs ();
 };
 
+class LairProfile {
+public:
+    LairProfile ();
+    ~LairProfile ();
+
+    virtual void roll (Lair& lair, Lair& originalLair);
+};
+
+class LairProfileClassic : public LairProfile {
+public:
+    LairProfileClassic ();
+    ~LairProfileClassic ();
+
+    LairType typeSelection[3];
+    Random::WeightedPicker* typePicker;
+    LairType typeSelection2[4];
+    Random::WeightedPicker* typePicker2;
+    OrientationType orientationList[4];
+
+    void roll (Lair& lair, Lair& originalLair);
+};
+
+class LairProfileTwo : public LairProfile {
+public:
+    LairProfileTwo ();
+    ~LairProfileTwo ();
+
+    void roll (Lair& lair, Lair& originalLair);
+};
 
 #endif // __LAIRS_H__

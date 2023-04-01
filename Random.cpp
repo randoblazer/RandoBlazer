@@ -13,13 +13,13 @@ namespace Random {
         numWeights = num;
         weightSums = new int[numWeights];
         totalWeight = 0;
-        std::cout << "weights: ";
+        // std::cout << "weights: ";
         for (int i = 0; i < numWeights; i++) {
             totalWeight += weights[i];
             weightSums[i] = totalWeight;
-            std::cout << totalWeight << " ";
+            // std::cout << totalWeight << " ";
         }
-        std::cout << std::endl;
+        // std::cout << std::endl;
     }
     WeightedPicker::~WeightedPicker() {
         delete weightSums;
