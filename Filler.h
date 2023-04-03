@@ -21,6 +21,7 @@ namespace Filler {
         PlacementSet* add (ItemIndex itemIndex);
         void shuffle ();
         ItemIndex take ();
+        void removeItem (ItemIndex itemIndex);
     };
 
     class LocationSet {
@@ -62,6 +63,7 @@ namespace Filler {
     bool placeItems (LogicMap* map, PlacementSet& placementSet, ItemPool& inventory);
     bool dummyPlacement (LogicMap* map, PlacementSet& placementSet, LocationSet& locationSet);
     bool dummyPlacementWithFilter (LogicMap* map, PlacementSet& placementSet, LocationSet& locationSet);
+    bool mustBeUniquePlacement (LogicMap* map, PlacementSet& placementSet1, PlacementSet& placementSet2, LocationSet& locationSet);
 
     void testPlacement ();
 }

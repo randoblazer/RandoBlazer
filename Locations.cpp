@@ -931,13 +931,13 @@ void Locations::populate () {
     );
     populateLair(
         LocationID::LAIR_SOUTHERTA_1,
-        ItemIndex::NPC_DOLPHIN2,
+        ItemIndex::NPC_DOLPHIN_NORTHEAST,
         &normalFlags,
         "Southerta first lair"
     );
     populateLair(
         LocationID::LAIR_SOUTHERTA_2,
-        ItemIndex::NPC_MERMAID4,
+        ItemIndex::NPC_MERMAID_DANCE_LEADER,
         &normalFlags,
         "Southerta second lair"
     );
@@ -1063,7 +1063,7 @@ void Locations::populate () {
     );
     populateLair(
         LocationID::LAIR_SEABED_TO_BLESTER_3,
-        ItemIndex::NPC_MERMAID,
+        ItemIndex::NPC_MERMAID_NORTHEAST,
         &normalFlags,
         "Seabed path to Blester third lair"
     );
@@ -1231,7 +1231,7 @@ void Locations::populate () {
     );
     populateLair(
         LocationID::LAIR_MOUNTAIN_SLOPE_LOWER_2,
-        ItemIndex::NPC_GRANDPA,
+        ItemIndex::NPC_GREETER_GRANDPA,
         &normalFlags,
         "Mountain Slope lower part second lair"
     );
@@ -1255,7 +1255,7 @@ void Locations::populate () {
     );
     populateLair(
         LocationID::LAIR_MOUNTAIN_SLOPE_MIDDLE_TOP,
-        ItemIndex::NPC_BOY,
+        ItemIndex::NPC_PATHFINDER_BOY,
         &normalFlags,
         "Mountain Slope middle top lair"
     );
@@ -1279,7 +1279,7 @@ void Locations::populate () {
     );
     populateLair(
         LocationID::LAIR_ICE_HILL_1,
-        ItemIndex::NPC_MUSHROOM2,
+        ItemIndex::NPC_MUSHROOM_TUNNEL,
         &normalFlags,
         "Ice Hill top lair"
     );
@@ -1297,7 +1297,7 @@ void Locations::populate () {
     );
     populateLair(
         LocationID::LAIR_ICE_HILL_4,
-        ItemIndex::NPC_GIRL3,
+        ItemIndex::NPC_GIRL_TUNNEL,
         &normalFlags,
         "Ice Hill middle of slope lair"
     );
@@ -1315,13 +1315,13 @@ void Locations::populate () {
     );
     populateLair(
         LocationID::LAIR_LAYNOLE_1,
-        ItemIndex::NPC_GRANDPA3,
+        ItemIndex::NPC_GRANDPA_LOGS,
         &normalFlags,
         "Laynole first lair near entrance"
     );
     populateLair(
         LocationID::LAIR_LAYNOLE_2,
-        ItemIndex::NPC_GRANDPA4,
+        ItemIndex::NPC_GRANDPA_LAKE,
         &normalFlags,
         "Laynole middle of ice tunnel lair"
     );
@@ -1333,7 +1333,7 @@ void Locations::populate () {
     );
     populateLair(
         LocationID::LAIR_LAYNOLE_4,
-        ItemIndex::NPC_GRANDPA5,
+        ItemIndex::NPC_GRANDPA_PRISON,
         &normalFlags,
         "Laynole south disappearing bridge lair"
     );
@@ -1516,7 +1516,7 @@ void Locations::populate () {
     );
     populateLair(
         LocationID::LAIR_LEOS_BASEMENT_B1_UP_FIRST_PIPE,
-        ItemIndex::NPC_CAT,
+        ItemIndex::NPC_CAT_MOUSEHOLE1,
         &normalFlags,
         "Leo's Basement B1 lair up center pipe"
     );
@@ -1540,7 +1540,7 @@ void Locations::populate () {
     );
     populateLair(
         LocationID::LAIR_LEOS_BASEMENT_B1_SMALL_ISLAND_RIGHT,
-        ItemIndex::NPC_CAT2,
+        ItemIndex::NPC_CAT_MOUSEHOLE2,
         &normalFlags,
         "Leo's Basement B1 lair on bottom right small island"
     );
@@ -1552,7 +1552,7 @@ void Locations::populate () {
     );
     populateLair(
         LocationID::LAIR_LEOS_BASEMENT_B1_RIGHT_SIDE_TOP,
-        ItemIndex::NPC_GREAT_DOOR,
+        ItemIndex::NPC_GREAT_DOOR_KITCHEN,
         &normalFlags,
         "Leo's Basement B1 right side pipe top lair"
     );
@@ -1570,7 +1570,7 @@ void Locations::populate () {
     );
     populateLair(
         LocationID::LAIR_LEOS_BASEMENT_B2_INSIDE_PIPE,
-        ItemIndex::NPC_MOUSE,
+        ItemIndex::NPC_MOUSE_HOLE,
         &normalFlags,
         "Leo's Basement B2 right side inside pipe lair"
     );
@@ -1648,7 +1648,7 @@ void Locations::populate () {
     );
     populateLair(
         LocationID::LAIR_MODEL_TOWN_2_CENTER_WEST,
-        ItemIndex::NPC_CHEST_OF_DRAWERS2,
+        ItemIndex::NPC_CHEST_OF_DRAWERS_ATTIC,
         &normalFlags,
         "Model Town 2 center west lair"
     );

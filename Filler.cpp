@@ -35,6 +35,16 @@ ItemIndex PlacementSet::take () {
     size--;
     return set[size];
 }
+void PlacementSet::removeItem (ItemIndex itemIndex) {
+    for (int i = 0; i < size; i++) {
+        if (set[i] == itemIndex) {
+            size--;
+            set[i] = set[size];
+            break;
+        }
+    }
+}
+
 LocationSet::LocationSet () {
     size = 0;
 }
@@ -252,6 +262,47 @@ bool dummyPlacementWithFilter (LogicMap* map, PlacementSet& placementSet, Locati
         locationSet.removeLocation(placementLocation);
         Locations::allLocations[static_cast<int>(placementLocation)].itemIndex = placementItem;
         map->fillLocation(placementLocation);
+    }
+    return true;
+}
+/*
+    Placement pass for locations labelled 'mustBeUnique'
+    Currently just the dancing grandmas reward - vanilla Phoenix
+    Still, it should be useful to have a general process.
+    Only removes placed items from the placement set.
+*/
+bool mustBeUniquePlacement (LogicMap* map, PlacementSet& placementSet1, PlacementSet& placementSet2, LocationSet& locationSet) {
+    LocationSet uniqueLocations;
+    uniqueLocations.clear();
+    PlacementSet uniqueItems;
+    uniqueItems.clear();
+    LocationID location;
+    ItemIndex itemIndex;
+    for (int i = 0; i < placementSet1.size; i++) {
+        if (ItemPool::allItems[static_cast<int>(placementSet1.set[i])].isUnique) {
+            uniqueItems.add(placementSet1.set[i]);
+        }
+    }
+    for (int i = 0; i < placementSet2.size; i++) {
+        if (ItemPool::allItems[static_cast<int>(placementSet2.set[i])].isUnique) {
+            uniqueItems.add(placementSet2.set[i]);
+        }
+    }
+    uniqueItems.shuffle();
+    for (int i = locationSet.size - 1; i >= 0; i--) {
+        location = locationSet.set[i];
+        if (Locations::allLocations[static_cast<int>(location)].mustBeUnique) {
+            if (uniqueItems.size == 0) {
+                return false; // No unique items left, we failed...
+            }
+            itemIndex = uniqueItems.take();
+            Locations::allLocations[static_cast<int>(location)].itemIndex = itemIndex;
+            map->fillLocation(location);
+            locationSet.size--;
+            locationSet.set[i] = locationSet.set[locationSet.size];
+            placementSet1.removeItem(itemIndex);
+            placementSet2.removeItem(itemIndex);
+        }
     }
     return true;
 }
