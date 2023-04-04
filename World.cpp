@@ -832,7 +832,6 @@ void WorldMap::createWorld (WorldFlags& creationFlags) {
     extraItems.add(ItemIndex::MEDICAL_HERB);
     extraItems.add(ItemIndex::MEDICAL_HERB);
     progressionItems.add(ItemIndex::PURPLE_STONE);
-
     progressionItems.add(ItemIndex::NPC_CAT_MOUSEHOLE1);
     progressionItems.add(ItemIndex::NPC_PLANT_HERB);
     extraNpcs.add(ItemIndex::NPC_PLANT);
@@ -952,6 +951,199 @@ void WorldMap::createWorld (WorldFlags& creationFlags) {
             ->addReq(new LinkReqCheck(ItemIndex::NPC_MARIE))
     ));
 
+    /*
+        Act VI: Magridd Castle
+    */
+    MapNode* magriddCastle = (new MapNode())
+        ->addLocation(LocationID::LAIR_TORTURE_CHAMBER1_NORTHWEST)
+        ->addLocation(LocationID::CHEST_TORTURE_CHAMBER1_LEFT)
+        ->addLocation(LocationID::CHEST_TORTURE_CHAMBER1_TOP_RIGHT)
+        ->addLocation(LocationID::SECRET_TORTURE_CHAMBER1_TOP_RIGHT);
+    MapNode* tortureChamberSpirit = (new MapNode())
+        ->addLocation(LocationID::LAIR_TORTURE_CHAMBER1_CENTER)
+        ->addLocation(LocationID::LAIR_TORTURE_CHAMBER2_RIGHT_1)
+        ->addLocation(LocationID::LAIR_TORTURE_CHAMBER2_RIGHT_2)
+        ->addLocation(LocationID::LAIR_TORTURE_CHAMBER2_RIGHT_3)
+        ->addLocation(LocationID::LAIR_TORTURE_CHAMBER2_LEFT_1)
+        ->addLocation(LocationID::LAIR_TORTURE_CHAMBER2_LEFT_2)
+        ->addLocation(LocationID::LAIR_TORTURE_CHAMBER2_LEFT_3)
+        ->addLocation(LocationID::LAIR_TORTURE_CHAMBER3_LEFT)
+        ->addLocation(LocationID::LAIR_TORTURE_CHAMBER3_CENTER_LOWER)
+        ->addLocation(LocationID::LAIR_TORTURE_CHAMBER3_CENTER_UPPER)
+        ->addLocation(LocationID::LAIR_TORTURE_CHAMBER3_RIGHT_TOP)
+        ->addLocation(LocationID::LAIR_TORTURE_CHAMBER3_RIGHT_BOTTOM)
+        ->addLocation(LocationID::CHEST_TORTURE_CHAMBER2_NORTH_INVISIBLE)
+        ->addLocation(LocationID::CHEST_TORTURE_CHAMBER2_SOUTHWEST_INVISIBLE)
+        ->addLocation(LocationID::CHEST_TORTURE_CHAMBER2_MIDDLE_INVISIBLE)
+        ->addLocation(LocationID::CHEST_TORTURE_CHAMBER3_NORTHWEST);
+    MapNode* leftTower = (new MapNode())
+        ->addLocation(LocationID::LAIR_LEFT_TOWER_FLOOR1)
+        ->addLocation(LocationID::LAIR_LEFT_TOWER_FLOOR2_LEFT)
+        ->addLocation(LocationID::LAIR_LEFT_TOWER_FLOOR2_RIGHT)
+        ->addLocation(LocationID::LAIR_LEFT_TOWER_FLOOR3_SOUTHEAST)
+        ->addLocation(LocationID::LAIR_LEFT_TOWER_FLOOR3_PRISON_NORTHEAST)
+        ->addLocation(LocationID::LAIR_LEFT_TOWER_FLOOR3_PRISON_NORTHWEST)
+        ->addLocation(LocationID::LAIR_LEFT_TOWER_FLOOR3_PRISON_SOUTHWEST);
+    MapNode* rightTower = (new MapNode())
+        ->addLocation(LocationID::LAIR_RIGHT_TOWER_FLOOR1_NORTHWEST)
+        ->addLocation(LocationID::LAIR_RIGHT_TOWER_FLOOR1_SOUTHEAST)
+        ->addLocation(LocationID::LAIR_RIGHT_TOWER_FLOOR1_CENTER)
+        ->addLocation(LocationID::LAIR_RIGHT_TOWER_FLOOR2_RIGHT)
+        ->addLocation(LocationID::LAIR_RIGHT_TOWER_FLOOR2_CENTER_SECRET)
+        ->addLocation(LocationID::LAIR_RIGHT_TOWER_FLOOR3)
+        ->addLocation(LocationID::CHEST_RIGHT_TOWER2_LEFT)
+        ->addLocation(LocationID::CHEST_RIGHT_TOWER2_RIGHT)
+        ->addLocation(LocationID::CHEST_RIGHT_TOWER3_TOP_LEFT)
+        ->addLocation(LocationID::CHEST_RIGHT_TOWER3_BOTTOM_RIGHT);
+    MapNode* demonBird = (new MapNode())
+        ->addLocation(LocationID::LAIR_RIGHT_TOWER_DEMON_BIRD_BOSS);
+    
+    extraItems.add(ItemIndex::GEMS_EXP_80);
+    progressionItems.add(ItemIndex::SPIRIT_SWORD);
+    extraItems.add(ItemIndex::STRANGE_BOTTLE);
+    extraItems.add(ItemIndex::MEDICAL_HERB);
+    extraItems.add(ItemIndex::GEMS_EXP_100);
+    progressionItems.add(ItemIndex::EMBLEM_B);
+    extraItems.add(ItemIndex::GEMS_EXP_80);
+    extraItems.add(ItemIndex::GEMS_EXP_80);
+    extraItems.add(ItemIndex::GEMS_EXP_100);
+    extraItems.add(ItemIndex::MEDICAL_HERB);
+    equipmentItems.add(ItemIndex::ELEMENTAL_MAIL);
+    progressionItems.add(ItemIndex::VIP_CARD);
+    equipmentItems.add(ItemIndex::SUPER_BRACELET);
+    progressionItems.add(ItemIndex::PLATINUM_CARD);
+    extraItems.add(ItemIndex::MEDICAL_HERB);
+    progressionItems.add(ItemIndex::EMBLEM_H);
+    progressionItems.add(ItemIndex::MOBILE_KEY);
+    progressionItems.add(ItemIndex::HARP_STRING);
+    progressionItems.add(ItemIndex::BLACK_STONE);
+    extraNpcs.add(ItemIndex::NPC_SOLDIER2);
+    extraNpcs.add(ItemIndex::NPC_SOLDIER);
+    progressionItems.add(ItemIndex::NPC_SINGER_CONCERT_HALL);
+    extraNpcs.add(ItemIndex::NPC_SOLDIER3);
+    extraNpcs.add(ItemIndex::NPC_SOLDIER4);
+    extraNpcs.add(ItemIndex::NPC_SOLDIER5);
+    progressionItems.add(ItemIndex::NPC_SOLDIER_ELEMENTAL_MAIL);
+    extraNpcs.add(ItemIndex::NPC_SOLDIER6);
+    extraNpcs.add(ItemIndex::NPC_MAID);
+    progressionItems.add(ItemIndex::NPC_SOLDIER_DOK);
+    progressionItems.add(ItemIndex::NPC_SOLDIER_LEFT_TOWER);
+    progressionItems.add(ItemIndex::NPC_SOLDIER_PLATINUM_CARD);
+    extraNpcs.add(ItemIndex::NPC_SINGER);
+    extraNpcs.add(ItemIndex::NPC_SOLDIER_SOUL_OF_REALITY);
+    extraNpcs.add(ItemIndex::NPC_MAID2);
+    progressionItems.add(ItemIndex::NPC_QUEEN_MAGRIDD);
+    extraNpcs.add(ItemIndex::NPC_SOLDIER7);
+    progressionItems.add(ItemIndex::NPC_DR_LEO);
+    progressionItems.add(ItemIndex::NPC_SOLDIER_WITH_LEO);
+    progressionItems.add(ItemIndex::NPC_SOLDIER_RIGHT_TOWER);
+    extraNpcs.add(ItemIndex::NPC_SOLDIER8);
+    progressionItems.add(ItemIndex::NPC_MAID_HERB);
+    progressionItems.add(ItemIndex::NPC_SOLDIER_CASTLE);
+    extraNpcs.add(ItemIndex::NPC_SOLDIER9);
+    extraNpcs.add(ItemIndex::NPC_SOLDIER10);
+    extraNpcs.add(ItemIndex::NPC_SOLDIER11);
+    progressionItems.add(ItemIndex::NPC_KING_MAGRIDD);
+
+    // combat area links
+    leosBedroom->addLink(new MapLink(leosBedroom, magriddCastle,
+        (new LinkReqAnd())
+            ->addReq(new LinkReqCheck(ItemIndex::NPC_STEPS_MARIE))
+            ->addReq(new LinkReqCheck(ItemIndex::NPC_MARIE))
+    ));
+    magriddCastle->addLink(new MapLink(magriddCastle, tortureChamberSpirit,
+        (new LinkReqCheck(ItemIndex::SPIRIT_SWORD))
+    ));
+    magriddCastle->addLink(new MapLink(magriddCastle, leftTower,
+        (new LinkReqAnd())
+            ->addReq(new LinkReqCheck(ItemIndex::NPC_SOLDIER_LEFT_TOWER))
+            ->addReq(new LinkReqCheck(ItemIndex::PLATINUM_CARD))
+    ));
+    magriddCastle->addLink(new MapLink(magriddCastle, rightTower,
+        (new LinkReqAnd())
+            ->addReq(new LinkReqCheck(ItemIndex::NPC_SOLDIER_RIGHT_TOWER))
+            ->addReq(new LinkReqCheck(ItemIndex::VIP_CARD))
+    ));
+    rightTower->addLink(new MapLink(rightTower, demonBird,
+        (new LinkReqCheck(ItemIndex::MOBILE_KEY))
+    ));
+
+    // NPC item links
+    magriddCastle->addLink(new MapLink(magriddCastle,
+        (new MapNode())->addLocation(LocationID::NPC_QUEEN_MAGRIDD),
+        (new LinkReqCheck(ItemIndex::NPC_QUEEN_MAGRIDD))
+    ));
+    magriddCastle->addLink(new MapLink(magriddCastle,
+        (new MapNode())->addLocation(LocationID::NPC_SOUTHEAST_MAID_BEHIND_COUNTER),
+        (new LinkReqCheck(ItemIndex::NPC_MAID_HERB))
+    ));
+    magriddCastle->addLink(new MapLink(magriddCastle,
+        (new MapNode())->addLocation(LocationID::SECRET_OUTSIDE_CASTLE),
+        (new LinkReqCheck(ItemIndex::NPC_SOLDIER_CASTLE))
+    ));
+    magriddCastle->addLink(new MapLink(magriddCastle,
+        (new MapNode())->addLocation(LocationID::NPC_SLEEPING_SOLDIER),
+        (new LinkReqAnd())
+            ->addReq(new LinkReqCheck(ItemIndex::NPC_SOLDIER_ELEMENTAL_MAIL))
+            ->addReq(new LinkReqCheck(ItemIndex::DREAM_ROD))
+    ));
+    magriddCastle->addLink(new MapLink(magriddCastle,
+        (new MapNode())->addLocation(LocationID::SECRET_CONCERT_HALL_SOLDIER),
+        (new LinkReqAnd())
+            ->addReq(new LinkReqCheck(ItemIndex::NPC_SINGER_CONCERT_HALL))
+            ->addReq(new LinkReqCheck(ItemIndex::NPC_SOLDIER_PLATINUM_CARD))
+            ->addReq(new LinkReqCheck(ItemIndex::HARP_STRING))
+    ));
+    rightTower->addLink(new MapLink(rightTower,
+        (new MapNode())->addLocation(LocationID::NPC_LEO_CUTSCENE),
+        (new LinkReqAnd())
+            ->addReq(new LinkReqCheck(ItemIndex::NPC_SOLDIER_DOK))
+            ->addReq(new LinkReqCheck(ItemIndex::NPC_SOLDIER_WITH_LEO))
+            ->addReq(new LinkReqCheck(ItemIndex::NPC_DR_LEO))
+    ));
+    rightTower->addLink(new MapLink(rightTower,
+        (new MapNode())->addLocation(LocationID::SECRET_UNDER_QUEEN_MAGRIDD),
+        (new LinkReqAnd())
+            ->addReq(new LinkReqCheck(ItemIndex::NPC_SOLDIER_DOK))
+            ->addReq(new LinkReqCheck(ItemIndex::NPC_SOLDIER_WITH_LEO))
+            ->addReq(new LinkReqCheck(ItemIndex::NPC_DR_LEO))
+            ->addReq(new LinkReqCheck(ItemIndex::NPC_QUEEN_MAGRIDD))
+    ));
+    magriddCastle->addLink(new MapLink(magriddCastle,
+        (new MapNode())->addLocation(LocationID::NPC_KING_MAGRIDD),
+        (new LinkReqAnd())
+            ->addReq(new LinkReqCheck(ItemIndex::NPC_SOLDIER_CASTLE))
+            ->addReq(new LinkReqCheck(ItemIndex::NPC_KING_MAGRIDD))
+    ));
+
+    progressionItems.add(ItemIndex::MEDICAL_HERB);
+    progressionItems.add(ItemIndex::GEMS_EXP_200);
+    progressionItems.add(ItemIndex::RED_HOT_BALL);
+    progressionItems.add(ItemIndex::SOUL_ARMOR);
+    progressionItems.add(ItemIndex::SOUL_BLADE);
+    progressionItems.add(ItemIndex::GEMS_EXP_100);
+
+    /*
+        Act VII: World of Evil
+    */
+    MapNode* worldOfEvil = (new MapNode())
+        ->addLocation(LocationID::CHEST_WORLD_OF_EVIL1_LEFT)
+        ->addLocation(LocationID::CHEST_WORLD_OF_EVIL1_RIGHT)
+        ->addLocation(LocationID::CHEST_WORLD_OF_EVIL1_TELEPORTER)
+        ->addLocation(LocationID::CHEST_WORLD_OF_EVIL2_RIGHT);
+    MapNode* dazzlingSpace = (new MapNode())
+        ->addLocation(LocationID::CHEST_WORLD_OF_EVIL3_LEFT)
+        ->addLocation(LocationID::CHEST_WORLD_OF_EVIL3_RIGHT);
+
+    magriddCastle->addLink(new MapLink(magriddCastle, worldOfEvil,
+        (new LinkReqAnd())
+            ->addReq(new LinkReqCheck(ItemIndex::NPC_SOLDIER_CASTLE))
+            ->addReq(new LinkReqCheck(ItemIndex::NPC_KING_MAGRIDD))
+    ));
+    worldOfEvil->addLink(new MapLink(worldOfEvil, dazzlingSpace,
+        (new LinkReqCheck(ItemIndex::SOUL_ARMOR))
+    ));
+
     map = new LogicMap(grassValley);
 }
 
@@ -1010,19 +1202,6 @@ void testTheWorld (WorldFlags& worldFlags) {
     bool success = Filler::placeItems(theWorld.map, theWorld.progressionItems, inventory);
     cout << "Progression placement " << (success ? "succeeded" : "failed") << endl;
     logMap(theWorld);
-
-    progressionPool
-        .addItem(ItemIndex::EMBLEM_B)
-        ->addItem(ItemIndex::EMBLEM_D)
-        ->addItem(ItemIndex::EMBLEM_E)
-        ->addItem(ItemIndex::EMBLEM_F)
-        ->addItem(ItemIndex::EMBLEM_G)
-        ->addItem(ItemIndex::EMBLEM_H)
-        ->addItem(ItemIndex::ZANTETSU_SWORD)
-        ->addItem(ItemIndex::SPIRIT_SWORD)
-        ->addItem(ItemIndex::RED_HOT_BALL)
-        ->addItem(ItemIndex::RED_HOT_STICK)
-        ->addItem(ItemIndex::RED_HOT_MIRROR);
 
     Filler::LocationSet emptyLocations;
     Filler::getEmptyLocations(theWorld.map, emptyLocations);
