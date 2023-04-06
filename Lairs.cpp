@@ -1,5 +1,6 @@
 #include "Lairs.h"
 #include "Random.h"
+#include "World.h"
 
 #include <fstream>
 #include <stdio.h>
@@ -97,7 +98,7 @@ const char* Lair::enemyName () {
         return "No enemy";
     }
     if (enemy == EnemyType::DREAM_NO_ENEMY) {
-        return "Dream, no enemy";
+        return "Dream; no enemy";
     }
     switch (act) {
         case ActID::ACT_1:
@@ -296,14 +297,68 @@ const char* Lair::enemyName () {
 void Lair::log () {
     cout << enemyName();
     cout << " | area " << (int)positionData[0] << " position " << (int)positionData[1] << ", " << (int)positionData[2];
+    if (spawnType == LairType::LAIR_ALREADY_THERE) {
+        cout << " Already there";
+    } else if (spawnType == LairType::LAIR_MULTISPAWN) {
+        cout << " Multispawn";
+    } else if (spawnType == LairType::LAIR_ONE_BY_ONE) {
+        cout << " Single spawn";
+    } else if (spawnType == LairType::LAIR_ONE_BY_ONE_PROX) {
+        cout << " Single spawn proximity";
+    } else if (spawnType == LairType::LAIR_TWO_UP_TWO_DOWN) {
+        cout << " Multidirection";
+    } else {
+        cout << " Unknown spawn type - likely bug!";
+    }
+    cout << " Count: " << static_cast<int>(numEnemies);
+    cout << " Rate: " << static_cast<int>(spawnRate);
+    if (orientation == 0) {
+        cout << " down";
+    } else if (orientation == 1) {
+        cout << " left";
+    } else if (orientation == 2) {
+        cout << " right";
+    } else if (orientation == 3) {
+        cout << " up";
+    }
     if (isMetal()) {
-        cout << " " << "[metal]";
+        cout << " [metal]";
     }
     if (isSpirit()) {
-        cout << " " << "[spirit]";
+        cout << " [spirit]";
     }
     if (isSoul()) {
-        cout << " " << "[soul]";
+        cout << " [soul]";
+    }
+    cout << endl;
+}
+void Lair::logCsv () {
+    // Enemy, Area, x, y, Spawn, Count, Rate, Orientation
+    cout << enemyName() << ",";
+    cout << (int)positionData[0] << "," << (int)positionData[1] << "," << (int)positionData[2] << ",";
+    if (spawnType == LairType::LAIR_ALREADY_THERE) {
+        cout << "Already there,";
+    } else if (spawnType == LairType::LAIR_MULTISPAWN) {
+        cout << "Multispawn,";
+    } else if (spawnType == LairType::LAIR_ONE_BY_ONE) {
+        cout << "Single spawn,";
+    } else if (spawnType == LairType::LAIR_ONE_BY_ONE_PROX) {
+        cout << "Single spawn proximity,";
+    } else if (spawnType == LairType::LAIR_TWO_UP_TWO_DOWN) {
+        cout << "Multidirection,";
+    } else {
+        cout << "Unknown spawn type - likely bug!,";
+    }
+    cout << static_cast<int>(numEnemies) << ",";
+    cout << static_cast<int>(spawnRate) << ",";
+    if (orientation == 0x00) {
+        cout << "down";
+    } else if (orientation == 0x40) {
+        cout << "left";
+    } else if (orientation == 0x80) {
+        cout << "right";
+    } else if (orientation == 0xC0) {
+        cout << "up";
     }
     cout << endl;
 }
@@ -466,7 +521,7 @@ void LairList::readOriginalLairs (fstream &ROMFile) {
 
 void LairList::logLairs () {
     for (int i = 0; i < NUMBER_OF_LAIRS; i++) {
-        lairList[i].log();
+        lairList[i].logCsv();
     }
 }
 
@@ -483,7 +538,7 @@ EnemyType pickEnemyType (Lair& originalLair) {
         return originalLair.enemy;
     }
     EnemyType* group;
-    int groupSize;
+    int groupSize = 0;
     EnemyType origEnemy = originalLair.enemy;
 
     switch (originalLair.act) {
@@ -588,6 +643,9 @@ EnemyType pickEnemyType (Lair& originalLair) {
         return origEnemy;
         break;
     }
+    if (groupSize == 0) {
+        return origEnemy;
+    }
     return group[Random::RandomInteger(groupSize)];
 }
 
@@ -597,12 +655,86 @@ void LairProfile::roll (Lair& lair, Lair& originalLair) {
     lair = originalLair;
 }
 
+LairProfileA::LairProfileA (WorldFlags& flags) {
+    worldFlags = &flags;
+    int normalTypeWeights[4] = { 15, 4, 1, 0 };
+    normalTypePicker = new Random::WeightedPicker(normalTypeWeights, 3);
+    int upDownTypeWeights[4] = { 5, 4, 1, 10 };
+    upDownTypePicker = new Random::WeightedPicker(upDownTypeWeights, 4);
+    int singleCountWeights[4] = { 5, 4, 1, 10 };
+    singleCountPicker = new Random::WeightedPicker(singleCountWeights, 4);
+    int multiCountWeights[4] = { 1, 1, 1, 1 };
+    multiCountPicker = new Random::WeightedPicker(multiCountWeights, 4);
+    // Lairs with more enemies can be weighted towards faster spawning
+    int spawnWeights[4][4] = {
+        { 1, 1, 1, 1 },   // 4-6 enemies
+        { 3, 2, 1, 1 },   // 6-8
+        { 8, 4, 2, 1 },   // 8-10
+        { 10, 5, 1, 1 }   // 10-12
+    };
+    for (int i = 0; i < 4; i++) {
+        spawnRatePickers[i] = new Random::WeightedPicker(spawnWeights[i], 4);
+    }
+}
+LairProfileA::~LairProfileA () {
+    delete normalTypePicker;
+    delete upDownTypePicker;
+    delete singleCountPicker;
+    delete multiCountPicker;
+    for (int i = 0; i < 4; i++) {
+        delete spawnRatePickers[i];
+    }
+}
+void LairProfileA::roll (Lair& lair, Lair& originalLair) {
+    // originalLair.log();
+    lair = originalLair;
+    if (worldFlags->blesterMetal && lair.positionData[0] == 49 && lair.positionData[1] == 33 && lair.positionData[2] == 41) {
+        lair.enemy = EnemyType::ACT3_METAL_GORILLA;
+    } else if (worldFlags->dureanMetal && lair.positionData[0] == 48 && lair.positionData[1] == 4 && lair.positionData[2] == 36) {
+        lair.enemy = EnemyType::ACT3_METAL_GORILLA;
+    } else {
+        lair.enemy = pickEnemyType(originalLair);
+    }
+    if (Lair::canRandomizeOrientation(lair.act, lair.enemy)) {
+        if (originalLair.MustNotBeUpwardsLairPosition()) {
+            lair.orientation = static_cast<unsigned char>(EnemyGroups::orientationList[Random::RandomInteger(3)]);
+        } else {
+            lair.orientation = static_cast<unsigned char>(EnemyGroups::orientationList[Random::RandomInteger(4)]);
+        }
+    } else {
+        lair.orientation = 0;
+    }
+    if (lair.spawnType == LairType::LAIR_ONE_BY_ONE ||
+        lair.spawnType == LairType::LAIR_MULTISPAWN ||
+        lair.spawnType == LairType::LAIR_ONE_BY_ONE_PROX
+    ) {
+        lair.spawnType = EnemyGroups::SpawnTypeList[normalTypePicker->pick()];
+    } else if (lair.spawnType == LairType::LAIR_TWO_UP_TWO_DOWN) {
+        lair.spawnType = EnemyGroups::SpawnTypeList[upDownTypePicker->pick()];
+    }
+    if (lair.spawnType == LairType::LAIR_ONE_BY_ONE ||
+        lair.spawnType == LairType::LAIR_ONE_BY_ONE_PROX
+    ) {
+        lair.numEnemies = 2 + singleCountPicker->pick();
+        lair.spawnRate = 0;
+    } else if (lair.spawnType == LairType::LAIR_MULTISPAWN ||
+        lair.spawnType == LairType::LAIR_TWO_UP_TWO_DOWN
+    ) {
+        int countPick = multiCountPicker->pick();
+        int spawnRatePick = spawnRatePickers[countPick]->pick();
+
+        lair.numEnemies = 4 + (2 * countPick) + Random::RandomInteger(3);
+        lair.spawnRate = 3 + (7 * spawnRatePick) + Random::RandomInteger(7);
+    }
+}
+
 LairProfileClassic::LairProfileClassic () {
     int typeWeights[4] = { 15, 4, 1, 0 };
     typePicker = new Random::WeightedPicker(typeWeights, 3);
     int typeWeights2[4] = { 1, 1, 1, 1 };
     typePicker2 = new Random::WeightedPicker(typeWeights2, 4);
 }
+
 LairProfileClassic::~LairProfileClassic () {
     delete typePicker;
     delete typePicker2;
@@ -648,7 +780,7 @@ void LairProfileTwo::roll (Lair& lair, Lair& originalLair) {
     if (originalLair.numEnemies > 2) {
         lair.numEnemies = 2;
         if (originalLair.spawnType != LairType::LAIR_ALREADY_THERE && originalLair.spawnRate > 0x02) {
-            lair.spawnRate = 0x02;
+            lair.spawnRate = 0x03;
         }
     }
 }

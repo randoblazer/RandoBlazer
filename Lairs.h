@@ -2,6 +2,7 @@
 #define __LAIRS_H__
 
 #include "Random.h"
+#include "World.h"
 
 #include <fstream>
 
@@ -143,9 +144,13 @@ public:
     static bool canRandomizeOrientation (ActID act, EnemyType enemy);
 
     void log ();
+    void logCsv ();
 
     ActID         act;                              /* 0A */
     unsigned char positionData[POSITION_DATA_SIZE]; /* from 0B to 0D */
+    unsigned char area;
+    unsigned char x;
+    unsigned char y;
     LairType      spawnType;                        /* from 10 to 11 */
     unsigned char numEnemies;                       /* 13 */
     unsigned char spawnRate;                        /* 14 */
@@ -174,16 +179,28 @@ public:
     virtual void roll (Lair& lair, Lair& originalLair);
 };
 
+class LairProfileA : public LairProfile {
+public:
+    LairProfileA (WorldFlags& flags);
+    ~LairProfileA ();
+
+    WorldFlags* worldFlags;
+    Random::WeightedPicker* normalTypePicker;
+    Random::WeightedPicker* upDownTypePicker;
+    Random::WeightedPicker* singleCountPicker;
+    Random::WeightedPicker* multiCountPicker;
+    Random::WeightedPicker* spawnRatePickers[4];
+
+    void roll (Lair& lair, Lair& originalLair);
+};
+
 class LairProfileClassic : public LairProfile {
 public:
     LairProfileClassic ();
     ~LairProfileClassic ();
 
-    LairType typeSelection[3];
     Random::WeightedPicker* typePicker;
-    LairType typeSelection2[4];
     Random::WeightedPicker* typePicker2;
-    OrientationType orientationList[4];
 
     void roll (Lair& lair, Lair& originalLair);
 };

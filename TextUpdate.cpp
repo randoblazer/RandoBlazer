@@ -1615,6 +1615,8 @@ namespace ROMUpdate {
         Item* item;
         ItemId itemId;
 
+        std::cout << "NPCTextUpdateMain" << std::endl;
+
         /* General text updates and some specific Item NPC text */
         GeneralTextUpdate(randomizedLairs, locations, itemPool, ROMFile, seed);
 

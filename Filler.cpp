@@ -234,12 +234,14 @@ bool placeItems (LogicMap* map, PlacementSet& placementSet, ItemPool& initialInv
     and with items and locations such that any of the items can go in any location.
 */
 bool dummyPlacement (LogicMap* map, PlacementSet& placementSet, LocationSet& locationSet) {
+    // cout << "Dummy placement: " << placementSet.size << " items " << locationSet.size << " locations" << endl;
     ItemIndex placementItem;
     LocationID placementLocation;
     while (placementSet.size > 0) {
         placementItem = placementSet.take();
         placementLocation = locationSet.take();
         Locations::allLocations[static_cast<int>(placementLocation)].itemIndex = placementItem;
+        // cout << "  fillLocation" << endl;
         map->fillLocation(placementLocation);
     }
     return true;

@@ -433,12 +433,13 @@ void WorldMap::createWorld (WorldFlags& creationFlags) {
         ->addLocation(LocationID::LAIR_DUREAN_WEST)
         ->addLocation(LocationID::LAIR_DUREAN_NORTH)
         ->addLocation(LocationID::LAIR_DUREAN_NORTHEAST)
+        ->addLocation(LocationID::CHEST_DUREAN_RIGHT_SIDE)
+        ->addLocation(LocationID::CRYSTAL_DUREAN_SEABED_PATH);
+    MapNode* dureanUpper = (new MapNode())
         ->addLocation(LocationID::LAIR_DUREAN_TIER2_NORTHWEST)
         ->addLocation(LocationID::LAIR_DUREAN_TIER2_NORTHEAST)
         ->addLocation(LocationID::LAIR_DUREAN_TIER3)
-        ->addLocation(LocationID::CHEST_DUREAN_RIGHT_SIDE)
-        ->addLocation(LocationID::CHEST_DUREAN_LAVA)
-        ->addLocation(LocationID::CRYSTAL_DUREAN_SEABED_PATH);
+        ->addLocation(LocationID::CHEST_DUREAN_LAVA);
     MapNode* dureanMetal = (new MapNode())
         ->addLocation(LocationID::LAIR_DUREAN_TIER2_METAL);
     MapNode* blester = (new MapNode())
@@ -535,7 +536,17 @@ void WorldMap::createWorld (WorldFlags& creationFlags) {
     rockbird->addLink(new MapLink(rockbird, durean,
         (new LinkReqCheck(ItemIndex::NPC_MERMAID_STATUE_DUREAN))
     ));
-    durean->addLink(new MapLink(durean, dureanMetal,
+    if (worldFlags->dureanMetal) {
+        durean->addLink(new MapLink(durean, dureanUpper,
+            (new LinkReqCheck(ItemIndex::ZANTETSU_SWORD))
+        ));
+    } else {
+        durean->addLink(new MapLink(durean, dureanUpper,
+            (new LinkReqFree())
+        ));
+    }
+    // The vanilla metal lair stays metal
+    durean->addLink(new MapLink(dureanUpper, dureanMetal,
         (new LinkReqCheck(ItemIndex::ZANTETSU_SWORD))
     ));
     stElles->addLink(new MapLink(stElles, blester,
@@ -544,15 +555,18 @@ void WorldMap::createWorld (WorldFlags& creationFlags) {
             ->addReq(new LinkReqCheck(ItemIndex::NPC_MERMAID_STATUE_BLESTER))
             ->addReq(new LinkReqCheck(ItemIndex::NPC_MERMAID_BUBBLE_ARMOR))
     ));
-    // TODO: set up bridge to top as extra metal lair 
-    blester->addLink(new MapLink(blester, blesterMiddle,
-        (new LinkReqFree())
-    ));
-    // blester->addLink(new MapLink(blester, blesterMiddle,
-        // (new LinkReqOr())
-            // ->addReq(new LinkReqCheck(ItemIndex::THUNDER_RING))
-            // ->addReq(new LinkReqCheck(ItemIndex::ZANTETSU_SWORD))
-    // ));
+    if (worldFlags->blesterMetal) {
+        blester->addLink(new MapLink(blester, blesterMiddle,
+            (new LinkReqOr())
+                ->addReq(new LinkReqCheck(ItemIndex::THUNDER_RING))
+                ->addReq(new LinkReqCheck(ItemIndex::ZANTETSU_SWORD))
+        ));
+    } else {
+        blester->addLink(new MapLink(blester, blesterMiddle,
+            (new LinkReqFree())
+        ));
+    }
+    // Top lair is always metal
     blester->addLink(new MapLink(blesterMiddle, blesterTop,
         (new LinkReqOr())
             ->addReq(new LinkReqCheck(ItemIndex::THUNDER_RING))
@@ -1116,13 +1130,6 @@ void WorldMap::createWorld (WorldFlags& creationFlags) {
             ->addReq(new LinkReqCheck(ItemIndex::NPC_KING_MAGRIDD))
     ));
 
-    progressionItems.add(ItemIndex::MEDICAL_HERB);
-    progressionItems.add(ItemIndex::GEMS_EXP_200);
-    progressionItems.add(ItemIndex::RED_HOT_BALL);
-    progressionItems.add(ItemIndex::SOUL_ARMOR);
-    progressionItems.add(ItemIndex::SOUL_BLADE);
-    progressionItems.add(ItemIndex::GEMS_EXP_100);
-
     /*
         Act VII: World of Evil
     */
@@ -1134,6 +1141,13 @@ void WorldMap::createWorld (WorldFlags& creationFlags) {
     MapNode* dazzlingSpace = (new MapNode())
         ->addLocation(LocationID::CHEST_WORLD_OF_EVIL3_LEFT)
         ->addLocation(LocationID::CHEST_WORLD_OF_EVIL3_RIGHT);
+
+    extraItems.add(ItemIndex::MEDICAL_HERB);
+    extraItems.add(ItemIndex::GEMS_EXP_200);
+    progressionItems.add(ItemIndex::RED_HOT_BALL);
+    progressionItems.add(ItemIndex::SOUL_ARMOR);
+    progressionItems.add(ItemIndex::SOUL_BLADE);
+    extraItems.add(ItemIndex::GEMS_EXP_100);
 
     magriddCastle->addLink(new MapLink(magriddCastle, worldOfEvil,
         (new LinkReqAnd())
