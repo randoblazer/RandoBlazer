@@ -1,7 +1,6 @@
 #ifndef __ROMUPDATE_H__
 #define __ROMUPDATE_H__
 
-#include "Sprite.h"
 #include "Locations.h"
 #include "Lairs.h"
 #include "ItemPool.h"
@@ -22,7 +21,7 @@ namespace ROMUpdate {
                         const Locations& locations,
                         const ItemPool& itemPool,
                         std::fstream &ROMFile);
-    void ROMUpdateMapSprites(const Sprite randomizedSpriteList[], std::fstream &ROMFile);
+    void ROMUpdateMapSprites(Lair sprites[], std::fstream &ROMFile);
 }
 
 #endif // __ROMUPDATE_H__

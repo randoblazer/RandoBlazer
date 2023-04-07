@@ -87,6 +87,7 @@ public:
     MapNode* addLocation (LocationID newLocation);
     MapNode* addLink (MapLink* newLink);
     void fillLocation (LocationID fillLocation);
+    bool locationIsFilled (LocationID fillLocation);
 };
 
 class MapLink {
@@ -116,6 +117,7 @@ public:
     void initLocationList ();
     void clearProcessed ();
     void fillLocation (LocationID fillLocation);
+    bool locationIsFilled (LocationID fillLocation);
     int countEmpty ();
     int countFilled ();
 };

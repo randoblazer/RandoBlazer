@@ -209,6 +209,25 @@ void MapNode::fillLocation (LocationID fillLocation) {
     filledLocations = node;
     numFilled++;
 }
+bool MapNode::locationIsFilled (LocationID fillLocation) {
+    // cout << "fillLocation" << endl;
+    MapNodeLocationNode* node;
+    MapNodeLocationNode* nextNode;
+    if (filledLocations == NULL) {
+        return false;
+    }
+    node = filledLocations;
+    if (node->location == fillLocation) {
+        return true;
+    } else {
+        nextNode = node->next;
+        while (nextNode != NULL && nextNode->location != fillLocation) {
+            node = nextNode;
+            nextNode = node->next;
+        }
+        return nextNode != NULL;
+    }
+}
 
 MapLink::MapLink () {
     source = NULL;
@@ -289,6 +308,15 @@ void LogicMap::fillLocation (LocationID fillLocation) {
         cout << "NULL node for location " << static_cast<int>(fillLocation) << endl;
     } else {
         locationList[static_cast<int>(fillLocation)]->fillLocation(fillLocation);
+    }
+}
+bool LogicMap::locationIsFilled (LocationID fillLocation) {
+    MapNode* node = locationList[static_cast<int>(fillLocation)];
+    if (node == NULL) {
+        cout << "NULL node for location " << static_cast<int>(fillLocation) << endl;
+        return false;
+    } else {
+        return locationList[static_cast<int>(fillLocation)]->locationIsFilled(fillLocation);
     }
 }
 int LogicMap::countEmpty () {

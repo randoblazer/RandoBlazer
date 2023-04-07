@@ -8,9 +8,8 @@
 
 using namespace std;
 
-#define POSITION_DATA_SIZE  3
 #define NUMBER_OF_LAIRS   420
-
+#define NUMBER_OF_SPRITES 205
 #define MONSTER_LAIR_DATA_ADDRESS 0xBA0D
 
 
@@ -146,16 +145,16 @@ public:
     void log ();
     void logCsv ();
 
-    ActID         act;                              /* 0A */
-    unsigned char positionData[POSITION_DATA_SIZE]; /* from 0B to 0D */
-    unsigned char area;
+    ActID         act;          /* 0A */
+    int           address;      // For sprites
+    unsigned char area;         // these three were formerly PositionData
     unsigned char x;
     unsigned char y;
-    LairType      spawnType;                        /* from 10 to 11 */
-    unsigned char numEnemies;                       /* 13 */
-    unsigned char spawnRate;                        /* 14 */
-    EnemyType     enemy;                            /* 15 */
-    unsigned char orientation;                      /* 17 */
+    LairType      spawnType;    /* from 10 to 11 */
+    unsigned char numEnemies;   /* 13 */
+    unsigned char spawnRate;    /* 14 */
+    EnemyType     enemy;        /* 15 */
+    unsigned char orientation;  /* 17 */
 };
 
 class LairList {
@@ -169,6 +168,7 @@ public:
     static void readOriginalLairs (fstream &ROMFile);
     void copyOriginalLairs ();
     void logLairs ();
+    void lairStats ();
 };
 
 class LairProfile {
@@ -212,5 +212,15 @@ public:
 
     void roll (Lair& lair, Lair& originalLair);
 };
+
+class LairProfileSprite : public LairProfile {
+public:
+    LairProfileSprite ();
+    ~LairProfileSprite ();
+
+    void roll (Lair& lair, Lair& originalLair);
+};
+
+void readOriginalSprites (Lair sprites[], std::fstream &ROMFile);
 
 #endif // __LAIRS_H__

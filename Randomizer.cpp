@@ -6,7 +6,6 @@
 #include "ItemPool.h"
 #include "Locations.h"
 #include "Lairs.h"
-#include "Sprite.h"
 #include "LogicGraph.h"
 #include "ROMUpdate.h"
 #include "Filler.h"
@@ -58,6 +57,7 @@ bool Randomize(const string &InFile, const string &OutFile, unsigned int seed, c
     LairList lairs;
     // lairs.copyOriginalLairs();
     // lairs.logLairs();
+    // lairs.lairStats();
 
     Locations::populate();
     Locations locations;
@@ -66,7 +66,7 @@ bool Randomize(const string &InFile, const string &OutFile, unsigned int seed, c
     WorldFlags worldFlags;
     worldFlags.roll();
 
-    // To get started, just set each location to vanilla
+    // This will set all locations vanilla
     // for (int i = 0; i < ALL_LOCATIONS_SIZE; i++) {
         // locations.allLocations[i].itemIndex = locations.allLocations[i].origItemIndex;
     // }
@@ -78,6 +78,14 @@ bool Randomize(const string &InFile, const string &OutFile, unsigned int seed, c
     // testTheWorld(worldFlags);
 
     randomizeLairs(lairs, worldFlags);
+
+    // Randomize stray enemies not associated with a lair
+    Lair sprites[NUMBER_OF_SPRITES];
+    readOriginalSprites(sprites, ROMFile);
+    randomizeSprites(sprites, worldFlags);
+
+    // lairs.logLairs();
+    // lairs.lairStats();
     
     bool placementSuccess = false;
     int placementCount = 0;
@@ -92,13 +100,9 @@ bool Randomize(const string &InFile, const string &OutFile, unsigned int seed, c
         return false;
     }
 
-    // Randomize stray enemies not associated with a lair
-    Sprite randomizedSpriteList[NUMBER_OF_SPRITES];
-    GetOriginalMapSpriteData(randomizedSpriteList, ROMFile);
-
     /* Modify the ROM with the randomized lists */
     ROMUpdate::ROMUpdateLairs(lairs, locations, itemPool, ROMFile);
-    ROMUpdate::ROMUpdateMapSprites(randomizedSpriteList, ROMFile);
+    ROMUpdate::ROMUpdateMapSprites(sprites, ROMFile);
     ROMUpdate::ROMUpdateTextAndItems(lairs, locations, itemPool, ROMFile, seedText);
 
     /* Close the ROM file */
@@ -130,6 +134,17 @@ void randomizeLairs (LairList& lairs, WorldFlags& worldFlags) {
 
     for (int i = 0; i < NUMBER_OF_LAIRS; i++) {
         profileA.roll(lairs.lairList[i], lairs.originalLairs[i]);
+        // classicProfile.roll(lairs.lairList[i], lairs.originalLairs[i]);
+    }
+}
+
+void randomizeSprites (Lair sprites[], WorldFlags& worldFlags) {
+    LairProfileSprite profile;
+    cout << "Randomizing sprites" << endl;
+    Lair newSprite;
+    for (int i = 0; i < NUMBER_OF_SPRITES; i++) {
+        profile.roll(newSprite, sprites[i]);
+        sprites[i] = newSprite;
     }
 }
 
@@ -321,14 +336,32 @@ bool randomizePlacement (WorldFlags& worldFlags) {
     // theWorld.map->printMap(progressionPool);
     // logMap(theWorld);
 
-/*
+    // If we somehow fail to fill all the locations it is Very Bad.
+    // There will most likely be a segfault during rom update.
     Filler::getEmptyLocations(theWorld.map, emptyLocations);
     if (emptyLocations.size > 0) {
+        cout << "WARNING - failed to fill a location!" << endl;
         cout << "Empty location is " << Locations::allLocations[static_cast<int>(emptyLocations.set[0])].name << endl;
+        return false;
     }
-*/
 
     // TODO: verify all locations reachable
+    ItemIndex blesterItem1 = Locations::allLocations[static_cast<int>(LocationID::LAIR_BLESTER_MIDDLE_LEFT)].itemIndex;
+    ItemIndex blesterItem2 = Locations::allLocations[static_cast<int>(LocationID::LAIR_BLESTER_MIDDLE_RIGHT)].itemIndex;
+    ItemIndex blesterItem3 = Locations::allLocations[static_cast<int>(LocationID::LAIR_BLESTER_TOP_LEFT)].itemIndex;
+    int progCount = 0;
+    if (ItemPool::allItems[static_cast<int>(blesterItem1)].isProgression) {
+        progCount++;
+    }
+    if (ItemPool::allItems[static_cast<int>(blesterItem2)].isProgression) {
+        progCount++;
+    }
+    if (ItemPool::allItems[static_cast<int>(blesterItem3)].isProgression) {
+        progCount++;
+    }
+    if (worldFlags.blesterMetal && progCount >= 2) {
+        cout << "May be thunder ring seed" << endl;
+    }
 
     return true;
 }

@@ -75,15 +75,14 @@ namespace EnemyGroups {
 
 using namespace EnemyGroups;
 
-
 // static declarations
 Lair LairList::originalLairs[NUMBER_OF_LAIRS];
 
 Lair::Lair() {
     act             = ActID::ACT_1;
-    positionData[0] = 0;
-    positionData[1] = 0;
-    positionData[2] = 0;
+    area            = 0;
+    x               = 0;
+    y               = 0;
     spawnType       = LairType::LAIR_ONE_BY_ONE;
     enemy           = EnemyType::NO_ENEMY;
     numEnemies      = 0;
@@ -296,7 +295,7 @@ const char* Lair::enemyName () {
 
 void Lair::log () {
     cout << enemyName();
-    cout << " | area " << (int)positionData[0] << " position " << (int)positionData[1] << ", " << (int)positionData[2];
+    cout << " | area " << (int)area << " position " << (int)x << ", " << (int)y;
     if (spawnType == LairType::LAIR_ALREADY_THERE) {
         cout << " Already there";
     } else if (spawnType == LairType::LAIR_MULTISPAWN) {
@@ -335,7 +334,7 @@ void Lair::log () {
 void Lair::logCsv () {
     // Enemy, Area, x, y, Spawn, Count, Rate, Orientation
     cout << enemyName() << ",";
-    cout << (int)positionData[0] << "," << (int)positionData[1] << "," << (int)positionData[2] << ",";
+    cout << (int)area << "," << (int)x << "," << (int)y << ",";
     if (spawnType == LairType::LAIR_ALREADY_THERE) {
         cout << "Already there,";
     } else if (spawnType == LairType::LAIR_MULTISPAWN) {
@@ -366,9 +365,9 @@ void Lair::logCsv () {
 Lair& Lair::operator= (const Lair& otherLair) {
     if (this != &otherLair) {
         act             = otherLair.act;
-        positionData[0] = otherLair.positionData[0];
-        positionData[1] = otherLair.positionData[1];
-        positionData[2] = otherLair.positionData[2];
+        area = otherLair.area;
+        x = otherLair.x;
+        y = otherLair.y;
         spawnType       = otherLair.spawnType;
         enemy           = otherLair.enemy;
         numEnemies      = otherLair.numEnemies;
@@ -380,60 +379,60 @@ Lair& Lair::operator= (const Lair& otherLair) {
 
 bool Lair::NoFishLairPosition() {
     /* Some monster lairs should not have fish enemies, otherwise it would crash the game */
-    return ( (positionData[0] == 0x2E && positionData[1] == 0x23) ||
-             (positionData[0] == 0x2F && positionData[1] == 0x14 && positionData[2] == 0x08) ||
-             (positionData[0] == 0x2F && positionData[1] == 0x24 && positionData[2] == 0x0F) ||
-             (positionData[0] == 0x2F && positionData[1] == 0x1A && positionData[2] == 0x17) ||
-             (positionData[0] == 0x2F && positionData[1] == 0x20 && positionData[2] == 0x18) ||
-             (positionData[0] == 0x30 && positionData[1] == 0x16 && positionData[2] == 0x11) ||
-             (positionData[0] == 0x30 && positionData[1] == 0x0C && positionData[2] == 0x24) ||
-             (positionData[0] == 0x30 && positionData[1] == 0x2D && positionData[2] == 0x11) ||
-             (positionData[0] == 0x31 && positionData[1] == 0x04 && positionData[2] == 0x11) ||
-             (positionData[0] == 0x31 && positionData[1] == 0x39 && positionData[2] == 0x2B) ||
-             (positionData[0] == 0x31 && positionData[1] == 0x3B && positionData[2] == 0x1A) ||
-             (positionData[0] == 0x31 && positionData[1] == 0x06 && positionData[2] == 0x20) );
+    return ( (area == 0x2E && x == 0x23) ||
+             (area == 0x2F && x == 0x14 && y == 0x08) ||
+             (area == 0x2F && x == 0x24 && y == 0x0F) ||
+             (area == 0x2F && x == 0x1A && y == 0x17) ||
+             (area == 0x2F && x == 0x20 && y == 0x18) ||
+             (area == 0x30 && x == 0x16 && y == 0x11) ||
+             (area == 0x30 && x == 0x0C && y == 0x24) ||
+             (area == 0x30 && x == 0x2D && y == 0x11) ||
+             (area == 0x31 && x == 0x04 && y == 0x11) ||
+             (area == 0x31 && x == 0x39 && y == 0x2B) ||
+             (area == 0x31 && x == 0x3B && y == 0x1A) ||
+             (area == 0x31 && x == 0x06 && y == 0x20) );
 }
 
 bool Lair::NoMetalLairPosition() {
     /* Some monster lairs are assumed to be beatable without Zantetsu Sword */
-    return ( (positionData[0] == 0x56 && positionData[1] == 0x19 && positionData[2] == 0x23) ||
-             (positionData[0] == 0x56 && positionData[1] == 0x02 && positionData[2] == 0x2E) ||
-             (positionData[0] == 0x56 && positionData[1] == 0x1D && positionData[2] == 0x11) ||
-             (positionData[0] == 0x56 && positionData[1] == 0x2B && positionData[2] == 0x23) ||
-             (positionData[0] == 0x58 && positionData[1] == 0x20 && positionData[2] == 0x0A) );
+    return ( (area == 0x56 && x == 0x19 && y == 0x23) ||
+             (area == 0x56 && x == 0x02 && y == 0x2E) ||
+             (area == 0x56 && x == 0x1D && y == 0x11) ||
+             (area == 0x56 && x == 0x2B && y == 0x23) ||
+             (area == 0x58 && x == 0x20 && y == 0x0A) );
 }
 
 bool Lair::NoGhostLairPosition() {
     /* Some monster lairs are assumed to be beatable without Spirit Sword */
-    return ( (positionData[0] == 0x66 && positionData[1] == 0x0C && positionData[2] == 0x07) ||
-             (positionData[0] == 0x66 && positionData[1] == 0x29 && positionData[2] == 0x09) ||
-             (positionData[0] == 0x66 && positionData[1] == 0x09 && positionData[2] == 0x14) );
+    return ( (area == 0x66 && x == 0x0C && y == 0x07) ||
+             (area == 0x66 && x == 0x29 && y == 0x09) ||
+             (area == 0x66 && x == 0x09 && y == 0x14) );
 }
 
 bool Lair::MustBeMetalLairPosition() {
     /* These lairs are supposed to have metal enemies, requiring the Zantetsu Sword to defeat */
-    return ( (positionData[0] == 0x56 && positionData[1] == 0x39 && positionData[2] == 0x35) ||
-             (positionData[0] == 0x58 && positionData[1] == 0x32 && positionData[2] == 0x2E) );
+    return ( (area == 0x56 && x == 0x39 && y == 0x35) ||
+             (area == 0x58 && x == 0x32 && y == 0x2E) );
 }
 
 bool Lair::MustBeGhostLairPosition() {
     /* This lair is supposed to have ghost enemies, requiring the Spirit Sword to defeat */
-    return (positionData[0] == 0x66 && positionData[1] == 0x2A && positionData[2] == 0x1E);
+    return (area == 0x66 && x == 0x2A && y == 0x1E);
 }
 
 bool Lair::MustNotRandomizeLairPosition() {
     /* These lairs should not be randomized (until I find a better way to deal with them) */
-    return ( (positionData[0] == 0x20 && positionData[1] == 0x08 && positionData[2] == 0x27) ||
-             (positionData[0] == 0x3E && positionData[1] == 0x0E && positionData[2] == 0x26) ||
-             (positionData[0] == 0x3E && positionData[1] == 0x17 && positionData[2] == 0x39) ||
-             (positionData[0] == 0x3F && positionData[1] == 0x0A && positionData[2] == 0x27) ||
-             (positionData[0] == 0x56 && positionData[1] == 0x2D && positionData[2] == 0x31) ||
-             (positionData[0] == 0x58 && positionData[1] == 0x37 && positionData[2] == 0x34) );
+    return ( (area == 0x20 && x == 0x08 && y == 0x27) ||
+             (area == 0x3E && x == 0x0E && y == 0x26) ||
+             (area == 0x3E && x == 0x17 && y == 0x39) ||
+             (area == 0x3F && x == 0x0A && y == 0x27) ||
+             (area == 0x56 && x == 0x2D && y == 0x31) ||
+             (area == 0x58 && x == 0x37 && y == 0x34) );
 }
 
 bool Lair::MustNotBeUpwardsLairPosition() {
     /* This lair cannot have enemies oriented upwards */
-    return (positionData[0] == 0x1B && positionData[1] == 0x25 && positionData[2] == 0x05);
+    return (area == 0x1B && x == 0x25 && y == 0x05);
 }
 
 bool Lair::canRandomizeOrientation (ActID act, EnemyType enemy) {
@@ -503,7 +502,9 @@ void LairList::readOriginalLairs (fstream &ROMFile) {
 
         /* Read the contents of this Monster Lair */
         ROMFile.read((char*)(&(originalLairs[i].act)), 1);
-        ROMFile.read((char*)(&(originalLairs[i].positionData[0])), POSITION_DATA_SIZE);
+        ROMFile.read((char*)(&(originalLairs[i].area)), 1);
+        ROMFile.read((char*)(&(originalLairs[i].x)), 1);
+        ROMFile.read((char*)(&(originalLairs[i].y)), 1);
         ROMFile.seekg(2, std::ios::cur);
         unsigned char b1, b2;
         ROMFile.read((char*)&b1, 1);
@@ -521,7 +522,8 @@ void LairList::readOriginalLairs (fstream &ROMFile) {
 
 void LairList::logLairs () {
     for (int i = 0; i < NUMBER_OF_LAIRS; i++) {
-        lairList[i].logCsv();
+        // lairList[i].logCsv();
+        lairList[i].log();
     }
 }
 
@@ -529,6 +531,36 @@ void LairList::copyOriginalLairs () {
     for (int i = 0; i < NUMBER_OF_LAIRS; i++) {
         lairList[i] = originalLairs[i];
     }
+}
+
+void LairList::lairStats () {
+    int singleLairs = 0;
+    int singleEnemies = 0;
+    int proxLairs = 0;
+    int proxEnemies = 0;
+    int multiLairs = 0;
+    int multiEnemies = 0;
+    int multiSpawnRate = 0;
+
+    for (int i = 0; i < NUMBER_OF_LAIRS; i++) {
+        if (lairList[i].spawnType == LairType::LAIR_ONE_BY_ONE) {
+            singleLairs++;
+            singleEnemies += lairList[i].numEnemies;
+        }
+        if (lairList[i].spawnType == LairType::LAIR_ONE_BY_ONE_PROX) {
+            proxLairs++;
+            proxEnemies += lairList[i].numEnemies;
+        }
+        if (lairList[i].spawnType == LairType::LAIR_MULTISPAWN) {
+            multiLairs++;
+            multiEnemies += lairList[i].numEnemies;
+            multiSpawnRate += lairList[i].spawnRate;
+        }
+    }
+    cout << "Single spawn: " << singleLairs << " with " << ((float)singleEnemies) / singleLairs << endl;
+    cout << "Prox spawn: " << proxLairs << " with " << ((float)proxEnemies) / proxLairs << endl;
+    cout << "Multi spawn: " << multiLairs << " with " << ((float)multiEnemies) / multiLairs <<
+        " at " << ((float)multiSpawnRate / multiLairs) << endl;
 }
 
 EnemyType pickEnemyType (Lair& originalLair) {
@@ -649,6 +681,82 @@ EnemyType pickEnemyType (Lair& originalLair) {
     return group[Random::RandomInteger(groupSize)];
 }
 
+EnemyType pickSpriteEnemy (Lair& originalLair) {
+    EnemyType* group;
+    int groupSize = 0;
+    EnemyType origEnemy = originalLair.enemy;
+
+    switch (originalLair.act) {
+    case ActID::ACT_1:
+        if (origEnemy < EnemyType::ACT1_ARMOR) {
+            group = UndergroundCastleEnemies;
+            groupSize = sizeof(UndergroundCastleEnemies) / sizeof(EnemyType);
+        } else {
+            group = LeosPaintingsEnemies;
+            groupSize = sizeof(LeosPaintingsEnemies) / sizeof(EnemyType);
+        }
+        break;
+    case ActID::ACT_2:
+        if (origEnemy < EnemyType::ACT2_FIRE_SPIRIT) {
+            group = WaterShrineEnemies;
+            groupSize = sizeof(WaterShrineEnemies) / sizeof(EnemyType);
+        } else {
+            group = FireLightShrineEnemies;
+            groupSize = sizeof(FireLightShrineEnemies) / sizeof(EnemyType);
+        }
+        break;
+    case ActID::ACT_3:
+        if (origEnemy < EnemyType::ACT3_PALM_TREE) {
+            group = SeabedEnemies;
+            groupSize = sizeof(SeabedEnemies) / sizeof(EnemyType);
+        } else {
+            group = IslandsEnemies;
+            groupSize = sizeof(IslandsEnemies) / sizeof(EnemyType);
+        }
+        break;
+    case ActID::ACT_4:
+        if (origEnemy < EnemyType::ACT4_PURPLE_WIZARD) {
+            group = MountainEnemies;
+            groupSize = sizeof(MountainEnemies) / sizeof(EnemyType);
+        } else {
+            group = LaynoleLuneEnemies;
+            groupSize = sizeof(LaynoleLuneEnemies) / sizeof(EnemyType);
+        }
+        break;
+    case ActID::ACT_5:
+        if (origEnemy < EnemyType::ACT5_MINI_KNIGHT) {
+            group = LeosBasementEnemies;
+            groupSize = sizeof(LeosBasementEnemies) / sizeof(EnemyType);
+        } else {
+            group = ModelTownsEnemies;
+            groupSize = sizeof(ModelTownsEnemies) / sizeof(EnemyType);
+        }
+        break;
+    case ActID::ACT_6:
+        if (origEnemy < EnemyType::ACT6_PURPLE_KNIGHT) {
+            group = CastleBasementEnemiesFull;
+            groupSize = sizeof(CastleBasementEnemiesFull) / sizeof(EnemyType);
+        }
+        else {
+            group = CastleTowersEnemiesFull;
+            groupSize = sizeof(CastleTowersEnemiesFull) / sizeof(EnemyType);
+        }
+        break;
+    case ActID::ACT_7:
+        group = WorldOfEvilEnemies;
+        groupSize = sizeof(WorldOfEvilEnemies) / sizeof(EnemyType);
+        break;
+    default:
+        /* Should not happen! */
+        return origEnemy;
+        break;
+    }
+    if (groupSize == 0) {
+        return origEnemy;
+    }
+    return group[Random::RandomInteger(groupSize)];
+}
+
 LairProfile::LairProfile () {}
 LairProfile::~LairProfile () {}
 void LairProfile::roll (Lair& lair, Lair& originalLair) {
@@ -661,16 +769,16 @@ LairProfileA::LairProfileA (WorldFlags& flags) {
     normalTypePicker = new Random::WeightedPicker(normalTypeWeights, 3);
     int upDownTypeWeights[4] = { 5, 4, 1, 10 };
     upDownTypePicker = new Random::WeightedPicker(upDownTypeWeights, 4);
-    int singleCountWeights[4] = { 5, 4, 1, 10 };
+    int singleCountWeights[4] = { 5, 4, 2, 1 };
     singleCountPicker = new Random::WeightedPicker(singleCountWeights, 4);
     int multiCountWeights[4] = { 1, 1, 1, 1 };
     multiCountPicker = new Random::WeightedPicker(multiCountWeights, 4);
     // Lairs with more enemies can be weighted towards faster spawning
     int spawnWeights[4][4] = {
-        { 1, 1, 1, 1 },   // 4-6 enemies
-        { 3, 2, 1, 1 },   // 6-8
-        { 8, 4, 2, 1 },   // 8-10
-        { 10, 5, 1, 1 }   // 10-12
+        { 1, 2, 4, 4 },    // 4-6 enemies
+        { 1, 1, 1, 1 },    // 6-8
+        { 2, 10, 7, 5 },  // 8-10
+        { 1, 10, 5, 1 }   // 10-12
     };
     for (int i = 0; i < 4; i++) {
         spawnRatePickers[i] = new Random::WeightedPicker(spawnWeights[i], 4);
@@ -688,9 +796,9 @@ LairProfileA::~LairProfileA () {
 void LairProfileA::roll (Lair& lair, Lair& originalLair) {
     // originalLair.log();
     lair = originalLair;
-    if (worldFlags->blesterMetal && lair.positionData[0] == 49 && lair.positionData[1] == 33 && lair.positionData[2] == 41) {
+    if (worldFlags->blesterMetal && lair.area == 49 && lair.x == 33 && lair.y == 41) {
         lair.enemy = EnemyType::ACT3_METAL_GORILLA;
-    } else if (worldFlags->dureanMetal && lair.positionData[0] == 48 && lair.positionData[1] == 4 && lair.positionData[2] == 36) {
+    } else if (worldFlags->dureanMetal && lair.area == 48 && lair.x == 4 && lair.y == 36) {
         lair.enemy = EnemyType::ACT3_METAL_GORILLA;
     } else {
         lair.enemy = pickEnemyType(originalLair);
@@ -781,6 +889,65 @@ void LairProfileTwo::roll (Lair& lair, Lair& originalLair) {
         lair.numEnemies = 2;
         if (originalLair.spawnType != LairType::LAIR_ALREADY_THERE && originalLair.spawnRate > 0x02) {
             lair.spawnRate = 0x03;
+        }
+    }
+}
+
+LairProfileSprite::LairProfileSprite () {}
+LairProfileSprite::~LairProfileSprite () {}
+void LairProfileSprite::roll (Lair& lair, Lair& originalLair) {
+    lair = originalLair;
+    lair.enemy = pickSpriteEnemy(originalLair);
+    if (Lair::canRandomizeOrientation(lair.act, lair.enemy)) {
+        lair.orientation = static_cast<unsigned char>(EnemyGroups::orientationList[Random::RandomInteger(4)]);
+    } else {
+        lair.orientation = 0x01;
+    }
+}
+
+int SpriteDataAddressList[7][63] = {
+    {0x9CCA, 0x9CCE, 0x9CD2, 0x9CD6, 0x9CDA, 0x9CDE, 0x9CE2, 0x9CE6, 0x9CEA, 0x9CEE,
+     0x9CF2, 0x9D1B, 0x9D1F, 0x9D23, 0x9D27, 0x9D2B, 0x9D2F, 0x9D33, 0x9D37, 0x9D3B,
+     0x9D3F, 0x9D43, 0x9D47, 0x9D4B, 0x9D4F, 0x9D53, 0x9D57},
+    {0x9F01, 0x9F05, 0x9F09, 0x9F0D, 0x9F11, 0x9F15, 0x9F19, 0x9F1D, 0x9F21, 0x9F25,
+     0x9F29, 0x9F2D, 0x9F31, 0x9F35, 0x9F6A, 0x9F6E, 0x9F72, 0x9F76, 0x9F93, 0x9F97,
+     0x9F9B, 0x9F9F, 0x9FA3, 0x9FA7, 0x9FAB},
+    {0xA11C, 0xA120, 0xA124, 0xA128, 0xA12C, 0xA130, 0xA194, 0xA198, 0xA19C, 0xA1A0,
+     0xA1A4, 0xA1A8, 0xA1AC, 0xA1B0, 0xA1B4, 0xA1B8, 0xA1D1, 0xA1D5, 0xA1D9, 0xA1DD,
+     0xA1E1, 0xA1E5, 0xA1E9, 0xA1ED, 0xA202, 0xA206, 0xA20A, 0xA20E, 0xA212, 0xA243,
+     0xA247, 0xA24B, 0xA24F, 0xA253, 0xA28C, 0xA290, 0xA294, 0xA298},
+    {0xA3B9, 0xA3BD, 0xA3C1, 0xA3C5, 0xA3C9, 0xA407, 0xA40B, 0xA40F, 0xA413, 0xA42C,
+     0xA430, 0xA434, 0xA438, 0xA47B, 0xA47F, 0xA498, 0xA49C, 0xA4A0, 0xA4A4, 0xA4C5,
+     0xA4C9, 0xA4CD, 0xA4D1, 0xA4D5, 0xA4D9, 0xA4DD, 0xA4E1},
+    {0xA608, 0xA60C, 0xA610, 0xA614, 0xA618, 0xA61C, 0xA63D, 0xA641, 0xA645, 0xA649,
+     0xA64D, 0xA651},
+    {0xA6CB, 0xA6CF, 0xA6D3, 0xA6D7, 0xA6DB, 0xA6DF, 0xA6E3, 0xA6E7, 0xA6EB, 0xA6EF,
+     0xA6F3, 0xA708, 0xA70C, 0xA710, 0xA714, 0xA718, 0xA71C, 0xA751, 0xA755, 0xA759,
+     0xA75D, 0xA761, 0xA765, 0xA77F, 0xA783, 0xA787, 0xA78B, 0xA78F, 0xA793, 0xA797,
+     0xA79B, 0xA79F, 0xA7A3, 0xA7A7, 0xA7AB, 0xA7BC, 0xA7C0, 0xA7C4, 0xA7C8, 0xA7CC,
+     0xA7D0, 0xA7D4, 0xA7D8, 0xA7F6, 0xA7FA, 0xA7FE, 0xA802, 0xA806, 0xA80A, 0xA81B,
+     0xA81F, 0xA823, 0xA827, 0xA834, 0xA838, 0xA83C, 0xA840, 0xA844, 0xA848, 0xA84C,
+     0xA850, 0xA861, 0xA865},                                /* leave these 3 bricks for grinding */
+    {0xA946, 0xA94A, 0xA94E, 0xA952, 0xA956, 0xA95A, 0xA95E, /*0xA987, 0xA98B, 0xA98F,*/
+     0xA993, 0xA997, 0xA99B, 0xA99F, 0xA9A3, 0xA9A7}
+};
+
+void readOriginalSprites (Lair sprites[], fstream &ROMFile) {
+    int count = 0;
+    for (int act = static_cast<int>(ActID::ACT_1); act < static_cast<int>(ActID::ACT_MAX); act++) {
+        for (int address = 0; address < 63; address++) {
+            if (SpriteDataAddressList[act][address] == 0) {
+                break;
+            }
+            sprites[count].address = SpriteDataAddressList[act][address];
+            sprites[count].act = (ActID)act;
+
+            ROMFile.seekg(SpriteDataAddressList[act][address], std::ios::beg);
+            ROMFile.read((char*)(&(sprites[count].x)), 1);
+            ROMFile.read((char*)(&(sprites[count].y)), 1);
+            ROMFile.read((char*)(&(sprites[count].orientation)), 1);
+            ROMFile.read((char*)(&(sprites[count].enemy)), 1);
+            count++;
         }
     }
 }

@@ -92,6 +92,7 @@ void ROMUpdateLairs(const LairList& randomizedLairs,
     Location* location;
     NpcId origNpcId, newNpcId;
     for (int i = 0; i < locations.allLocationsCount; i++) {
+        // cout << "location number " << i << endl;
         location = &locations.allLocations[i];
         if (location->isLair) {
             /*
@@ -106,6 +107,8 @@ void ROMUpdateLairs(const LairList& randomizedLairs,
         }
     }
 
+    // cout << "reordered lairs to place souls" << endl;
+
     Lair* lair;
     for (int i = 0; i < NUMBER_OF_LAIRS; i++) {
         ROMFile.seekg(10, std::ios::cur);
@@ -113,7 +116,9 @@ void ROMUpdateLairs(const LairList& randomizedLairs,
         /* Update the contents of this Monster Lair */
         lair = &outputLairs.lairList[i];
         ROMFile.write((char*)(&(lair->act)), 1);
-        ROMFile.write((char*)(&(lair->positionData[0])), POSITION_DATA_SIZE);
+        ROMFile.write((char*)(&(lair->area)), 1);
+        ROMFile.write((char*)(&(lair->x)), 1);
+        ROMFile.write((char*)(&(lair->y)), 1);
         ROMFile.seekp(2, std::ios::cur);
         unsigned char lairType[2] = {
             static_cast<unsigned char>((static_cast<unsigned int>(lair->spawnType) >> 8) & 0xFF),
@@ -131,18 +136,16 @@ void ROMUpdateLairs(const LairList& randomizedLairs,
     std::cout << "Updated lairs" << endl;
 }
 
-void ROMUpdateMapSprites(const Sprite randomizedSpriteList[], std::fstream &ROMFile) {
+void ROMUpdateMapSprites(Lair sprites[], std::fstream &ROMFile) {
     int address;
-    for (int spriteIndex = 0; spriteIndex < NUMBER_OF_SPRITES; ++spriteIndex) {
-        /* Get the ROM address of this sprite data */
-        address = randomizedSpriteList[spriteIndex].Address;
+    for (int spriteIndex = 0; spriteIndex < NUMBER_OF_SPRITES; spriteIndex++) {
+        address = sprites[spriteIndex].address;
 
-        /* Update the contents of this Sprite */
         ROMFile.seekp (address, std::ios::beg);
-        ROMFile.write((char*)(&randomizedSpriteList[spriteIndex].x), 1);
-        ROMFile.write((char*)(&randomizedSpriteList[spriteIndex].y), 1);
-        ROMFile.write((char*)(&randomizedSpriteList[spriteIndex].Orientation), 1);
-        ROMFile.write((char*)(&randomizedSpriteList[spriteIndex].Enemy), 1);
+        ROMFile.write((char*)(&sprites[spriteIndex].x), 1);
+        ROMFile.write((char*)(&sprites[spriteIndex].y), 1);
+        ROMFile.write((char*)(&sprites[spriteIndex].orientation), 1);
+        ROMFile.write((char*)(&sprites[spriteIndex].enemy), 1);
     }
     std::cout << "Updated sprites" << endl;
 }

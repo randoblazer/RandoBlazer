@@ -29,7 +29,7 @@ namespace LocationGroups {
         ItemIndex::NPC_GRANDPA_LUNE,
         ItemIndex::NPC_MODEL_TOWN1,
         ItemIndex::NPC_MODEL_TOWN2,
-        ItemIndex::NPC_SOLDIER_RIGHT_TOWER,
+        ItemIndex::NPC_SOLDIER_RIGHT_TOWER
     };
     static LocationID WaterShrineItems[7] = {
         LocationID::CHEST_WATER_SHRINE_FLOOR1_FAR_SIDE,
@@ -54,10 +54,10 @@ namespace LocationGroups {
     };
     static LocationID FireShrineLairs[10] = {
         LocationID::LAIR_FIRE_SHRINE_B1,
-        LocationID::LAIR_FIRE_SHRINE_B2_NORTHWEST,
         LocationID::LAIR_FIRE_SHRINE_B2_SOUTH,
         LocationID::LAIR_FIRE_SHRINE_B2_SOUTHEAST,
         LocationID::LAIR_FIRE_SHRINE_B2_NORTHWEST,
+        LocationID::LAIR_FIRE_SHRINE_B2_BACK,
         LocationID::LAIR_FIRE_SHRINE_B3_1,
         LocationID::LAIR_FIRE_SHRINE_B3_2,
         LocationID::LAIR_FIRE_SHRINE_B3_3,

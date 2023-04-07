@@ -29,8 +29,6 @@ add_library(randoblazerlib STATIC
   Locations.h
   Lairs.cpp
   Lairs.h
-  Lair.cpp
-  Lair.h
   #Log.cpp
   #Log.h
   LogicGraph.cpp
@@ -47,8 +45,6 @@ add_library(randoblazerlib STATIC
   ROMCheck.h
   ROMUpdate.cpp
   ROMUpdate.h
-  Sprite.cpp
-  Sprite.h
   TextUpdate.cpp
   TextUpdate.h
 )

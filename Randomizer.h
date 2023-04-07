@@ -20,6 +20,7 @@ namespace Randomizer {
     };
 
     void randomizeLairs(LairList& lairs, WorldFlags& worldFlags);
+    void randomizeSprites(Lair sprites[], WorldFlags& worldFlags);
     bool randomizePlacement(WorldFlags& worldFlags);
     ROMStatus CheckFile(const std::string& Filename);
     bool backupRom (const std::string &InFile, const std::string &OutFile);

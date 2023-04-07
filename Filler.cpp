@@ -240,6 +240,10 @@ bool dummyPlacement (LogicMap* map, PlacementSet& placementSet, LocationSet& loc
     while (placementSet.size > 0) {
         placementItem = placementSet.take();
         placementLocation = locationSet.take();
+        // If we double place during dummy fill there will be an empty spot later. Very Bad.
+        // if (map->locationIsFilled(placementLocation)) {
+            // cout << "WARNING - location is already filled: " << Locations::allLocations[static_cast<int>(placementLocation)].name << endl;
+        // }
         Locations::allLocations[static_cast<int>(placementLocation)].itemIndex = placementItem;
         // cout << "  fillLocation" << endl;
         map->fillLocation(placementLocation);

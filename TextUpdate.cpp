@@ -581,7 +581,7 @@ namespace ROMUpdate {
                 break;
             }
         }
-        switch (randomizedLairs.lairList[(int)itemPool.allItems[(int)locations.allLocations[newLocation].origItemIndex].npcId].positionData[0]) {
+        switch (randomizedLairs.lairList[(int)itemPool.allItems[(int)locations.allLocations[newLocation].origItemIndex].npcId].area) {
         case 0x05:
         case 0x06:
             return "Underground Castle";
@@ -1354,7 +1354,7 @@ namespace ROMUpdate {
         ROMFile.seekp(0x26D82, std::ios::beg);
         for (lairIndex = 0; lairIndex < NUMBER_OF_LAIRS; lairIndex++) {
             /* Find the index of the lair on the airship */
-            if (randomizedLairs.lairList[lairIndex].positionData[0] == 0x72 /* Airship map */) break;
+            if (randomizedLairs.lairList[lairIndex].area == 0x72 /* Airship map */) break;
         }
         TEXT_WriteByte(lairIndex % 0x100);
         TEXT_WriteByte(lairIndex / 0x100);
@@ -1615,7 +1615,7 @@ namespace ROMUpdate {
         Item* item;
         ItemId itemId;
 
-        std::cout << "NPCTextUpdateMain" << std::endl;
+        // std::cout << "NPCTextUpdateMain" << std::endl;
 
         /* General text updates and some specific Item NPC text */
         GeneralTextUpdate(randomizedLairs, locations, itemPool, ROMFile, seed);
