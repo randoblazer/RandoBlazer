@@ -1158,6 +1158,26 @@ void WorldMap::createWorld (WorldFlags& creationFlags) {
         (new LinkReqCheck(ItemIndex::SOUL_ARMOR))
     ));
 
+    Item* checkItem;
+    for (int i = 0; i < progressionItems.size; i++) {
+        checkItem = &ItemPool::allItems[static_cast<int>(progressionItems.set[i])];
+        if (!checkItem->isProgression) {
+            cout << "WARNING - non-progression item in world progressionItems list: " << checkItem->name << endl;
+        }
+    }
+    for (int i = 0; i < extraItems.size; i++) {
+        checkItem = &ItemPool::allItems[static_cast<int>(extraItems.set[i])];
+        if (checkItem->isProgression) {
+            cout << "WARNING - progression item in world extraItems list: " << checkItem->name << endl;
+        }
+    }
+    for (int i = 0; i < extraNpcs.size; i++) {
+        checkItem = &ItemPool::allItems[static_cast<int>(extraNpcs.set[i])];
+        if (checkItem->isProgression) {
+            cout << "WARNING - progression npc in world extraNpcs list: " << checkItem->name << endl;
+        }
+    }
+
     map = new LogicMap(grassValley);
 }
 

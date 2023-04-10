@@ -208,6 +208,9 @@ void ItemPool::populate () {
     Item npc;
     Item progNpc;
     Item reqNpc;
+    resetFlags(npc);
+    resetFlags(progNpc);
+    resetFlags(reqNpc);
     npc.isNPC = true;
     progNpc.isNPC = true;
     progNpc.isProgression = true;
@@ -281,7 +284,7 @@ void ItemPool::populate () {
     populateNpc(ItemIndex::NPC_MERMAID_NORTHEAST, &progNpc, NpcId::NPC_MERMAID_NORTHEAST, "NW Medical Herb Mermaid");
     populateNpc(ItemIndex::NPC_MERMAID2, &npc, NpcId::NPC_MERMAID2, "Mermaid 2");
     populateNpc(ItemIndex::NPC_MERMAID3, &npc, NpcId::NPC_MERMAID3, "Mermaid 3");
-    populateNpc(ItemIndex::NPC_MERMAID_DANCE_LEADER, &npc, NpcId::NPC_MERMAID_DANCE_LEADER, "Dance platform Mermaid");
+    populateNpc(ItemIndex::NPC_MERMAID_DANCE_LEADER, &progNpc, NpcId::NPC_MERMAID_DANCE_LEADER, "Dance platform Mermaid");
     populateNpc(ItemIndex::NPC_MERMAID5, &npc, NpcId::NPC_MERMAID5, "Mermaid 5");
     populateNpc(ItemIndex::NPC_MERMAID6, &npc, NpcId::NPC_MERMAID6, "Mermaid 6");
     populateNpc(ItemIndex::NPC_MERMAID7, &npc, NpcId::NPC_MERMAID7, "Mermaid 7");
@@ -304,7 +307,7 @@ void ItemPool::populate () {
     populateNpc(ItemIndex::NPC_MERMAID_STATUE_GHOST_SHIP, &progNpc, NpcId::NPC_MERMAID_STATUE_GHOST_SHIP, "Ghost Ship Mermaid Statue");
     populateNpc(ItemIndex::NPC_MERMAID_QUEEN, &reqNpc, NpcId::NPC_MERMAID_QUEEN, "Mermaid Queen");
 
-    populateNpc(ItemIndex::NPC_GREETER_GRANDPA, &npc, NpcId::NPC_GREETER_GRANDPA, "Greeter Grandpa (northwest tunnel)");
+    populateNpc(ItemIndex::NPC_GREETER_GRANDPA, &progNpc, NpcId::NPC_GREETER_GRANDPA, "Greeter Grandpa (northwest tunnel)");
     populateNpc(ItemIndex::NPC_GRANDPA2, &npc, NpcId::NPC_GRANDPA2, "Grandpa 2");
     populateNpc(ItemIndex::NPC_GRANDPA_LOGS, &reqNpc, NpcId::NPC_GRANDPA_LOGS, "Grandpa (opens door to King)");
     populateNpc(ItemIndex::NPC_GRANDPA_LAKE, &reqNpc, NpcId::NPC_GRANDPA_LAKE, "Grandpa (opens southeast lake)");
@@ -327,7 +330,7 @@ void ItemPool::populate () {
     populateNpc(ItemIndex::NPC_SNAIL_RACER2, &npc, NpcId::NPC_SNAIL_RACER2, "Snail Racer 2");
     populateNpc(ItemIndex::NPC_MUSHROOM, &npc, NpcId::NPC_MUSHROOM, "Mushroom");
     populateNpc(ItemIndex::NPC_MUSHROOM_TUNNEL, &reqNpc, NpcId::NPC_MUSHROOM_TUNNEL, "Mushroom (south tunnel to Nome)");
-    populateNpc(ItemIndex::NPC_MUSHROOM3, &reqNpc, NpcId::NPC_MUSHROOM3, "Mushroom 3");
+    populateNpc(ItemIndex::NPC_MUSHROOM3, &npc, NpcId::NPC_MUSHROOM3, "Mushroom 3");
     populateNpc(ItemIndex::NPC_MUSHROOM_EMBLEM_F, &progNpc, NpcId::NPC_MUSHROOM_EMBLEM_F, "Sleeping Mushroom (unlock in Lune)");
     populateNpc(ItemIndex::NPC_NOME, &reqNpc, NpcId::NPC_NOME, "Nome the snail");
     populateNpc(ItemIndex::NPC_MOUNTAIN_KING, &reqNpc, NpcId::NPC_MOUNTAIN_KING, "Mountain King");
@@ -381,7 +384,7 @@ void ItemPool::populate () {
     populateNpc(ItemIndex::NPC_DR_LEO, &progNpc, NpcId::NPC_DR_LEO, "Doctor Leo at Airship");
     populateNpc(ItemIndex::NPC_MAID, &npc, NpcId::NPC_MAID, "Maid");
     populateNpc(ItemIndex::NPC_MAID2, &npc, NpcId::NPC_MAID2, "Maid 2");
-    populateNpc(ItemIndex::NPC_MAID_HERB, &npc, NpcId::NPC_MAID_HERB, "Medical Herb Maid behind counter");
+    populateNpc(ItemIndex::NPC_MAID_HERB, &progNpc, NpcId::NPC_MAID_HERB, "Medical Herb Maid behind counter");
     populateNpc(ItemIndex::NPC_SINGER, &npc, NpcId::NPC_SINGER, "Singer standing outside");
     populateNpc(ItemIndex::NPC_SINGER_CONCERT_HALL, &progNpc, NpcId::NPC_SINGER_CONCERT_HALL, "Singer in Concert Hall");
     populateNpc(ItemIndex::NPC_SOLDIER_LEFT_TOWER, &progNpc, NpcId::NPC_SOLDIER_LEFT_TOWER, "Left Tower Guard Soldier");

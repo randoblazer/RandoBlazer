@@ -448,6 +448,8 @@ public:
     static void populateNpcItem (LocationID locationIndex, ItemIndex origItemIndex, Location* flags, const char* name, NpcItemIndex npcItemIndex);
     static void populateChest (LocationID locationIndex, ItemIndex origItemIndex, Location* flags, const char* name, unsigned char chestId);
     static void populate ();
+    static Location* getLocation (LocationID locationId);
+    static int itemLocation (ItemIndex itemIndex);
     static void logLocation (const Location& location);
     static void logAllLocations ();
 };

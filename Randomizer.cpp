@@ -10,6 +10,7 @@
 #include "ROMUpdate.h"
 #include "Filler.h"
 #include "World.h"
+#include "SpoilerLog.h"
 
 #include <algorithm>
 #include <iomanip>
@@ -39,15 +40,22 @@ bool Randomize(const string &InFile, const string &OutFile, unsigned int seed, c
         seed = Random::RandomInit(seed);
         seed = Random::RandomInit(seed);
         seed = Random::RandomInit(seed);
+    } else {
+        cout << "Seed is " << seedText << endl;
     }
 
-    bool romCheck = backupRom(InFile, OutFile);
+    string OutFileName = OutFile;
+    if (OutFileName == "Soul Blazer Randomized.smc") {
+        OutFileName = "Soul Blazer Randomized (Beta)-" + seedText + ".smc";
+    }
+
+    bool romCheck = backupRom(InFile, OutFileName);
     if (!romCheck) {
         cout << "There was a problem with the ROM file!\n";
         return false;
     }
 
-    std::fstream ROMFile(OutFile, std::ios::in | std::ios::out | std::ios::binary | std::ios::ate);
+    std::fstream ROMFile(OutFileName, std::ios::in | std::ios::out | std::ios::binary | std::ios::ate);
 
     ItemPool::populate();
     // ItemPool::logAllItems();
@@ -65,6 +73,7 @@ bool Randomize(const string &InFile, const string &OutFile, unsigned int seed, c
 
     WorldFlags worldFlags;
     worldFlags.roll();
+    worldFlags.race = options.race;
 
     // This will set all locations vanilla
     // for (int i = 0; i < ALL_LOCATIONS_SIZE; i++) {
@@ -89,9 +98,9 @@ bool Randomize(const string &InFile, const string &OutFile, unsigned int seed, c
     
     bool placementSuccess = false;
     int placementCount = 0;
-    while (!placementSuccess && placementCount < 5) {
+    while (!placementSuccess && placementCount < 10) {
         placementCount++;
-        placementSuccess = randomizePlacement(worldFlags);
+        placementSuccess = randomizePlacement(worldFlags, seedText);
     }
     if (placementSuccess) {
         cout << "Placement succeeded in " << placementCount << (placementCount == 1 ? " try" : " tries") << endl;
@@ -111,17 +120,6 @@ bool Randomize(const string &InFile, const string &OutFile, unsigned int seed, c
 
     std::cout << " . . . ROM modification complete.\n";
 
-/*  No spoiler log for now, need to avoid duplicate definitions
-    if (!options.race)
-    {
-        std::cout << "Starting Spoiler Log creation.\n";
-
-        // Generate the Spoiler Log
-        Log::CreateSpoilerLog(RandomizedLairList, RandomizedItemList);
-
-        std::cout << " . . . Spoiler Log created.\n";
-    }
-*/
     return true;
 }
 
@@ -159,11 +157,15 @@ void randomizeSprites (Lair sprites[], WorldFlags& worldFlags) {
     After that we handle any remaining locations that must have unique items (Dancing Grandmas reward)
     Then we fill the rest of spots with non-progression items and npcs.
 */
-bool randomizePlacement (WorldFlags& worldFlags) {
+bool randomizePlacement (WorldFlags& worldFlags, string& seedText) {
     cout << "Randomizing items and souls" << endl;
 
     WorldMap theWorld;
     theWorld.createWorld(worldFlags);
+
+    // Save a copy of the progression items for later
+    // Filler::PlacementSet progressionList;
+    // progressionList.copyFrom(&theWorld.progressionItems);
 
     // cout << "Progression: " << theWorld.progressionItems.size << endl;
     // cout << "Equipment: " << theWorld.equipmentItems.size << endl;
@@ -341,26 +343,42 @@ bool randomizePlacement (WorldFlags& worldFlags) {
     Filler::getEmptyLocations(theWorld.map, emptyLocations);
     if (emptyLocations.size > 0) {
         cout << "WARNING - failed to fill a location!" << endl;
-        cout << "Empty location is " << Locations::allLocations[static_cast<int>(emptyLocations.set[0])].name << endl;
+        cout << "Empty location is " << Locations::getLocation(emptyLocations.set[0])->name << endl;
         return false;
     }
 
-    // TODO: verify all locations reachable
-    ItemIndex blesterItem1 = Locations::allLocations[static_cast<int>(LocationID::LAIR_BLESTER_MIDDLE_LEFT)].itemIndex;
-    ItemIndex blesterItem2 = Locations::allLocations[static_cast<int>(LocationID::LAIR_BLESTER_MIDDLE_RIGHT)].itemIndex;
-    ItemIndex blesterItem3 = Locations::allLocations[static_cast<int>(LocationID::LAIR_BLESTER_TOP_LEFT)].itemIndex;
+    /*
+    // Still not sure exactly how often thunder ring is required
+    LocationID blesterSpots[3] = {
+        LocationID::LAIR_BLESTER_MIDDLE_LEFT,
+        LocationID::LAIR_BLESTER_MIDDLE_RIGHT,
+        LocationID::LAIR_BLESTER_TOP_LEFT
+    };
     int progCount = 0;
-    if (ItemPool::allItems[static_cast<int>(blesterItem1)].isProgression) {
-        progCount++;
-    }
-    if (ItemPool::allItems[static_cast<int>(blesterItem2)].isProgression) {
-        progCount++;
-    }
-    if (ItemPool::allItems[static_cast<int>(blesterItem3)].isProgression) {
-        progCount++;
+    for (int i = 0; i < 3; i++) {
+        ItemIndex blesterItem = Locations::allLocations[static_cast<int>(blesterSpots[i])].itemIndex;
+        if (ItemPool::allItems[static_cast<int>(blesterItem)].isProgression) {
+            progCount++;
+        }
     }
     if (worldFlags.blesterMetal && progCount >= 2) {
-        cout << "May be thunder ring seed" << endl;
+        int commonHouse = Locations::itemLocation(ItemIndex::NPC_MERMAID_BUBBLE_ARMOR);
+        int blesterStatue = Locations::itemLocation(ItemIndex::NPC_MERMAID_STATUE_BLESTER);
+        int thunderRing = Locations::itemLocation(ItemIndex::THUNDER_RING);
+        int zantetsu = Locations::itemLocation(ItemIndex::ZANTETSU_SWORD);
+        int soulBlade = Locations::itemLocation(ItemIndex::SOUL_BLADE);
+        if (commonHouse < 150 && blesterStatue < 150 && thunderRing < 150 && zantetsu > 150 && soulBlade > 150) {
+            cout << "May be thunder ring seed" << endl;
+            return true;
+        }
+    }
+    */
+
+    if (!worldFlags.race) {
+        cout << "Writing spoiler log" << endl;
+        int progressionLocations[PROGRESSION_LOCATIONS_SIZE];
+        Filler::createProgressionList(theWorld.map, progressionLocations);
+        createSpoilerLog(theWorld, progressionLocations, seedText);
     }
 
     return true;

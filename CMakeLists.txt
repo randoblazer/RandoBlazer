@@ -45,6 +45,8 @@ add_library(randoblazerlib STATIC
   ROMCheck.h
   ROMUpdate.cpp
   ROMUpdate.h
+  SpoilerLog.cpp
+  SpoilerLog.h
   TextUpdate.cpp
   TextUpdate.h
 )

@@ -106,6 +106,8 @@ public:
     WorldFlags ();
     ~WorldFlags ();
 
+    bool race;
+
     bool blesterMetal;
     bool dureanMetal;
 

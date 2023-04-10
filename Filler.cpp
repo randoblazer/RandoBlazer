@@ -23,6 +23,12 @@ void PlacementSet::init (ItemIndex* initItems, int count) {
 void PlacementSet::clear () {
     size = 0;
 }
+void PlacementSet::copyFrom (PlacementSet* source) {
+    size = source->size;
+    for (int i = 0; i < size; i++) {
+        set[i] = source->set[i];
+    }
+}
 PlacementSet* PlacementSet::add (ItemIndex itemIndex) {
     set[size] = itemIndex;
     size++;
@@ -130,7 +136,7 @@ void LinkSet::add (MapLink* link) {
     set[size] = link;
     size++;
 }
-MapLink* LinkSet::pick (ItemPool inventory) {
+MapLink* LinkSet::pick (ItemPool& inventory) {
     MapLink* pick;
     for (int i = 0; i < size; i++) {
         if (set[i]->req->isMet(inventory)) {
@@ -311,6 +317,80 @@ bool mustBeUniquePlacement (LogicMap* map, PlacementSet& placementSet1, Placemen
         }
     }
     return true;
+}
+
+void createProgressionList (LogicMap* logicMap, int progressionLocations[]) {
+    LinkSet links;
+    LinkSet sphereLinks;
+    ItemPool inventory;
+    MapLink* link;
+    MapLink* initialLink = new MapLink(NULL, logicMap->map, new LinkReqFree());
+    MapNode* node;
+    MapNodeLinkNode* linkNode;
+    MapNodeLocationNode* locationNode;
+    ItemIndex itemIndex;
+    Item* item;
+    int progCount = 0;
+
+    links.clear();
+    links.add(initialLink);
+    sphereLinks.clear();
+    logicMap->clearProcessed();
+    inventory.clear();
+    inventory.addItem(ItemIndex::SWORD_OF_LIFE);
+
+    while (links.size > 0) {
+        // Collect up all currently met links
+        do {
+            link = links.pick(inventory);
+            if (link != NULL) {
+                sphereLinks.add(link);
+            }
+        } while (link != NULL);
+        // This should not happen - it would mean we cannot reach all locations
+        if (sphereLinks.size == 0) {
+            std::cout << "WARNING - could not reach all locations in progression processing" << endl;
+            progressionLocations[progCount++] = -1;
+            progressionLocations[progCount++] = -1;
+            break;
+        }
+        /*
+            Process the dest node of each link we pulled out above.
+            -manage processed state
+            -add locations of required items to progressionLocations
+            -add items to inventory
+            -add links to main linkSet
+        */
+        for (int i = 0; i < sphereLinks.size; i++) {
+            node = sphereLinks.set[i]->dest;
+            if (node->processed) {
+                continue;
+            }
+            locationNode = node->filledLocations;
+            while (locationNode != NULL) {
+                itemIndex = Locations::getLocation(locationNode->location)->itemIndex;
+                item = &ItemPool::allItems[static_cast<int>(itemIndex)];
+                if (item->isProgression) {
+                    progressionLocations[progCount++] = static_cast<int>(locationNode->location);
+                    inventory.addItem(itemIndex);
+                }
+                locationNode = locationNode->next;
+            }
+            linkNode = node->links;
+            while (linkNode != NULL) {
+                links.add(linkNode->link);
+                linkNode = linkNode->next;
+            }
+            node->processed = true;
+        }
+        // Put a -1 in the list to denote the end of the sphere.
+        progressionLocations[progCount++] = -1;
+        sphereLinks.clear();
+    }
+    // To denote the end of the list
+    progressionLocations[progCount++] = -1;
+
+    delete initialLink;
 }
 
 void testPlacement () {

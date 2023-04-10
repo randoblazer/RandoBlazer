@@ -76,6 +76,19 @@ void Locations::logLocation (const Location& location) {
     cout << " -- " << item.name << endl;
 }
 
+Location* Locations::getLocation(LocationID locationId) {
+    return &allLocations[static_cast<int>(locationId)];
+}
+
+int Locations::itemLocation (ItemIndex itemIndex) {
+    for (int i = 0; i < ALL_LOCATIONS_SIZE; i++) {
+        if (allLocations[i].itemIndex == itemIndex) {
+            return i;
+        }
+    }
+    return -1;
+}
+
 void Locations::populateLair (LocationID locationIndex, ItemIndex origItemIndex, Location* flags, const char* name) {
     Location *dst = &allLocations[(int)locationIndex];
     memcpy(dst, flags, sizeof(Location));
@@ -1980,6 +1993,9 @@ void Locations::populate () {
         &normalFlags,
         "Right Tower Demon Bird boss lair"
     );
+    /*
+        Act 7
+    */
     populateChest(
         LocationID::CHEST_WORLD_OF_EVIL1_RIGHT,
         ItemIndex::MEDICAL_HERB,

@@ -18,6 +18,7 @@ namespace Filler {
 
         void init (ItemIndex* initItems, int count);
         void clear ();
+        void copyFrom (PlacementSet* source);
         PlacementSet* add (ItemIndex itemIndex);
         void shuffle ();
         ItemIndex take ();
@@ -56,7 +57,7 @@ namespace Filler {
         // Pick a link where inventory meets requirement
         // Remove it from the set
         // Return NULL if no links are met
-        MapLink* pick (ItemPool inventory);
+        MapLink* pick (ItemPool& inventory);
     };
 
     void getEmptyLocations (LogicMap* map, LocationSet& locationSet);
@@ -64,6 +65,7 @@ namespace Filler {
     bool dummyPlacement (LogicMap* map, PlacementSet& placementSet, LocationSet& locationSet);
     bool dummyPlacementWithFilter (LogicMap* map, PlacementSet& placementSet, LocationSet& locationSet);
     bool mustBeUniquePlacement (LogicMap* map, PlacementSet& placementSet1, PlacementSet& placementSet2, LocationSet& locationSet);
+    void createProgressionList (LogicMap* logicMap, int progressionLocations[]);
 
     void testPlacement ();
 }
