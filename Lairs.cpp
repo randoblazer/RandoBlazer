@@ -765,7 +765,7 @@ void LairProfile::roll (Lair& lair, Lair& originalLair) {
 
 LairProfileA::LairProfileA (WorldFlags& flags) {
     worldFlags = &flags;
-    int normalTypeWeights[4] = { 15, 4, 1, 0 };
+    int normalTypeWeights[4] = { 17, 2, 1, 0 };
     normalTypePicker = new Random::WeightedPicker(normalTypeWeights, 3);
     int upDownTypeWeights[4] = { 5, 4, 1, 10 };
     upDownTypePicker = new Random::WeightedPicker(upDownTypeWeights, 4);

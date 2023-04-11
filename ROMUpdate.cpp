@@ -13,8 +13,6 @@
 
 namespace ROMUpdate {
 void ROMUpdateTextAndItems(const LairList& randomizedLairs,
-                            const Locations& locations,
-                            const ItemPool& itemPool,
                             std::fstream &ROMFile,
                             const std::string& seed) {
     unsigned char Byte;
@@ -34,12 +32,12 @@ void ROMUpdateTextAndItems(const LairList& randomizedLairs,
         // std::cout << "chestId " << i << std::endl;
         // std::cout << "locationId " << static_cast<int>(Locations::chestIdMap[i]) << std::endl;
 
-        // Location* chestLocation = &locations.allLocations[static_cast<int>(locations.chestIdMap[i])];
+        // Location* chestLocation = &Locations::allLocations[static_cast<int>(Locations::chestIdMap[i])];
         // std::cout << chestLocation->name << " has " << static_cast<int>(chestLocation->itemIndex) << std::endl;
 
         Item* item = &ItemPool::allItems[
-            static_cast<int>(locations.allLocations[
-                static_cast<int>(locations.chestIdMap[i])
+            static_cast<int>(Locations::allLocations[
+                static_cast<int>(Locations::chestIdMap[i])
             ].itemIndex)
         ];
         // std::cout << "chestId " << i << " location " << chestLocation->name << " item " << item->name << std::endl;
@@ -70,12 +68,10 @@ void ROMUpdateTextAndItems(const LairList& randomizedLairs,
     /* Full update of text and NPC items */
     /*************************************/
 
-    NPCTextUpdateMain(randomizedLairs, locations, itemPool, ROMFile, seed);
+    NPCTextUpdateMain(randomizedLairs, ROMFile, seed);
 }
 
 void ROMUpdateLairs(const LairList& randomizedLairs,
-                    const Locations& locations,
-                    const ItemPool& itemPool,
                     std::fstream &ROMFile) {
     ROMFile.seekp (MONSTER_LAIR_DATA_ADDRESS, std::ios::beg);
 
@@ -91,18 +87,18 @@ void ROMUpdateLairs(const LairList& randomizedLairs,
 
     Location* location;
     NpcId origNpcId, newNpcId;
-    for (int i = 0; i < locations.allLocationsCount; i++) {
+    for (int i = 0; i < Locations::allLocationsCount; i++) {
         // cout << "location number " << i << endl;
-        location = &locations.allLocations[i];
+        location = &Locations::allLocations[i];
         if (location->isLair) {
             /*
             std::cout << location->name << ": ";
-            std::cout << itemPool.allItems[static_cast<int>(location->origItemIndex)].name << " -> ";
-            std::cout << itemPool.allItems[static_cast<int>(location->itemIndex)].name << std::endl;
+            std::cout << ItemPool::allItems[static_cast<int>(location->origItemIndex)].name << " -> ";
+            std::cout << ItemPool::allItems[static_cast<int>(location->itemIndex)].name << std::endl;
             */
 
-            origNpcId = itemPool.allItems[static_cast<int>(location->origItemIndex)].npcId;
-            newNpcId = itemPool.allItems[static_cast<int>(location->itemIndex)].npcId;
+            origNpcId = ItemPool::allItems[static_cast<int>(location->origItemIndex)].npcId;
+            newNpcId = ItemPool::allItems[static_cast<int>(location->itemIndex)].npcId;
             outputLairs.lairList[static_cast<int>(newNpcId)] = randomizedLairs.lairList[static_cast<int>(origNpcId)];
         }
     }

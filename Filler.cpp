@@ -388,7 +388,7 @@ void createProgressionList (LogicMap* logicMap, int progressionLocations[]) {
         sphereLinks.clear();
     }
     // To denote the end of the list
-    progressionLocations[progCount++] = -1;
+    progressionLocations[progCount++] = -2;
 
     delete initialLink;
 }

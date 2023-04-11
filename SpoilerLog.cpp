@@ -170,7 +170,7 @@ void createSpoilerLog(WorldMap& theWorld, int progressionLocations[], string& se
     for (int i = 0; i < ALL_LOCATIONS_SIZE + 100; i++) {
         if (progressionLocations[i] == -1) {
             LogFile << "\r\n";
-            if (progressionLocations[i + 1] == -1)  {
+            if (progressionLocations[i + 1] == -2)  {
                 break;
             }
             continue;

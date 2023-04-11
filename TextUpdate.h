@@ -16,18 +16,13 @@
 namespace ROMUpdate {
     int ConvertToBCD(int dec);
     void NPCTextUpdateMain(const LairList& randomizedLairs,
-                           const Locations& locations,
-                           const ItemPool& itemPool,
                            std::fstream &ROMFile,
                            const std::string& seed);
     void GeneralTextUpdate(const LairList& randomizedLairs,
-                           const Locations& locations,
-                           const ItemPool& itemPool,
                            std::fstream &ROMFile,
                            const std::string& seed);
     void NPCItemTextUpdate(int npcItemIndex,
                            int itemIndex,
-                           const ItemPool& itemPool,
                            std::fstream &ROMFile);
 }
 

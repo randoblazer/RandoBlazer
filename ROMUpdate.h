@@ -13,13 +13,9 @@
 
 namespace ROMUpdate {
     void ROMUpdateTextAndItems(const LairList& randomizedLairs,
-                               const Locations& locations,
-                               const ItemPool& itemPool,
                                std::fstream &ROMFile,
                                const std::string& seed);
     void ROMUpdateLairs(const LairList& randomizedLairs,
-                        const Locations& locations,
-                        const ItemPool& itemPool,
                         std::fstream &ROMFile);
     void ROMUpdateMapSprites(Lair sprites[], std::fstream &ROMFile);
 }

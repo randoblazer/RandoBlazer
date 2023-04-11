@@ -59,7 +59,6 @@ bool Randomize(const string &InFile, const string &OutFile, unsigned int seed, c
 
     ItemPool::populate();
     // ItemPool::logAllItems();
-    ItemPool itemPool;
 
     LairList::readOriginalLairs(ROMFile);
     LairList lairs;
@@ -68,8 +67,7 @@ bool Randomize(const string &InFile, const string &OutFile, unsigned int seed, c
     // lairs.lairStats();
 
     Locations::populate();
-    Locations locations;
-    // locations.logAllLocations();
+    // Locations::logAllLocations();
 
     WorldFlags worldFlags;
     worldFlags.roll();
@@ -77,11 +75,12 @@ bool Randomize(const string &InFile, const string &OutFile, unsigned int seed, c
 
     // This will set all locations vanilla
     // for (int i = 0; i < ALL_LOCATIONS_SIZE; i++) {
-        // locations.allLocations[i].itemIndex = locations.allLocations[i].origItemIndex;
+        // Locations::allLocations[i].itemIndex = Locations::allLocations[i].origItemIndex;
     // }
-    // locations.logAllLocations();
+    // Locations::logAllLocations();
 
     // For testing
+    // Locations locations;
     // testMaps(locations);
     // Filler::testPlacement();
     // testTheWorld(worldFlags);
@@ -110,9 +109,9 @@ bool Randomize(const string &InFile, const string &OutFile, unsigned int seed, c
     }
 
     /* Modify the ROM with the randomized lists */
-    ROMUpdate::ROMUpdateLairs(lairs, locations, itemPool, ROMFile);
+    ROMUpdate::ROMUpdateLairs(lairs, ROMFile);
     ROMUpdate::ROMUpdateMapSprites(sprites, ROMFile);
-    ROMUpdate::ROMUpdateTextAndItems(lairs, locations, itemPool, ROMFile, seedText);
+    ROMUpdate::ROMUpdateTextAndItems(lairs, ROMFile, seedText);
 
     /* Close the ROM file */
     ROMFile.close();
