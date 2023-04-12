@@ -765,6 +765,8 @@ void LairProfile::roll (Lair& lair, Lair& originalLair) {
 
 LairProfileA::LairProfileA (WorldFlags& flags) {
     worldFlags = &flags;
+    reduced = false;
+    forceProx = false;
     int normalTypeWeights[4] = { 17, 2, 1, 0 };
     normalTypePicker = new Random::WeightedPicker(normalTypeWeights, 3);
     int upDownTypeWeights[4] = { 5, 4, 1, 10 };
@@ -773,6 +775,8 @@ LairProfileA::LairProfileA (WorldFlags& flags) {
     singleCountPicker = new Random::WeightedPicker(singleCountWeights, 4);
     int multiCountWeights[4] = { 1, 1, 1, 1 };
     multiCountPicker = new Random::WeightedPicker(multiCountWeights, 4);
+    int multiCountReducedWeights[4] = { 1, 2, 0, 0 };
+    multiCountReducedPicker = new Random::WeightedPicker(multiCountReducedWeights, 4);
     // Lairs with more enemies can be weighted towards faster spawning
     int spawnWeights[4][4] = {
         { 1, 2, 4, 4 },    // 4-6 enemies
@@ -789,6 +793,7 @@ LairProfileA::~LairProfileA () {
     delete upDownTypePicker;
     delete singleCountPicker;
     delete multiCountPicker;
+    delete multiCountReducedPicker;
     for (int i = 0; i < 4; i++) {
         delete spawnRatePickers[i];
     }
@@ -796,12 +801,17 @@ LairProfileA::~LairProfileA () {
 void LairProfileA::roll (Lair& lair, Lair& originalLair) {
     // originalLair.log();
     lair = originalLair;
-    if (worldFlags->blesterMetal && lair.area == 49 && lair.x == 33 && lair.y == 41) {
-        lair.enemy = EnemyType::ACT3_METAL_GORILLA;
-    } else if (worldFlags->dureanMetal && lair.area == 48 && lair.x == 4 && lair.y == 36) {
-        lair.enemy = EnemyType::ACT3_METAL_GORILLA;
-    } else {
-        lair.enemy = pickEnemyType(originalLair);
+    if (!originalLair.MustNotRandomizeLairPosition() &&
+        originalLair.enemy != EnemyType::DREAM_NO_ENEMY &&
+        originalLair.enemy != EnemyType::NO_ENEMY
+    ) {
+        if (worldFlags->blesterMetal && lair.area == 49 && lair.x == 33 && lair.y == 41) {
+            lair.enemy = EnemyType::ACT3_METAL_GORILLA;
+        } else if (worldFlags->dureanMetal && lair.area == 48 && lair.x == 45 && lair.y == 55) {
+            lair.enemy = EnemyType::ACT3_METAL_GORILLA;
+        } else {
+            lair.enemy = pickEnemyType(originalLair);
+        }
     }
     if (Lair::canRandomizeOrientation(lair.act, lair.enemy)) {
         if (originalLair.MustNotBeUpwardsLairPosition()) {
@@ -816,9 +826,17 @@ void LairProfileA::roll (Lair& lair, Lair& originalLair) {
         lair.spawnType == LairType::LAIR_MULTISPAWN ||
         lair.spawnType == LairType::LAIR_ONE_BY_ONE_PROX
     ) {
-        lair.spawnType = EnemyGroups::SpawnTypeList[normalTypePicker->pick()];
+        if (forceProx) {
+            lair.spawnType = LairType::LAIR_ONE_BY_ONE_PROX;
+        } else {
+            lair.spawnType = EnemyGroups::SpawnTypeList[normalTypePicker->pick()];
+        }
     } else if (lair.spawnType == LairType::LAIR_TWO_UP_TWO_DOWN) {
-        lair.spawnType = EnemyGroups::SpawnTypeList[upDownTypePicker->pick()];
+        if (forceProx) {
+            lair.spawnType = LairType::LAIR_ONE_BY_ONE_PROX;
+        } else {
+            lair.spawnType = EnemyGroups::SpawnTypeList[upDownTypePicker->pick()];
+        }
     }
     if (lair.spawnType == LairType::LAIR_ONE_BY_ONE ||
         lair.spawnType == LairType::LAIR_ONE_BY_ONE_PROX
@@ -826,9 +844,16 @@ void LairProfileA::roll (Lair& lair, Lair& originalLair) {
         lair.numEnemies = 2 + singleCountPicker->pick();
         lair.spawnRate = 0;
     } else if (lair.spawnType == LairType::LAIR_MULTISPAWN ||
-        lair.spawnType == LairType::LAIR_TWO_UP_TWO_DOWN
+               lair.spawnType == LairType::LAIR_TWO_UP_TWO_DOWN
     ) {
-        int countPick = multiCountPicker->pick();
+        int countPick;
+        // Keeping old hack for reduced multispawn mimics
+        // Other reasons for reduced count include less lag and making some areas faster
+        if (reduced || lair.enemy == EnemyType::ACT6_MIMIC) {
+            countPick = multiCountReducedPicker->pick();
+        } else {
+            countPick = multiCountPicker->pick();
+        }
         int spawnRatePick = spawnRatePickers[countPick]->pick();
 
         lair.numEnemies = 4 + (2 * countPick) + Random::RandomInteger(3);
@@ -849,7 +874,12 @@ LairProfileClassic::~LairProfileClassic () {
 }
 void LairProfileClassic::roll (Lair& lair, Lair& originalLair) {
     lair = originalLair;
-    lair.enemy = pickEnemyType(originalLair);
+    if (!originalLair.MustNotRandomizeLairPosition() &&
+        originalLair.enemy != EnemyType::DREAM_NO_ENEMY &&
+        originalLair.enemy != EnemyType::NO_ENEMY
+    ) {
+        lair.enemy = pickEnemyType(originalLair);
+    }
     if (Lair::canRandomizeOrientation(lair.act, lair.enemy)) {
         if (originalLair.MustNotBeUpwardsLairPosition()) {
             lair.orientation = static_cast<unsigned char>(EnemyGroups::orientationList[Random::RandomInteger(3)]);

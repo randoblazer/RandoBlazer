@@ -749,7 +749,7 @@ namespace ROMUpdate {
         ROMFile.seekp(0x13B2B, std::ios::beg);
         TEXT_WriteString("RANDO HYPE");
         ROMFile.seekp(0x13B3C, std::ios::beg);
-        TEXT_WriteString("RandoBlazer v0.6a  ");
+        TEXT_WriteString("RandoBlazer v0.7B  ");
         ROMFile.seekp(0x143B9, std::ios::beg);
         TEXT_WriteString("Seed ");
 	    ROMFile.write(seed.c_str(), 10);
@@ -1356,18 +1356,15 @@ namespace ROMUpdate {
         TEXT_WriteByte(0x11);
         TEXT_WriteByte(0x0C);
 
-        /*** Magridd Castle basement Crystal fairy - Clue on a sword */
-        /* First, decide which sword the clue will be about */
+        /*** Magridd Castle basement Crystal fairy - red hot item clue */
         ItemIndex swordClueItems[3] = {
-            ItemIndex::LUCKY_BLADE,
-            ItemIndex::ZANTETSU_SWORD,
-            ItemIndex::SPIRIT_SWORD
+            ItemIndex::RED_HOT_BALL,
+            ItemIndex::RED_HOT_MIRROR,
+            ItemIndex::RED_HOT_STICK
         };
         clueItem = swordClueItems[Random::RandomInteger(3)];
         /* Now find where this sword is */
-        for (clueLocation = 0; clueLocation < Locations::allLocationsCount; clueLocation++) {
-            if (Locations::allLocations[clueLocation].itemIndex == clueItem) break;
-        }
+        clueLocation = Locations::itemLocation(clueItem);
         /* Update text */
         ROMFile.seekp(0x26EB9, std::ios::beg);
         TEXT_WriteByte(0x91); /* "The " */
@@ -1512,7 +1509,7 @@ namespace ROMUpdate {
 	    int addrCount = sizeof(addrs) / sizeof(addrs[0]);
 	    for (int i = 0; i < addrCount; i++) {
 	    	ROMFile.seekp(addrs[i], std::ios::beg);
-	    	// 0 for instant, 1 for fast like J version
+	    	// 1 for fast like J version, 0 makes it instant but causes problems
 	    	TEXT_WriteByte(0x01);
 	    }
     }
@@ -1601,6 +1598,19 @@ namespace ROMUpdate {
         ItemId itemId;
 
         // std::cout << "NPCTextUpdateMain" << std::endl;
+
+        // Change some items to medical herbs
+        for (int locationId = 0; locationId < Locations::allLocationsCount; locationId++) {
+            location = &Locations::allLocations[locationId];
+            if (!location->isNpc) {
+                continue;
+            }
+            item = &ItemPool::allItems[(int)location->itemIndex];
+            if ((item->isExperience || item->itemId == ItemId::NOTHING) &&
+                    !Locations::NPCOriginallyGivesEXP((LocationID)locationId)) {
+                location->itemIndex = ItemIndex::MEDICAL_HERB;
+            }
+        }
 
         /* General text updates and some specific Item NPC text */
         GeneralTextUpdate(randomizedLairs, ROMFile, seed);

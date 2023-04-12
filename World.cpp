@@ -737,7 +737,7 @@ void WorldMap::createWorld (WorldFlags& creationFlags) {
             ->addReq(new LinkReqCheck(ItemIndex::NPC_GRANDPA_LAKE))
             ->addReq(new LinkReqCheck(ItemIndex::NPC_GRANDPA_LUNE))
     ));
-    mountainHome->addLink(new MapLink(lune, luneMushroomDream,
+    lune->addLink(new MapLink(lune, luneMushroomDream,
         (new LinkReqAnd())
             ->addReq(new LinkReqCheck(ItemIndex::NPC_MUSHROOM_TUNNEL))
             ->addReq(new LinkReqCheck(ItemIndex::NPC_GRANDPA_PRISON))

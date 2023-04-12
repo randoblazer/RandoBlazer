@@ -87,6 +87,16 @@ bool Randomize(const string &InFile, const string &OutFile, unsigned int seed, c
 
     randomizeLairs(lairs, worldFlags);
 
+    /*
+    // Show original and modified lair info for debugging
+    for (int i = 0; i < NUMBER_OF_LAIRS; i++) {
+        lairs.originalLairs[i].log();
+        cout << ">>";
+        lairs.lairList[i].log();
+        cout << endl;
+    }
+    */
+
     // Randomize stray enemies not associated with a lair
     Lair sprites[NUMBER_OF_SPRITES];
     readOriginalSprites(sprites, ROMFile);
@@ -124,14 +134,33 @@ bool Randomize(const string &InFile, const string &OutFile, unsigned int seed, c
 
 void randomizeLairs (LairList& lairs, WorldFlags& worldFlags) {
     LairProfileA profileA(worldFlags);
+    LairProfileA profileAReduced(worldFlags);
+    LairProfileA profileAProx(worldFlags);
+    profileAReduced.reduced = true;
+    profileAProx.forceProx = true;
     // LairProfileClassic classicProfile;
     // LairProfileTwo twoProfile;
+    Lair* origLair;
 
     cout << "Randomizing lairs" << endl;
 
     for (int i = 0; i < NUMBER_OF_LAIRS; i++) {
-        profileA.roll(lairs.lairList[i], lairs.originalLairs[i]);
-        // classicProfile.roll(lairs.lairList[i], lairs.originalLairs[i]);
+        origLair = &lairs.originalLairs[i];
+        if (origLair->enemy == EnemyType::DREAM_NO_ENEMY ||
+            origLair->enemy == EnemyType::NO_ENEMY
+        ) {
+            lairs.lairList[i] = *origLair;
+        } else if (origLair->area == 106) {
+            // Reduce lag in Left tower with a few tweaks
+            if (origLair->x == 16 && origLair->y == 27) {
+                profileAProx.roll(lairs.lairList[i], *origLair);
+            } else {
+                profileAReduced.roll(lairs.lairList[i], *origLair);
+            }
+        } else {
+            profileA.roll(lairs.lairList[i], *origLair);
+            // classicProfile.roll(lairs.lairList[i], lairs.originalLairs[i]);
+        }
     }
 }
 

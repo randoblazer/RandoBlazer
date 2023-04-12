@@ -189,7 +189,13 @@ public:
     Random::WeightedPicker* upDownTypePicker;
     Random::WeightedPicker* singleCountPicker;
     Random::WeightedPicker* multiCountPicker;
+    Random::WeightedPicker* multiCountReducedPicker;
     Random::WeightedPicker* spawnRatePickers[4];
+
+    // Reduce the multispawn count to reduce lag or make some areas faster
+    bool reduced;
+    // Force a lair to be proximity spawn, probably to reduce lag
+    bool forceProx;
 
     void roll (Lair& lair, Lair& originalLair);
 };
