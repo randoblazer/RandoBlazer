@@ -157,6 +157,16 @@ void randomizeLairs (LairList& lairs, WorldFlags& worldFlags) {
             } else {
                 profileAReduced.roll(lairs.lairList[i], *origLair);
             }
+        } else if (worldFlags.blesterMetal && origLair->area == 49) {
+            // Reduce lower blester lairs to avoid sprite overload that can interfere with thunder ring
+            if ((origLair->x == 33 && origLair->y == 41) ||
+                (origLair->x == 25 && origLair->y == 49) ||
+                (origLair->x == 42 && origLair->y == 49)
+            ) {
+                profileAReduced.roll(lairs.lairList[i], *origLair);
+            } else {
+                profileA.roll(lairs.lairList[i], *origLair);
+            }
         } else {
             profileA.roll(lairs.lairList[i], *origLair);
             // classicProfile.roll(lairs.lairList[i], lairs.originalLairs[i]);

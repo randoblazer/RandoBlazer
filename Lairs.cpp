@@ -929,7 +929,7 @@ void LairProfileSprite::roll (Lair& lair, Lair& originalLair) {
     lair = originalLair;
     lair.enemy = pickSpriteEnemy(originalLair);
     if (Lair::canRandomizeOrientation(lair.act, lair.enemy)) {
-        lair.orientation = static_cast<unsigned char>(EnemyGroups::orientationList[Random::RandomInteger(4)]);
+        lair.orientation = static_cast<unsigned char>(EnemyGroups::orientationList[Random::RandomInteger(4)]) + 1;
     } else {
         lair.orientation = 0x01;
     }
