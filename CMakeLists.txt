@@ -29,8 +29,6 @@ add_library(randoblazerlib STATIC
   Locations.h
   Lairs.cpp
   Lairs.h
-  #Log.cpp
-  #Log.h
   LogicGraph.cpp
   LogicGraph.h
   Filler.cpp

@@ -320,7 +320,7 @@ bool mustBeUniquePlacement (LogicMap* map, PlacementSet& placementSet1, Placemen
 }
 
 void createProgressionList (LogicMap* logicMap, int progressionLocations[]) {
-    LinkSet links;
+    LinkSet unmetLinks;
     LinkSet sphereLinks;
     ItemPool inventory;
     MapLink* link;
@@ -332,40 +332,65 @@ void createProgressionList (LogicMap* logicMap, int progressionLocations[]) {
     Item* item;
     int progCount = 0;
 
-    links.clear();
-    links.add(initialLink);
+    unmetLinks.clear();
+    unmetLinks.add(initialLink);
     sphereLinks.clear();
     logicMap->clearProcessed();
     inventory.clear();
     inventory.addItem(ItemIndex::SWORD_OF_LIFE);
 
-    while (links.size > 0) {
-        // Collect up all currently met links
+    while (unmetLinks.size > 0) {
+        /*
+            Sort out links
+            - Some unmet links will now be met. They go in sphereLinks
+            - Check links from newly reachable nodes
+        */
+        // cout << unmetLinks.size << " links at start of sphere" << endl;
         do {
-            link = links.pick(inventory);
+            link = unmetLinks.pick(inventory);
             if (link != NULL) {
+                node = link->dest;
+                if (node->processed) {
+                    continue;
+                }
                 sphereLinks.add(link);
+                linkNode = node->links;
+                while (linkNode != NULL) {
+                    unmetLinks.add(linkNode->link);
+                    linkNode = linkNode->next;
+                }
+                node->processed = true;
             }
         } while (link != NULL);
+        // cout << unmetLinks.size << " unmet links after processing" << endl;
+        // cout << sphereLinks.size << " links to process in sphere" << endl;
+
         // This should not happen - it would mean we cannot reach all locations
         if (sphereLinks.size == 0) {
             std::cout << "WARNING - could not reach all locations in progression processing" << endl;
+
+            // std::cout << unmetLinks.size << " unsatisfied links" << endl;
+            // node = unmetLinks.set[0]->source;
+            // std::cout << "Requirement: ";
+            // unmetLinks.set[1]->req->print();
+            // std::cout << endl;
+            // std::cout << node->numLocations << " total locations in unreachable node" << endl;
+            // std::cout << node->numFilled << " filled locations in unreachable node" << endl;
+            // std::cout << (int)node->filledLocations->location << endl;
+            // std::cout << Locations::getLocation(node->filledLocations->location)->name << endl;
+            
             progressionLocations[progCount++] = -1;
-            progressionLocations[progCount++] = -1;
+            progressionLocations[progCount++] = -2;
             break;
         }
         /*
             Process the dest node of each link we pulled out above.
-            -manage processed state
             -add locations of required items to progressionLocations
             -add items to inventory
             -add links to main linkSet
         */
         for (int i = 0; i < sphereLinks.size; i++) {
             node = sphereLinks.set[i]->dest;
-            if (node->processed) {
-                continue;
-            }
             locationNode = node->filledLocations;
             while (locationNode != NULL) {
                 itemIndex = Locations::getLocation(locationNode->location)->itemIndex;
@@ -373,16 +398,13 @@ void createProgressionList (LogicMap* logicMap, int progressionLocations[]) {
                 if (item->isProgression) {
                     progressionLocations[progCount++] = static_cast<int>(locationNode->location);
                     inventory.addItem(itemIndex);
+                    // cout << "Found " << item->name << " in " <<
+                        // Locations::getLocation(locationNode->location)->name << endl;
                 }
                 locationNode = locationNode->next;
             }
-            linkNode = node->links;
-            while (linkNode != NULL) {
-                links.add(linkNode->link);
-                linkNode = linkNode->next;
-            }
-            node->processed = true;
         }
+        // cout << "End of sphere\n" << endl;
         // Put a -1 in the list to denote the end of the sphere.
         progressionLocations[progCount++] = -1;
         sphereLinks.clear();
