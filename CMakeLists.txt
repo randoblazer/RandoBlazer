@@ -23,6 +23,8 @@ if(NOT boost-cmake_POPULATED)
 endif()
 
 add_library(randoblazerlib STATIC
+  IpsPatch.cpp
+  IpsPatch.h
   ItemPool.cpp
   ItemPool.h
   Locations.cpp

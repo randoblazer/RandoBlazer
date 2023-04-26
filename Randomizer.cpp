@@ -11,6 +11,7 @@
 #include "Filler.h"
 #include "World.h"
 #include "SpoilerLog.h"
+#include "IpsPatch.h"
 
 #include <algorithm>
 #include <iomanip>
@@ -53,6 +54,16 @@ bool Randomize(const string &InFile, const string &OutFile, unsigned int seed, c
     if (!romCheck) {
         cout << "There was a problem with the ROM file!\n";
         return false;
+    }
+
+    /*
+        Fastrom patch by kando
+        Patreon: kandowontu - https://www.patreon.com/Kandowontu
+        Twitter: @kandowontu
+    */
+    bool patchSuccess = applyPatch(OutFileName, "Fastrom-SoulBlazerU.ips");
+    if (patchSuccess) {
+        cout << "Applied FastRom patch" << endl;
     }
 
     std::fstream ROMFile(OutFileName, std::ios::in | std::ios::out | std::ios::binary | std::ios::ate);
