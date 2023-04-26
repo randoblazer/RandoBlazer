@@ -10,7 +10,7 @@
 
 #define LOCATION_NAME_SIZE    55
 #define NPC_NAME_SIZE         45
-#define ITEM_NAME_SIZE        20
+#define ITEM_NAME_SIZE        40
 
 using namespace std;
 using namespace Filler;
@@ -143,12 +143,39 @@ int getActNumber (int locationId) {
     return 7;
 }
 
+void printAct (std::ofstream& LogFile, int act) {
+    switch (act) {
+    case 1:
+        LogFile << "Act 1: Grass Valley";
+        break;
+    case 2:
+        LogFile << "Act 2: Greenwood";
+        break;
+    case 3:
+        LogFile << "Act 3: St Elles";
+        break;
+    case 4:
+        LogFile << "Act 4: Mountain of Souls";
+        break;
+    case 5:
+        LogFile << "Act 5: Leo's Lab";
+        break;
+    case 6:
+        LogFile << "Act 6: Magridd Castle";
+        break;
+    default:
+        LogFile << "Act 7: World of Evil";
+        break;
+    }
+}
+
 void createSpoilerLog(WorldMap& theWorld, int progressionLocations[], string& seedText) {
     string fileName = "SpoilerLog-" + seedText + ".txt";
     std::ofstream LogFile(fileName, std::ios::binary);
     Location* locationData;
+    Location* origLocation;
     Item* itemData;
-    int lastAct = 0;
+    int lastAct;
     int act;
 
     LogFile << "\r\n";
@@ -181,35 +208,37 @@ void createSpoilerLog(WorldMap& theWorld, int progressionLocations[], string& se
                 << itemData->name << "\r\n";
     }
 
-    LogFile << "  ----- All locations -----" << "\r\n";
+    LogFile << "  ----- All NPCs and key items -----" << "\r\n";
 
+    lastAct = 0;
     for (int locationId = 0; locationId < Locations::allLocationsCount; locationId++) {
         act = getActNumber(locationId);
         if (act > lastAct) {
             LogFile << "\r\n";
-            switch (act) {
-            case 1:
-                LogFile << "Act 1: Grass Valley" << "\r\n";
-                break;
-            case 2:
-                LogFile << "Act 2: Greenwood" << "\r\n";
-                break;
-            case 3:
-                LogFile << "Act 3: St Elles" << "\r\n";
-                break;
-            case 4:
-                LogFile << "Act 4: Mountain of Souls" << "\r\n";
-                break;
-            case 5:
-                LogFile << "Act 5: Leo's Lab" << "\r\n";
-                break;
-            case 6:
-                LogFile << "Act 6: Magridd Castle" << "\r\n";
-                break;
-            default:
-                LogFile << "Act 7: World of Evil" << "\r\n";
-                break;
-            }
+            printAct(LogFile, act);
+            LogFile << "\r\n";
+            lastAct = act;
+        }
+        origLocation = &Locations::allLocations[locationId];
+        itemData = &ItemPool::allItems[static_cast<int>(origLocation->origItemIndex)];
+
+        if (!itemData->isConsumable && !itemData->isExperience) {
+            locationData = &Locations::allLocations[Locations::itemLocation(origLocation->origItemIndex)];
+            LogFile << std::setw(ITEM_NAME_SIZE) << std::left << itemData->name
+                    << locationData->name << "\r\n";
+        }
+    }
+
+    LogFile << "\r\n";
+    LogFile << "  ----- All locations -----" << "\r\n";
+
+    lastAct = 0;
+    for (int locationId = 0; locationId < Locations::allLocationsCount; locationId++) {
+        act = getActNumber(locationId);
+        if (act > lastAct) {
+            LogFile << "\r\n";
+            printAct(LogFile, act);
+            LogFile << "\r\n";
             lastAct = act;
         }
         locationData = &Locations::allLocations[locationId];
