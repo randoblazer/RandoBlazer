@@ -1,6 +1,5 @@
 #include "Randomizer.h"
 
-//#include "Log.h"
 #include "Random.h"
 #include "ROMCheck.h"
 #include "ItemPool.h"
@@ -30,6 +29,12 @@ bool Randomize(const string &InFile, const string &OutFile, unsigned int seed, c
     seed = Random::RandomInit(seed);
     std::string seedText = std::to_string(seed);
 
+    cout << "Options: "
+        << (options.race ? "race, " : "")
+        << (options.full ? "full" : "short")
+        << ", " << (options.fastrom ? "fastrom" : "nofastrom")
+        << endl;
+
     /*
         Race mode: we increment the seed a few times from what is actually reported.
         This means that if you take the same seed and give it without race mode
@@ -37,7 +42,6 @@ bool Randomize(const string &InFile, const string &OutFile, unsigned int seed, c
         and there is a seed we can report and use as a link.
     */
     if (options.race) {
-        std::cout << "Race mode enabled\n";
         seed = Random::RandomInit(seed);
         seed = Random::RandomInit(seed);
         seed = Random::RandomInit(seed);
@@ -61,9 +65,11 @@ bool Randomize(const string &InFile, const string &OutFile, unsigned int seed, c
         Patreon: kandowontu - https://www.patreon.com/Kandowontu
         Twitter: @kandowontu
     */
-    bool patchSuccess = applyPatch(OutFileName, "Fastrom-SoulBlazerU.ips");
-    if (patchSuccess) {
-        cout << "Applied FastRom patch" << endl;
+    if (options.fastrom) {
+        bool patchSuccess = applyPatch(OutFileName, "Fastrom-SoulBlazerU.ips");
+        if (patchSuccess) {
+            cout << "Applied FastRom patch" << endl;
+        }
     }
 
     std::fstream ROMFile(OutFileName, std::ios::in | std::ios::out | std::ios::binary | std::ios::ate);
@@ -115,19 +121,35 @@ bool Randomize(const string &InFile, const string &OutFile, unsigned int seed, c
 
     // lairs.logLairs();
     // lairs.lairStats();
-    
-    bool placementSuccess = false;
-    int placementCount = 0;
-    while (!placementSuccess && placementCount < 10) {
-        placementCount++;
-        placementSuccess = randomizePlacement(worldFlags, seedText);
+
+    int testPlaceTotal = 1;
+    int totalPlaceAttempts = 0;
+    int maxAttempts = 0;
+    for (int testPlacementCount = 0; testPlacementCount < testPlaceTotal; testPlacementCount++) {
+        bool placementSuccess = false;
+        int placementCount = 0;
+        while (!placementSuccess && placementCount < 10) {
+            placementCount++;
+            placementSuccess = randomizePlacement(worldFlags, seedText);
+        }
+        if (placementSuccess) {
+            totalPlaceAttempts += placementCount;
+            if (placementCount > maxAttempts) {
+                maxAttempts = placementCount;
+            }
+            cout << "Placement succeeded in " << placementCount << (placementCount == 1 ? " try" : " tries") << endl;
+        } else {
+            cout << "Placement failed after " << placementCount << (placementCount == 1 ? " try" : " tries") << endl;
+            return false;
+        }
     }
-    if (placementSuccess) {
-        cout << "Placement succeeded in " << placementCount << (placementCount == 1 ? " try" : " tries") << endl;
-    } else {
-        cout << "Placement failed after " << placementCount << (placementCount == 1 ? " try" : " tries") << endl;
-        return false;
-    }
+    /*
+    // Statistics
+    cout << "Total: " << totalPlaceAttempts <<
+            " Average: " << (float)totalPlaceAttempts / testPlaceTotal <<
+            " Max: " << maxAttempts <<
+            endl;
+    */
 
     /* Modify the ROM with the randomized lists */
     ROMUpdate::ROMUpdateLairs(lairs, ROMFile);
@@ -396,40 +418,20 @@ bool randomizePlacement (WorldFlags& worldFlags, string& seedText) {
         return false;
     }
 
-    /*
-    // Still not sure exactly how often thunder ring is required
-    LocationID blesterSpots[3] = {
-        LocationID::LAIR_BLESTER_MIDDLE_LEFT,
-        LocationID::LAIR_BLESTER_MIDDLE_RIGHT,
-        LocationID::LAIR_BLESTER_TOP_LEFT
-    };
-    int progCount = 0;
-    for (int i = 0; i < 3; i++) {
-        ItemIndex blesterItem = Locations::allLocations[static_cast<int>(blesterSpots[i])].itemIndex;
-        if (ItemPool::allItems[static_cast<int>(blesterItem)].isProgression) {
-            progCount++;
+    if (worldFlags.race) {
+        if (!Filler::verifyAllReachable(theWorld.map)) {
+            cout << "Placement failed, could not reach all locations" << endl;
+            return false;
         }
-    }
-    if (worldFlags.blesterMetal && progCount >= 2) {
-        int commonHouse = Locations::itemLocation(ItemIndex::NPC_MERMAID_BUBBLE_ARMOR);
-        int blesterStatue = Locations::itemLocation(ItemIndex::NPC_MERMAID_STATUE_BLESTER);
-        int thunderRing = Locations::itemLocation(ItemIndex::THUNDER_RING);
-        int zantetsu = Locations::itemLocation(ItemIndex::ZANTETSU_SWORD);
-        int soulBlade = Locations::itemLocation(ItemIndex::SOUL_BLADE);
-        if (commonHouse < 150 && blesterStatue < 150 && thunderRing < 150 && zantetsu > 150 && soulBlade > 150) {
-            cout << "May be thunder ring seed" << endl;
-            return true;
-        }
-    }
-    */
-
-    if (!worldFlags.race) {
+    } else {
         cout << "Writing spoiler log" << endl;
         int progressionLocations[PROGRESSION_LOCATIONS_SIZE];
-        Filler::createProgressionList(theWorld.map, progressionLocations);
+        if (!Filler::createProgressionList(theWorld.map, progressionLocations)) {
+            cout << "Placement failed, could not reach all locations" << endl;
+            return false;
+        }
         createSpoilerLog(theWorld, progressionLocations, seedText);
     }
-
     return true;
 }
 
@@ -500,17 +502,26 @@ bool backupRom (const std::string &InFile, const std::string &OutFile)
     return true;
 }
 
-Options::Options(const string &options_string)
-{
+Options::Options(const string &options_string) {
+    add(options_string);
+}
+void Options::add(const string &options_string) {
     vector<string> options_list;
     boost::algorithm::split(options_list, options_string, boost::is_any_of(","));
 
     for (const auto &option : options_list) {
         if (option == "race") {
             race = true;
+        } else if (option == "full") {
+            full = true;
+        } else if (option == "short") {
+            full = false;
+        } else if (option == "nofastrom") {
+            fastrom = false;
         } else {
             cout << "Unknown option: " << option << "\n";
         }
     }
 }
+
 }

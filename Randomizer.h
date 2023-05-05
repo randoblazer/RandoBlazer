@@ -14,9 +14,12 @@
 
 namespace Randomizer {
     struct Options {
-	Options() {}
-	Options(const std::string& options_string);
+	    Options() {};
+	    Options(const std::string& options_string);
+	    void add(const std::string& options_string);
         bool race = false;
+        bool full = true;
+        bool fastrom = true;
     };
 
     void randomizeLairs(LairList& lairs, WorldFlags& worldFlags);

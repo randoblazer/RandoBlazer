@@ -6,6 +6,8 @@
 #include "LogicGraph.h"
 #include "Random.h"
 
+#define PROGRESSION_LOCATIONS_SIZE 400
+
 namespace Filler {
 
     class PlacementSet {
@@ -65,7 +67,9 @@ namespace Filler {
     bool dummyPlacement (LogicMap* map, PlacementSet& placementSet, LocationSet& locationSet);
     bool dummyPlacementWithFilter (LogicMap* map, PlacementSet& placementSet, LocationSet& locationSet);
     bool mustBeUniquePlacement (LogicMap* map, PlacementSet& placementSet1, PlacementSet& placementSet2, LocationSet& locationSet);
-    void createProgressionList (LogicMap* logicMap, int progressionLocations[]);
+    bool verifyLogicMap (LogicMap* logicMap, int progressionLocations[]);
+    bool createProgressionList (LogicMap* logicMap, int progressionLocations[]);
+    bool verifyAllReachable (LogicMap* logicMap);
 
     void testPlacement ();
 }

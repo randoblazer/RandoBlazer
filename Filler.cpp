@@ -319,7 +319,14 @@ bool mustBeUniquePlacement (LogicMap* map, PlacementSet& placementSet1, Placemen
     return true;
 }
 
-void createProgressionList (LogicMap* logicMap, int progressionLocations[]) {
+/*
+    Verify 100% locations reachable.
+    Also creates list for creation section of spoiler log.
+    TODO: Later we need to verify simply beatable.
+    Add trigger 'items' for 'dancing grandmas' and 'beat deathtoll' to make this easier.
+    Could be useful in other ways down the line.
+*/
+bool verifyLogicMap (LogicMap* logicMap, int progressionLocations[]) {
     LinkSet unmetLinks;
     LinkSet sphereLinks;
     ItemPool inventory;
@@ -331,6 +338,7 @@ void createProgressionList (LogicMap* logicMap, int progressionLocations[]) {
     ItemIndex itemIndex;
     Item* item;
     int progCount = 0;
+    bool success = false;
 
     unmetLinks.clear();
     unmetLinks.add(initialLink);
@@ -365,9 +373,13 @@ void createProgressionList (LogicMap* logicMap, int progressionLocations[]) {
         // cout << unmetLinks.size << " unmet links after processing" << endl;
         // cout << sphereLinks.size << " links to process in sphere" << endl;
 
+        if (unmetLinks.size == 0) {
+            success = true;
+        }
+
         // This should not happen - it would mean we cannot reach all locations
         if (sphereLinks.size == 0) {
-            std::cout << "WARNING - could not reach all locations in progression processing" << endl;
+            // std::cout << "WARNING - could not reach all locations in progression processing" << endl;
 
             // std::cout << unmetLinks.size << " unsatisfied links" << endl;
             // node = unmetLinks.set[0]->source;
@@ -413,6 +425,23 @@ void createProgressionList (LogicMap* logicMap, int progressionLocations[]) {
     progressionLocations[progCount++] = -2;
 
     delete initialLink;
+    return success;
+}
+
+/*
+    For now this just calls verifyLogicMap. If plans change it could become more specific.
+*/
+bool createProgressionList (LogicMap* logicMap, int progressionLocations[]) {
+    return verifyLogicMap(logicMap, progressionLocations);
+    // bool result = verifyLogicMap(logicMap, progressionLocations);
+    // if (!result) {
+        // std::cout << "WARNING - could not reach all locations in progression processing" << endl;
+    // }
+    // return result;
+}
+bool verifyAllReachable (LogicMap* logicMap) {
+    int progressionLocations[PROGRESSION_LOCATIONS_SIZE];
+    return verifyLogicMap(logicMap, progressionLocations);
 }
 
 void testPlacement () {

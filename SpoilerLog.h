@@ -4,8 +4,6 @@
 #include "World.h"
 #include "Filler.h"
 
-#define PROGRESSION_LOCATIONS_SIZE 400
-
 using namespace std;
 using namespace Filler;
 
