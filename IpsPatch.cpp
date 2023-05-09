@@ -10,7 +10,7 @@
 
 using namespace std;
 
-bool applyPatch (const std::string &OutFile, const std::string &PatchFile) {
+bool applyPatch (const std::string &OutFile, const unsigned char PatchBuffer[]) {
     std::ifstream ReadROM(OutFile, std::ios::binary);
     ReadROM.seekg(0, std::ios::end);
     long ROMFileSize = ReadROM.tellg();
@@ -19,15 +19,6 @@ bool applyPatch (const std::string &OutFile, const std::string &PatchFile) {
     ReadROM.read((char *)ROMBuffer, ROMFileSize);
     ReadROM.close();
     ReadROM.clear();
-
-    std::ifstream ReadPatch(PatchFile, std::ios::binary);
-    ReadPatch.seekg(0, std::ios::end);
-    long PatchFileSize = ReadPatch.tellg();
-    unsigned char *PatchBuffer = new unsigned char[PatchFileSize];
-    ReadPatch.seekg(0, std::ios::beg);
-    ReadPatch.read((char *)PatchBuffer, PatchFileSize);
-    ReadPatch.close();
-    ReadPatch.clear();
 
     int patchPos = 5;    // After the header
     unsigned int offset, size;
@@ -58,6 +49,5 @@ bool applyPatch (const std::string &OutFile, const std::string &PatchFile) {
     WriteROM.clear();
 
     delete[] ROMBuffer;
-    delete[] PatchBuffer;
     return true;
 }

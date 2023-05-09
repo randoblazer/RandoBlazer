@@ -66,7 +66,7 @@ bool Randomize(const string &InFile, const string &OutFile, unsigned int seed, c
         Twitter: @kandowontu
     */
     if (options.fastrom) {
-        bool patchSuccess = applyPatch(OutFileName, "Fastrom-SoulBlazerU.ips");
+        bool patchSuccess = applyPatch(OutFileName, FastRomPatchBuffer);
         if (patchSuccess) {
             cout << "Applied FastRom patch" << endl;
         }
