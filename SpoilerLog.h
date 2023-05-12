@@ -4,6 +4,8 @@
 #include "World.h"
 #include "Filler.h"
 
+#include <string>
+
 using namespace std;
 using namespace Filler;
 

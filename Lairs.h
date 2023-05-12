@@ -6,8 +6,6 @@
 
 #include <fstream>
 
-using namespace std;
-
 #define NUMBER_OF_LAIRS   420
 #define NUMBER_OF_SPRITES 205
 #define MONSTER_LAIR_DATA_ADDRESS 0xBA0D
@@ -165,7 +163,7 @@ public:
     static Lair originalLairs[NUMBER_OF_LAIRS];
     Lair lairList[NUMBER_OF_LAIRS];
 
-    static void readOriginalLairs (fstream &ROMFile);
+    static void readOriginalLairs (std::fstream &ROMFile);
     void copyOriginalLairs ();
     void logLairs ();
     void lairStats ();

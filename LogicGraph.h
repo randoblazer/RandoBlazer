@@ -4,8 +4,6 @@
 #include "Locations.h"
 #include "ItemPool.h"
 
-using namespace std;
-
 
 class LinkRequirement {
 public:

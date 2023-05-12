@@ -6,6 +6,7 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <string>
 #include <stdio.h>
 
 #define LOCATION_NAME_SIZE    55

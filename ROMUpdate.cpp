@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+using namespace std;
 
 namespace ROMUpdate {
 void ROMUpdateTextAndItems(const LairList& randomizedLairs,

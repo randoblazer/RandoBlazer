@@ -15,6 +15,6 @@ namespace RandoblazerExport {
 using namespace emscripten;
 
 EMSCRIPTEN_BINDINGS(randoblazer) {
-    function("CheckFile", &RandoblazerExport::CheckFile);
-    function("Randomize", &RandoblazerExport::Randomize);
+    emscripten::function("CheckFile", &RandoblazerExport::CheckFile);
+    emscripten::function("Randomize", &RandoblazerExport::Randomize);
 }

@@ -1,8 +1,6 @@
 #ifndef __ITEMPOOL_H__
 #define __ITEMPOOL_H__
 
-using namespace std;
-
 /*
     'Item' covers both release NPCs and actual items
     Flags tracked per item can tell what it actually is

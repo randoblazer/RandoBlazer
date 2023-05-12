@@ -289,6 +289,8 @@ const char* Lair::enemyName () {
                 default:
                     return "unknown";
             }
+        default:
+            return "unknown";
     }
     return "unknown";
 }
