@@ -1153,6 +1153,12 @@ void WorldMap::createWorld (WorldFlags& creationFlags) {
         (new LinkReqAnd())
             ->addReq(new LinkReqCheck(ItemIndex::NPC_SOLDIER_CASTLE))
             ->addReq(new LinkReqCheck(ItemIndex::NPC_KING_MAGRIDD))
+            ->addReq(new LinkReqCheck(ItemIndex::BROWN_STONE))
+            ->addReq(new LinkReqCheck(ItemIndex::GREEN_STONE))
+            ->addReq(new LinkReqCheck(ItemIndex::BLUE_STONE))
+            ->addReq(new LinkReqCheck(ItemIndex::SILVER_STONE))
+            ->addReq(new LinkReqCheck(ItemIndex::PURPLE_STONE))
+            ->addReq(new LinkReqCheck(ItemIndex::BLACK_STONE))
     ));
     worldOfEvil->addLink(new MapLink(worldOfEvil, dazzlingSpace,
         (new LinkReqCheck(ItemIndex::SOUL_ARMOR))
