@@ -10,6 +10,7 @@
 int main (int argc, char** argv ) {
     std::string in_file;
     std::string out_file;
+    std::string seed_name;
     std::optional<unsigned int> seed;
     Randomizer::Options options;
 
@@ -28,5 +29,5 @@ int main (int argc, char** argv ) {
     if (in_file.empty()) in_file = ROM_FILE_NAME;
     if (out_file.empty()) out_file = MOD_ROM_FILE_NAME;
 
-    return Randomizer::Randomize(in_file, out_file, seed.value_or(0), options) ? 0 : 1;
+    return Randomizer::Randomize(in_file, out_file, seed.value_or(0), options, &seed_name) ? 0 : 1;
 }

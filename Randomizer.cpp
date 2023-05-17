@@ -24,10 +24,12 @@ using namespace LocationGroups;
 
 namespace Randomizer {
 
-bool Randomize(const string &InFile, const string &OutFile, unsigned int seed, const Options &options, string *seedName)
+bool Randomize(const string &InFile, const string &OutFile,
+        unsigned int seed, const Options &options, string *seedName)
 {
     seed = Random::RandomInit(seed);
-    std::string seedText = std::to_string(seed);
+    *seedName = std::to_string(seed);
+    std::string seedText = *seedName;
 
     cout << "Options: "
         << (options.race ? "race, " : "")
@@ -518,7 +520,7 @@ void Options::add(const string &options_string) {
             full = false;
         } else if (option == "nofastrom") {
             fastrom = false;
-        } else {
+        } else if (option != "") {
             cout << "Unknown option: " << option << "\n";
         }
     }

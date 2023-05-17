@@ -27,7 +27,8 @@ namespace Randomizer {
     bool randomizePlacement(WorldFlags& worldFlags, std::string& seedText);
     ROMStatus CheckFile(const std::string& Filename);
     bool backupRom (const std::string &InFile, const std::string &OutFile);
-    bool Randomize(const std::string& InFile, const std::string& OutFile, unsigned int seed, const Options& options, std::string* seed_name = 0);
+    bool Randomize(const std::string& InFile, const std::string& OutFile,
+                   unsigned int seed, const Options& options, std::string* seedName);
 }
 
 #endif // __RANDOMIZER_H__
