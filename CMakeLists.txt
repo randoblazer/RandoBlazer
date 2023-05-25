@@ -25,6 +25,8 @@ endif()
 add_library(randoblazerlib STATIC
   Item.cpp
   Item.h
+  IpsPatch.cpp
+  IpsPatch.h
   Lair.cpp
   Lair.h
   Log.cpp

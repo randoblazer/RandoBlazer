@@ -4,6 +4,7 @@
 #include "Random.h"
 #include "ROMData.h"
 #include "ROMUpdate.h"
+#include "IpsPatch.h"
 
 #include <algorithm>
 #include <iomanip>
@@ -889,6 +890,15 @@ namespace Randomizer {
         ROMFileOriginal.clear();
         ROMFileCopy.clear();
 
+        /*
+            Fastrom patch by kando
+            Patreon: kandowontu - https://www.patreon.com/Kandowontu
+            Twitter: @kandowontu
+        */
+        bool patchSuccess = applyPatch(OutFile, FastRomPatchBuffer);
+        if (patchSuccess) {
+            std::cout << "Applied FastRom patch" << std::endl;
+        }
 
         /****************\
         |*  Randomize!  *|
