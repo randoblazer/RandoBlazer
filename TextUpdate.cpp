@@ -749,7 +749,7 @@ namespace ROMUpdate {
         ROMFile.seekp(0x13B2B, std::ios::beg);
         TEXT_WriteString("RANDO HYPE");
         ROMFile.seekp(0x13B3C, std::ios::beg);
-        TEXT_WriteString("RandoBlazer v0.7B  ");
+        TEXT_WriteString("RandoBlazer v0.9F  ");
         ROMFile.seekp(0x143B9, std::ios::beg);
         TEXT_WriteString("Seed ");
 	    ROMFile.write(seed.c_str(), 10);

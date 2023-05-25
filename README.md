@@ -2,6 +2,8 @@
 
 This randomizer should be used with the US version of the ROM: 
   Soul Blazer (U) [!].smc
+
+Both headered and non-headered ROMs can be used - the header will be automatically detected.
   
 ## Make a randomized ROM
 
@@ -9,17 +11,9 @@ This project builds two ways to randomize Soul Blazer: an executable and a web p
 
 To use the web page, load it in a browser and follow the instructions.
 
-For the executable, build the executable with the build instructions below. If you are simply clicking it in a file explorer then your original ROM should have the exact name "Soul Blazer (U) [!].smc" and be in the same folder. A patched rom and spoiler log will be created. 
+For the executable, build instructions and cli options are in the development section below.
 
-### On the command line
-
-```./randoblazer <original rom> <output rom (optional)> <seed (optional)> <flags (optional)>```
-
-The first three arguments are positional and required in order to set flags. Available flags are:
-* `race` - No spoiler log is created and the placement will not be the same as without the race option. The randomization is still consistent with the same seed so a link can be shared in the web version **(New)**.
-* `nofastrom` - The fastrom patch will not be applied.
-
-## Version 0.7b features
+## Version 0.9.1 features
 
 Monster Lair contents:
  - Enemy type is randomized, but will still choose from the possible enemy types in the current location. Monsters which usually don't belong to lairs can be in lairs (like blue blobs and torches in Act 1 Underground Castle).
@@ -52,5 +46,32 @@ You can use this tracker made by Netanonima: https://eggper.com/blazer_tracker/
  - More text edits maybe?
  - Randomize the orientation of enemies in "already there" monster lairs.
 
-### Known issues/limitations
+### Development
 
+The randomizer is a C++ project that is configured to build with cmake. It is recommended to create a build subdirectory for each build type. Linux is recommended - on Windows try using Windows Subsystem for Linux (WSL). The cmake tool generates a Makefile by default but the ninja build tool is recommended. Emscripten is used for web assembly compilation. All tools are widely available from Linux package management systems like apt.
+
+```
+# Install build toolchain
+sudo apt install build-essential ninja-build emscripten
+```
+
+ - CLI build
+
+```./randoblazer <original rom> <output rom (optional)> <seed (optional)> <flags (optional)>```
+
+If the original rom filename is omitted, it is expected to be in the same directory and named `Soul Blazer (U) [!].smc`. The first three arguments are positional and required in order to set flags. Available flags are:
+* `race` - No spoiler log is created and the placement will not be the same as without the race option. The randomization is still consistent with the same seed so a link can be shared in the web version **(New)**.
+* `nofastrom` - The fastrom patch will not be applied. **(New - fastrom patch is applied by default)**
+ ```
+ mkdir build && cd build
+ cmake .. -GNinja
+ ninja
+ ```
+
+ - Web assembly build
+ ```
+ mkdir build_emscripten && cd build_emscripten
+ emcmake cmake .. -GNinja -DCMAKE_BUILD_TYPE=MinSizeRel
+ ninja
+ ```
+ On the emcmake command `-DCMAKE_BUILD_TYPE=MinSizeRel` specifies a minified production build. Omit it for a development build. This build process creates `randoblazer.js` and `randoblazer.wasm`. Serve these alongside the files in the `www` directory.
