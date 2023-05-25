@@ -37,7 +37,7 @@ bool Locations::NPCOriginallyGivesEXP (LocationID locationIndex) {
         case LocationID::CRYSTAL_UNDERGROUND_CASTLE:
         case LocationID::CRYSTAL_LOST_MARSH_END:
         case LocationID::CRYSTAL_WATER_SHRINE2_SPEARS:
-        case LocationID::CRYSTAL_FIRE_SHRINE_BASEMENT:
+        case LocationID::CRYSTAL_FIRE_SHRINE_FLOOR1_METAL:
         case LocationID::CRYSTAL_MOUNTAIN_SUMMIT:
         case LocationID::CRYSTAL_LUNE:
         case LocationID::CRYSTAL_LEOS_BASEMENT:
