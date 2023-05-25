@@ -1,6 +1,7 @@
 #include "Randomizer.h"
 
 #include <emscripten/bind.h>
+#include <string>
 
 namespace RandoblazerExport {
     int CheckFile(const std::string& in_file) { return Randomizer::CheckFile(in_file); }
@@ -12,9 +13,7 @@ namespace RandoblazerExport {
     }
 }
 
-using namespace emscripten;
-
 EMSCRIPTEN_BINDINGS(randoblazer) {
-    function("CheckFile", &RandoblazerExport::CheckFile);
-    function("Randomize", &RandoblazerExport::Randomize);
+    emscripten::function("CheckFile", &RandoblazerExport::CheckFile);
+    emscripten::function("Randomize", &RandoblazerExport::Randomize);
 }
