@@ -24,6 +24,10 @@ $hourNumber = $dateTime->format('H');
 // numéro de semaine
 if(!isset($_GET['weekNumber'])){
     $weekNumber = $dateTime->format('W');
+    if($dayNumber == 1 || $dayNumber == 2 || $dayNumber == 3 || $dayNumber == 4 || $dayNumber == 5){
+        $weekNumber = intval($weekNumber)-1;
+    }
+
 }else{
     $weekNumber = $_GET['weekNumber'];
 }
@@ -35,7 +39,7 @@ if(empty($_GET['year'])) {
 }
 
 // condition pour voir la weekly seed et pouvoir poster son temps
-if(($dayNumber == 6 || $dayNumber == 7 || ($dayNumber == 5 && $hourNumber>17) || ($dayNumber == 1 && $hourNumber<14))&&(isset($_SESSION['id']))){
+if((($dayNumber == 5 && $hourNumber>17) || $dayNumber == 6 || $dayNumber == 7 || $dayNumber == 1 || $dayNumber == 2 || $dayNumber == 3 || $dayNumber == 4 || ($dayNumber == 5 && $hourNumber<7))&&(isset($_SESSION['id']))){
 	// recherche si un temps a été envoyé
 	$sql        =   'SELECT timeSent FROM times WHERE fk_user_id='.$userID.' AND year='.$year.' AND week='.$weekNumber;
 	$stmt       =   $db->prepare($sql);
@@ -51,9 +55,6 @@ if(($dayNumber == 6 || $dayNumber == 7 || ($dayNumber == 5 && $hourNumber>17) ||
 	// contenu de la weekly seed
 	if(!empty($_POST['time'])){
 		// décrémentation du numéro de semaine si le lundi
-		if(date("N")=='1'){
-			$weekNumber--;
-		}
 		$result	=	0;
 		// traitement de la requête
 		$userTime = "0000-00-00 ".$_POST['time'];
