@@ -6,8 +6,8 @@ ini_set('display_errors', 'On');
 // déclaration des variables de l'application
 define("PAGESCRIPT",            'index.php');               // page d'accueil de l'app
 define("SERVERNAME",            'localhost');               // host de la base de données
-define("DBUSERNAME",            'admin_netanonima');        // identifiant de la base de données
-define("DBPASSWORD",            'Dlt3qyby44');              // mot de pass de la base de données
+define("DBUSERNAME",            'YOUR_USERNAME');        // identifiant de la base de données
+define("DBPASSWORD",            'YOUR_PASSWORD');              // mot de pass de la base de données
 define("DBNAME",                'admin_randoblazer');       // nom de la base de données
 define("YEAROFCREATION",        '2020');                    // année de la création de l'application
 
@@ -32,7 +32,7 @@ if(!empty($_GET['nav'])){
                     setcookie($name, '', time()-1000, '/');
                 }
             }
-        }   
+        }
         ?><script>location.href = "index.php?nav=login"</script><?php
     }
 }
