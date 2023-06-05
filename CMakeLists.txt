@@ -25,6 +25,8 @@ endif()
 add_library(randoblazerlib STATIC
   Item.cpp
   Item.h
+  IpsPatch.cpp
+  IpsPatch.h
   Lair.cpp
   Lair.h
   Log.cpp
@@ -53,7 +55,7 @@ if(CMAKE_SYSTEM_NAME MATCHES "Emscripten")
     Emscripten.cpp
   )
   target_compile_options(randoblazer_emscripten PRIVATE --bind)
-  target_link_libraries(randoblazer_emscripten PRIVATE randoblazerlib --bind)
+  target_link_libraries(randoblazer_emscripten PRIVATE randoblazerlib idbfs.js --bind)
   set_target_properties(randoblazer_emscripten PROPERTIES
     OUTPUT_NAME randoblazer
   )
