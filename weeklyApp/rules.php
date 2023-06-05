@@ -7,7 +7,7 @@ include('up.php');
 <p>Please only send real times. If you're a liar, we'll have a lot of fun during the next herb% tournament. </p>
 <p>You can update your time in the "Current weekly seed" section. </p>
 <p>If you can't remember your password please contact me on discord (netanonima#7832), I will give a link so you can change it. </p>
-<p>Good luck,have fun and blame Everhate. </p>
+<p>Good luck, have fun and blame Everhate. </p>
 <?php
 include('down.php');
 ?>

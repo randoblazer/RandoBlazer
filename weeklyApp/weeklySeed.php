@@ -74,7 +74,7 @@ if((($dayNumber == 5 && $hourNumber>17) || $dayNumber == 6 || $dayNumber == 7 ||
 			$oldTimeSent = $oldTimeSent->format('H:i:s');
 		}
 		if($result==1){
-			echo "<div>You time has been sent, thank you. </div>";
+			echo "<div>Your time has been sent, thank you. </div>";
 		}else{
 			echo "<div>There was an error while sending your time. </div>";
 		}
@@ -83,7 +83,7 @@ if((($dayNumber == 5 && $hourNumber>17) || $dayNumber == 6 || $dayNumber == 7 ||
 		}
 	}
 	?>
-	<div><h3><a href="https://noobill.ch/RandoBlazer/build/weeklySeed.zip" target="_blank">Dowload weekly seed</a></h3></div>
+	<div><h3><a href="https://noobill.ch/RandoBlazer/build/weeklySeed.zip" target="_blank">Download weekly seed</a></h3></div>
 	<form action="" method="post">
 		<fieldset>
 			<legend>Then you can post/update your time here for the <u><?php echo $year;?> week <?php echo $weekNumber;?>'s seed</u> : </legend>

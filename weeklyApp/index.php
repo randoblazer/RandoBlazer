@@ -8,7 +8,7 @@ include('up.php');
 	if(isset($_SESSION['id'])){
 		echo '<p>You\'re correctly logged in!</p>';
 		}else{
-			echo '<p>Please log yourself on login page!</p>';
+			echo '<p>Please log in on the login page!</p>';
 		}
 		?>
 		</div>

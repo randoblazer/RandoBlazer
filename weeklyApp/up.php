@@ -5,7 +5,7 @@ include 'config.php';
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Randoblazer</title>
+	<title>Randoblazer Weekly</title>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/superhero/bootstrap.min.css">
 	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
 	<link rel="icon" href="favicon.ico" type="image/x-icon">
