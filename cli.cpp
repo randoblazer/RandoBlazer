@@ -1,6 +1,7 @@
 #include "Randomizer.h"
 #include "Random.h"
 
+#include <optional>
 #include <stdlib.h>
 
 #define ROM_FILE_NAME      "Soul Blazer (U) [!].smc"
@@ -9,8 +10,7 @@
 int main (int argc, char** argv ) {
     std::string in_file;
     std::string out_file;
-    bool has_seed = false;
-    unsigned int seed;
+    std::optional<unsigned int> seed;
     Randomizer::Options options;
 
     for (int i = 1; i < argc; i++) {
@@ -18,9 +18,8 @@ int main (int argc, char** argv ) {
            in_file = argv[i];
        } else if (out_file.empty()) {
            out_file = argv[i];
-       } else if (!has_seed) {
+       } else if (!seed.has_value()) {
            seed = atoi(argv[i]);
-	   has_seed = true;
        } else {
            options = Randomizer::Options(argv[i]);
        }
@@ -28,7 +27,6 @@ int main (int argc, char** argv ) {
 
     if (in_file.empty()) in_file = ROM_FILE_NAME;
     if (out_file.empty()) out_file = MOD_ROM_FILE_NAME;
-    if (!has_seed) seed = Random::RandomInit(0);
 
-    return Randomizer::Randomize(in_file, out_file, seed, options) ? 0 : 1;
+    return Randomizer::Randomize(in_file, out_file, seed.value_or(0), options) ? 0 : 1;
 }
