@@ -4,6 +4,7 @@
 #include "Random.h"
 #include "ROMData.h"
 #include "ROMUpdate.h"
+#include "IpsPatch.h"
 
 #include <algorithm>
 #include <iomanip>
@@ -812,34 +813,25 @@ namespace Randomizer {
             return false;
         }
 
-        if (options.race) {
-            std::cout << "Race mode enabled, randomizing seed number.\n";
-            seed = 0;
-        }
-
         seed = Random::RandomInit(seed);
         std::string seedText = std::to_string(seed);
-
-        if (options.race) {
-            seedText += std::to_string(Random::RandomInteger(INT32_MAX));
-            // Get top 10 characters of SHA1 hash
-            boost::uuids::detail::sha1 sha1;
-            sha1.process_bytes(seedText.data(), seedText.size());
-            unsigned hash[5] = {0};
-            sha1.get_digest(hash);
-            char buffer[41] = {0};
-            for (int i = 0; i < 5; i++) {
-                std::sprintf(buffer + (i << 3), "%08x", hash[i]);
-            }
-            seedText = "Race ";
-            seedText += std::string(buffer, 5);
-        }
-
         if (seedName) {
             *seedName = seedText;
         }
-
         std::cout << "Seed " << seedText << "\n";
+
+        /*
+            Race mode: we increment the seed a few times from what is actually reported.
+            This means that if you take the same seed and give it without race mode
+            the result will be different. But the result with race mode will be consistent
+            and there is a seed we can report and use as a link.
+        */
+        if (options.race) {
+            std::cout << "Race mode enabled, altering actual seed.\n";
+            Random::RandomInit(seed);
+            Random::RandomInit(seed);
+            Random::RandomInit(seed);
+        }
 
         /***************************************************\
         |*  Delete old modified ROM / backup original ROM  *|
@@ -889,6 +881,15 @@ namespace Randomizer {
         ROMFileOriginal.clear();
         ROMFileCopy.clear();
 
+        /*
+            Fastrom patch by kando
+            Patreon: kandowontu - https://www.patreon.com/Kandowontu
+            Twitter: @kandowontu
+        */
+        bool patchSuccess = applyPatch(OutFile, FastRomPatchBuffer);
+        if (patchSuccess) {
+            std::cout << "Applied FastRom patch" << std::endl;
+        }
 
         /****************\
         |*  Randomize!  *|

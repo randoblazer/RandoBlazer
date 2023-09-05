@@ -8,6 +8,7 @@
 #include <fstream>
 #include <string.h>
 #include <vector>
+#include <array>
 
 #define NB_NPC_TO_DISABLE_ADDRESSES 27
 #define NB_MASTER_INTRO_TEXTS 26
@@ -1586,6 +1587,20 @@ namespace ROMUpdate {
         TEXT_WriteString("I`ve got nothing\rfor you.");
         TEXT_WriteByte(0x11);
         TEXT_WriteByte(0x0C);
+
+	    /*** change message speed */
+        std::array addrs = {
+        	0x2796C,
+            0x25F0F,
+            0x25F19,
+            0x26004,
+            0x2600E
+        };
+        for (int i = 0; i < addrs.size(); i++) {
+            ROMFile.seekp(addrs[i], std::ios::beg);
+            // 0 for instant, 1 for fast like J version
+            TEXT_WriteByte(0x01);
+        }
     }
 
 
