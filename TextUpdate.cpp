@@ -8,6 +8,7 @@
 #include <fstream>
 #include <string.h>
 #include <vector>
+#include <array>
 
 #define NB_NPC_TO_DISABLE_ADDRESSES 27
 #define NB_MASTER_INTRO_TEXTS 26

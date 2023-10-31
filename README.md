@@ -50,9 +50,14 @@ You can use this tracker made by Netanonima: https://eggper.com/blazer_tracker/
 
 The randomizer is a C++ project that is configured to build with cmake. It is recommended to create a build subdirectory for each build type. Linux is recommended - on Windows try using Windows Subsystem for Linux (WSL). The cmake tool generates a Makefile by default but the ninja build tool is recommended. Emscripten is used for web assembly compilation. All tools are widely available from Linux package management systems like apt.
 
+For web assembly a tool called emscripten is used. There may not be an apt package easily available.
+The manual install process fairly straightforward though - https://emscripten.org/docs/getting_started/downloads.html
+
 ```
 # Install build toolchain
-sudo apt install build-essential ninja-build emscripten
+sudo apt install build-essential cmake ninja-build
+# emscripten for web assembly build
+sudo apt install emscripten
 ```
 
  - CLI build

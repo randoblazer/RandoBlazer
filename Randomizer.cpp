@@ -24,6 +24,9 @@ using namespace LocationGroups;
 
 namespace Randomizer {
 
+// seedName is used by the web build to return the seed
+// The CLI version just returns 0 or 1
+
 bool Randomize(const string &InFile, const string &OutFile,
         unsigned int seed, const Options &options, string *seedName)
 {
