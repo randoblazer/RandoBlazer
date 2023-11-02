@@ -8,7 +8,6 @@
 #include <fstream>
 #include <string.h>
 #include <vector>
-#include <array>
 
 #define NB_NPC_TO_DISABLE_ADDRESSES 27
 #define NB_MASTER_INTRO_TEXTS 26
@@ -1500,19 +1499,32 @@ namespace ROMUpdate {
         TEXT_WriteByte(0x0C);
 
        	/*** change message speed */
-	    unsigned int addrs[] = {
+	    for (unsigned int addr: {
 		    0x2796C,
 		    0x25F0F,
 		    0x25F19,
 		    0x26004,
 		    0x2600E
-        };
-	    int addrCount = sizeof(addrs) / sizeof(addrs[0]);
-	    for (int i = 0; i < addrCount; i++) {
-	    	ROMFile.seekp(addrs[i], std::ios::beg);
+        }) {
+	    	ROMFile.seekp(addr, std::ios::beg);
 	    	// 1 for fast like J version, 0 makes it instant but causes problems
 	    	TEXT_WriteByte(0x01);
 	    }
+
+        /*** Double screen transition effect speed */
+        // This works by overwriting a subroutine jump with no-ops
+        ROMFile.seekp(0x27894, std::ios::beg);
+        TEXT_WriteByte(0xEA);
+        TEXT_WriteByte(0xEA);
+        TEXT_WriteByte(0xEA);
+        TEXT_WriteByte(0xEA);
+
+        /*** Reduce enemy iframes on spawn */
+        ROMFile.seekp(0x294B, std::ios::beg);
+        // Default is 59 so one second
+        // Making it too short trivializes certain enemies - we still
+        // want random moving enemies to run off and wizards to teleport
+        TEXT_WriteByte(36);
     }
 
     void NPCItemTextUpdate(NpcItemIndex npcItemIndex,
