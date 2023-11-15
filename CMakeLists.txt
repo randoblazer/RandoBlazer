@@ -10,18 +10,6 @@ if(ASAN)
   set(CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS} -fno-omit-frame-pointer -fsanitize=address")
 endif()
 
-include(FetchContent)
-FetchContent_Declare(
-  Boost-CMake
-  GIT_REPOSITORY https://github.com/Orphis/boost-cmake.git
-)
-
-FetchContent_GetProperties(Boost-CMake)
-if(NOT boost-cmake_POPULATED)
-  FetchContent_Populate(Boost-CMake)
-  add_subdirectory(${boost-cmake_SOURCE_DIR} ${boost-cmake_BINARY_DIR} EXCLUDE_FROM_ALL)
-endif()
-
 add_library(randoblazerlib STATIC
   IpsPatch.cpp
   IpsPatch.h
@@ -50,7 +38,7 @@ add_library(randoblazerlib STATIC
   TextUpdate.cpp
   TextUpdate.h
 )
-target_link_libraries(randoblazerlib PRIVATE Boost::random)
+target_link_libraries(randoblazerlib PRIVATE)
 
 if(CMAKE_SYSTEM_NAME MATCHES "Emscripten")
   add_executable(randoblazer_emscripten

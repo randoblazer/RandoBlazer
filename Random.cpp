@@ -1,8 +1,6 @@
 #include "Random.h"
 
 #include <random>
-#include <boost/random/uniform_int_distribution.hpp>
-
 #include <iostream>
 
 static std::mt19937 gen;
@@ -68,9 +66,8 @@ namespace Random {
     }
 
     int RandomIntegerRange(int LowerBound, int UpperBound) {
-        static boost::random::uniform_int_distribution<int> dis;
-
-        return dis(gen, boost::random::uniform_int_distribution<int>::param_type{LowerBound, UpperBound});
+        static std::uniform_int_distribution<int> dis;
+        return dis(gen, std::uniform_int_distribution<int>::param_type{LowerBound, UpperBound});
     }
 
     void testPicker () {

@@ -1519,12 +1519,44 @@ namespace ROMUpdate {
         TEXT_WriteByte(0xEA);
         TEXT_WriteByte(0xEA);
 
-        /*** Reduce enemy iframes on spawn */
-        ROMFile.seekp(0x294B, std::ios::beg);
+        /*** Tweak enemy movement delay and iframes on spawn */
+        // These values affect the spawn-in speed.
+        // Default values are 6, 6, 6 5
+        // Lowering them means enemy spawns in faster.
+        // They still get iframes after this that we take care of next
+	    for (unsigned int addr: {
+		    0x70022,
+		    0x7002A,
+		    0x70032,
+		    0x7003A
+        }) {
+	        ROMFile.seekp(addr, std::ios::beg);
+	        TEXT_WriteByte(1);
+	    }
+        // Iframes once spawn has finished
         // Default is 59 so one second
         // Making it too short trivializes certain enemies - we still
         // want random moving enemies to run off and wizards to teleport
-        TEXT_WriteByte(36);
+        // ROMFile.seekp(0x294B, std::ios::beg);
+        // TEXT_WriteByte(40);
+        // Even a modest decrease is a bit harsh on the enemies so we leave it off
+
+        // This value controls how long the xp value hangs after finishing an enemy
+        // Default is 16. Lowering it speeds up single spawn lairs
+        ROMFile.seekp(0x2B55, std::ios::beg);
+        TEXT_WriteByte(1);
+
+        // This makes death animation faster
+	    for (unsigned int addr: {
+		    0x70138,
+		    0x70140,
+		    0x70148,
+		    0x70150,
+		    0x70158
+        }) {
+	        ROMFile.seekp(addr, std::ios::beg);
+	        TEXT_WriteByte(1);
+	    }
     }
 
     void NPCItemTextUpdate(NpcItemIndex npcItemIndex,

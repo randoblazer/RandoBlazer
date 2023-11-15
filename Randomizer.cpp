@@ -15,9 +15,8 @@
 #include <algorithm>
 #include <iomanip>
 #include <iostream>
+#include <sstream>
 #include <cstdio>
-#include <boost/algorithm/string.hpp>
-#include <boost/uuid/detail/sha1.hpp>
 
 using namespace std;
 using namespace LocationGroups;
@@ -511,10 +510,10 @@ Options::Options(const string &options_string) {
     add(options_string);
 }
 void Options::add(const string &options_string) {
-    vector<string> options_list;
-    boost::algorithm::split(options_list, options_string, boost::is_any_of(","));
+    std::stringstream optionsStream(options_string);
+    std::string option;
 
-    for (const auto &option : options_list) {
+    while (std::getline(optionsStream, option, ',')) {
         if (option == "race") {
             race = true;
         } else if (option == "full") {
