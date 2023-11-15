@@ -8,7 +8,6 @@
 #include <fstream>
 #include <string.h>
 #include <vector>
-#include <array>
 
 #define NB_NPC_TO_DISABLE_ADDRESSES 27
 #define NB_MASTER_INTRO_TEXTS 26
@@ -1588,19 +1587,66 @@ namespace ROMUpdate {
         TEXT_WriteByte(0x11);
         TEXT_WriteByte(0x0C);
 
-	    /*** change message speed */
-        std::array addrs = {
-        	0x2796C,
-            0x25F0F,
-            0x25F19,
-            0x26004,
-            0x2600E
-        };
-        for (int i = 0; i < addrs.size(); i++) {
-            ROMFile.seekp(addrs[i], std::ios::beg);
-            // 0 for instant, 1 for fast like J version
-            TEXT_WriteByte(0x01);
-        }
+        /*** change message speed */
+	    for (unsigned int addr: {
+		    0x2796C,
+		    0x25F0F,
+		    0x25F19,
+		    0x26004,
+		    0x2600E
+        }) {
+	        ROMFile.seekp(addr, std::ios::beg);
+	        // 1 for fast like J version, 0 makes it instant but causes problems
+	        TEXT_WriteByte(0x01);
+	    }
+
+        /*** Double screen transition effect speed */
+        // This works by overwriting a subroutine jump with no-ops
+        ROMFile.seekp(0x27894, std::ios::beg);
+        TEXT_WriteByte(0xEA);
+        TEXT_WriteByte(0xEA);
+        TEXT_WriteByte(0xEA);
+        TEXT_WriteByte(0xEA);
+
+        /*** Tweak enemy movement delay and iframes on spawn */
+        // These values affect the spawn-in speed.
+        // Default values are 6, 6, 6, 5
+        // Lowering them means enemy spawns in faster.
+        // They still get iframes after this
+        // This also makes other explosion animations run faster
+	    for (unsigned int addr: {
+		    0x70022,
+		    0x7002A,
+		    0x70032,
+		    0x7003A
+        }) {
+	        ROMFile.seekp(addr, std::ios::beg);
+	        TEXT_WriteByte(1);
+	    }
+        // Iframes once spawn has finished
+        // Default is 59 so one second
+        // Making it too short trivializes certain enemies - we still
+        // want random moving enemies to run off and wizards to teleport
+        // ROMFile.seekp(0x294B, std::ios::beg);
+        // TEXT_WriteByte(40);
+        // Even small changes here are harsh to the enemies so we leave it as is
+
+        // This value controls how long the xp value hangs after finishing an enemy
+        // Default is 16. Lowering it speeds up single spawn lairs
+        ROMFile.seekp(0x2B55, std::ios::beg);
+        TEXT_WriteByte(1);
+
+        // This makes death animation faster
+	    for (unsigned int addr: {
+		    0x70138,
+		    0x70140,
+		    0x70148,
+		    0x70150,
+		    0x70158
+        }) {
+	        ROMFile.seekp(addr, std::ios::beg);
+	        TEXT_WriteByte(1);
+	    }
     }
 
 
