@@ -180,6 +180,11 @@ namespace Map {
         RegionList[11].InsertGoal(13); /* Mermaid Queen ==> Act 4 */
         RegionList[11].InsertGoal(54); /* Medical Herb mermaid */
         RegionList[11].InsertGoal(55); /* Common Mermaid house */
+        RegionList[11].InsertGoal(12); /* Last soul of Southerta */
+        RegionList[11].InsertGoal(15); /* Rockbird */
+        RegionList[11].InsertGoal(16); /* Blester */
+        RegionList[11].InsertGoal(17); /* Durean */
+        RegionList[11].InsertGoal(18); /* Ghost Ship */
 
         /* Region 12 - Light Shrine Fire Spirits */
         RegionList[12].InsertElement(GoalType::LAIR, NPC_BIRD_RED_HOT_MIRROR);
@@ -187,8 +192,6 @@ namespace Map {
 
         /* Region 13 - Last soul of Southerta */
         RegionList[13].InsertElement(GoalType::LAIR, NPC_MERMAID_STATUE_ROCKBIRD);
-        RegionList[13].InsertGoal(15); /* Rockbird */
-        RegionList[13].InsertGoal(16); /* Blester */
 
         /* Region 14 - Act 4 start, Mountain of Souls */
         RegionList[14].InsertElement(GoalType::ITEM, ITEM_MERMAID_QUEEN);
@@ -226,8 +229,6 @@ namespace Map {
         RegionList[16].InsertElement(GoalType::ITEM, 29);
         RegionList[16].InsertElement(GoalType::ITEM, 30);
         RegionList[16].InsertElement(GoalType::ITEM, ITEM_CRYSTAL_ROCKBIRD);
-        RegionList[16].InsertGoal(17); /* Durean */
-        RegionList[16].InsertGoal(18); /* Ghost Ship */
 
         /* Region 17 - Blester */
         RegionList[17].InsertElement(GoalType::LAIR, NPC_ANGELFISH);
@@ -492,7 +493,6 @@ namespace Map {
         /* Region 56 - Common Mermaid house */
         RegionList[56].InsertElement(GoalType::ITEM, 22);  /* WARNING: I hope this chest is safe */
         RegionList[56].InsertElement(GoalType::ITEM, ITEM_MERMAID_BUBBLE_ARMOR);
-        RegionList[56].InsertGoal(12); /* Last soul of Southerta */
         RegionList[56].InsertGoal(14); /* Big Pearl chest */
         //RegionList[56].InsertGoal(22); /* Mermaid's Tears chest */
         RegionList[56].InsertGoal(57); /* Red-Hot Stick mermaid */
@@ -634,6 +634,7 @@ namespace Map {
         GoalList[11].Target = 12;
 
         /* Goal 12 - Last soul of Southerta */
+        GoalList[12].InsertElement(GoalType::LAIR, NPC_MERMAID_BUBBLE_ARMOR);
         GoalList[12].InsertElement(GoalType::ITEM, ITEM_MERMAID_BUBBLE_ARMOR);
         GoalList[12].Target = 13;
 
@@ -647,18 +648,26 @@ namespace Map {
         GoalList[14].Target = 15;
 
         /* Goal 15 - Rockbird */
+        GoalList[15].InsertElement(GoalType::LAIR, NPC_MERMAID_BUBBLE_ARMOR);
+        GoalList[15].InsertElement(GoalType::ITEM, ITEM_MERMAID_BUBBLE_ARMOR);
         GoalList[15].InsertElement(GoalType::LAIR, NPC_MERMAID_STATUE_ROCKBIRD);
         GoalList[15].Target = 16;
 
         /* Goal 16 - Blester */
+        GoalList[16].InsertElement(GoalType::LAIR, NPC_MERMAID_BUBBLE_ARMOR);
+        GoalList[16].InsertElement(GoalType::ITEM, ITEM_MERMAID_BUBBLE_ARMOR);
         GoalList[16].InsertElement(GoalType::LAIR, NPC_MERMAID_STATUE_BLESTER);
         GoalList[16].Target = 17;
 
         /* Goal 17 - Durean */
+        GoalList[17].InsertElement(GoalType::LAIR, NPC_MERMAID_BUBBLE_ARMOR);
+        GoalList[17].InsertElement(GoalType::ITEM, ITEM_MERMAID_BUBBLE_ARMOR);
         GoalList[17].InsertElement(GoalType::LAIR, NPC_MERMAID_STATUE_DUREAN);
         GoalList[17].Target = 18;
 
         /* Goal 18 - Ghost Ship */
+        GoalList[18].InsertElement(GoalType::LAIR, NPC_MERMAID_BUBBLE_ARMOR);
+        GoalList[18].InsertElement(GoalType::ITEM, ITEM_MERMAID_BUBBLE_ARMOR);
         GoalList[18].InsertElement(GoalType::LAIR, NPC_MERMAID_STATUE_GHOST_SHIP);
         GoalList[18].Target = 19;
 
