@@ -828,10 +828,10 @@ namespace ROMUpdate {
         ROMFile.seekp(0x13B2B, std::ios::beg);
         TEXT_WriteString("RANDO HYPE");
         ROMFile.seekp(0x13B3C, std::ios::beg);
-        TEXT_WriteString("RandoBlazer v0.5c  ");
+        TEXT_WriteString("RandoBlazer v0.5d  ");
         ROMFile.seekp(0x143B9, std::ios::beg);
         TEXT_WriteString("Seed ");
-	ROMFile.write(Seed.c_str(), 10);
+        ROMFile.write(Seed.c_str(), 10);
         //TEXT_WriteString(Seed.c_str());
 
         /*** Correct Magic Flare typo + Greenwood/Actinidia leaves + "received" typo */
