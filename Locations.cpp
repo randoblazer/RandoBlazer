@@ -86,6 +86,14 @@ int Locations::itemLocation (ItemIndex itemIndex) {
     }
     return -1;
 }
+int Locations::itemOrigLocation (ItemIndex itemIndex) {
+    for (int i = 0; i < ALL_LOCATIONS_SIZE; i++) {
+        if (allLocations[i].origItemIndex == itemIndex) {
+            return i;
+        }
+    }
+    return -1;
+}
 
 void Locations::populateLair (LocationID locationIndex, ItemIndex origItemIndex, Location* flags, const char* name) {
     Location *dst = &allLocations[(int)locationIndex];

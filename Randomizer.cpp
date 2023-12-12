@@ -296,6 +296,34 @@ bool randomizePlacement (WorldFlags& worldFlags, string& seedText) {
         theWorld.map->fillLocation(keyNpcBossLocation);
     }
 
+/*
+    // Set fast progress to test things
+    dummyPlacementItems.clear();
+    for (ItemIndex i: {
+        ItemIndex::NPC_VILLAGE_CHIEF,
+        ItemIndex::NPC_OLD_WOMAN,
+        ItemIndex::NPC_GREENWOODS_GUARDIAN,
+        // ItemIndex::NPC_MERMAID_STATUE_ROCKBIRD,
+        ItemIndex::NPC_MERMAID_STATUE_GHOST_SHIP,
+        ItemIndex::NPC_MERMAID_BUBBLE_ARMOR
+    }) {
+        dummyPlacementItems.add(i);
+        theWorld.progressionItems.removeItem(i);
+    }
+    ItemIndex bubbleArmor = ItemIndex::BUBBLE_ARMOR;
+    theWorld.progressionItems.removeItem(bubbleArmor);
+    Locations::allLocations[static_cast<int>(LocationID::NPC_VILLAGE_CHIEF)].itemIndex = bubbleArmor;
+    theWorld.map->fillLocation(LocationID::NPC_VILLAGE_CHIEF);
+    dummyLocations.clear();
+    dummyLocations.add(LocationID::LAIR_UNDERGROUND_CASTLE_1);
+    dummyLocations.add(LocationID::LAIR_UNDERGROUND_CASTLE_2);
+    dummyLocations.add(LocationID::LAIR_UNDERGROUND_CASTLE_3);
+    dummyLocations.add(LocationID::LAIR_UNDERGROUND_CASTLE_4);
+    dummyLocations.add(LocationID::LAIR_UNDERGROUND_CASTLE_5);
+    dummyLocations.add(LocationID::LAIR_UNDERGROUND_CASTLE_6);
+    Filler::dummyPlacement(theWorld.map, dummyPlacementItems, dummyLocations);
+*/
+
     // cout << "Boss fill 2 done" << endl;
     // cout << "After boss fill" << endl;
     // logMap(theWorld);

@@ -450,6 +450,7 @@ public:
     static void populate ();
     static Location* getLocation (LocationID locationId);
     static int itemLocation (ItemIndex itemIndex);
+    static int itemOrigLocation (ItemIndex itemIndex);
     static void logLocation (const Location& location);
     static void logAllLocations ();
 };

@@ -33,6 +33,12 @@
     Byte = _Byte_;                    \
     ROMFile.write((char*)(&Byte), 1); \
 }
+#define TEXT_WriteByteAt(_Address_, _Byte_)        \
+{                                     \
+    Byte = _Byte_;                    \
+    ROMFile.seekp(_Address_, std::ios::beg); \
+    ROMFile.write((char*)(&Byte), 1); \
+}
 
 #define TEXT_WriteString(_String_) {ROMFile.write(_String_, strlen(_String_));}
 
@@ -45,7 +51,6 @@
     ItemId Byte = ItemPool::allItems[(int)Locations::allLocations[(int)_Location_].itemIndex].itemId;       \
     if (Byte != ItemId::GEMS_EXP && Byte != ItemId::NOTHING) {ROMFile.write((char*)(&Byte), 1);} \
 }
-
 
 /* Handle the different types of text ending (yeah, apparently it's a thing) */
 #define TEXT_EndText(_Type_)  \
@@ -1427,6 +1432,13 @@ namespace ROMUpdate {
         TEXT_WriteString("Southerta is open!");
         TEXT_EndText(TEXT_ENDTYPE_44AA);
 
+        /*** Move Rockbird statue */
+        ROMFile.seekp(0xA108, std::ios::beg);
+        TEXT_WriteByte(0x60);
+        TEXT_WriteByte(0x20);
+        // Remove a hole so we don't get stuck on ghost ship
+        TEXT_WriteByteAt(0xF039F, 0x0E);
+
         /*** Bubble Armor mermaid's revival text */
         ROMFile.seekp(0xF8BBD, std::ios::beg);
         TEXT_WriteString("Does anyone want my\r");
@@ -1506,9 +1518,8 @@ namespace ROMUpdate {
 		    0x26004,
 		    0x2600E
         }) {
-	    	ROMFile.seekp(addr, std::ios::beg);
 	    	// 1 for fast like J version, 0 makes it instant but causes problems
-	    	TEXT_WriteByte(0x01);
+	        TEXT_WriteByteAt(addr, 1);
 	    }
 
         /*** Double screen transition effect speed */
@@ -1519,32 +1530,31 @@ namespace ROMUpdate {
         TEXT_WriteByte(0xEA);
         TEXT_WriteByte(0xEA);
 
-        /*** Tweak enemy movement delay and iframes on spawn */
-        // These values affect the spawn-in speed.
-        // Default values are 6, 6, 6 5
+        /*** Tweak enemy spawn animation speed */
+        // These values affect the explosion animation that happens when enemies spawn in
+        // Default values are 6, 6, 6, 5
         // Lowering them means enemy spawns in faster.
-        // They still get iframes after this that we take care of next
+        // The overall rate of multispawn lairs does not change.
+        // They still get iframes after this
+        // This also makes other explosion animations run faster
 	    for (unsigned int addr: {
 		    0x70022,
 		    0x7002A,
 		    0x70032,
 		    0x7003A
         }) {
-	        ROMFile.seekp(addr, std::ios::beg);
-	        TEXT_WriteByte(1);
+	        TEXT_WriteByteAt(addr, 2);
 	    }
         // Iframes once spawn has finished
         // Default is 59 so one second
         // Making it too short trivializes certain enemies - we still
         // want random moving enemies to run off and wizards to teleport
-        // ROMFile.seekp(0x294B, std::ios::beg);
-        // TEXT_WriteByte(40);
-        // Even a modest decrease is a bit harsh on the enemies so we leave it off
+        // TEXT_WriteByteAt(0x294B, 59);
+        // Even a small decrease is a bit harsh on the enemies so we leave it off
 
         // This value controls how long the xp value hangs after finishing an enemy
         // Default is 16. Lowering it speeds up single spawn lairs
-        ROMFile.seekp(0x2B55, std::ios::beg);
-        TEXT_WriteByte(1);
+        TEXT_WriteByteAt(0x2B55, 1);
 
         // This makes death animation faster
 	    for (unsigned int addr: {
@@ -1554,8 +1564,7 @@ namespace ROMUpdate {
 		    0x70150,
 		    0x70158
         }) {
-	        ROMFile.seekp(addr, std::ios::beg);
-	        TEXT_WriteByte(1);
+            TEXT_WriteByteAt(addr, 1);
 	    }
     }
 

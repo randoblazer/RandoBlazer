@@ -533,8 +533,11 @@ void WorldMap::createWorld (WorldFlags& creationFlags) {
             ->addReq(new LinkReqCheck(ItemIndex::NPC_MERMAID_STATUE_ROCKBIRD))
             ->addReq(new LinkReqCheck(ItemIndex::NPC_MERMAID_BUBBLE_ARMOR))
     ));
-    rockbird->addLink(new MapLink(rockbird, durean,
-        (new LinkReqCheck(ItemIndex::NPC_MERMAID_STATUE_DUREAN))
+    stElles->addLink(new MapLink(stElles, durean,
+        (new LinkReqAnd())
+            ->addReq(new LinkReqCheck(ItemIndex::BUBBLE_ARMOR))
+            ->addReq(new LinkReqCheck(ItemIndex::NPC_MERMAID_STATUE_DUREAN))
+            ->addReq(new LinkReqCheck(ItemIndex::NPC_MERMAID_BUBBLE_ARMOR))
     ));
     if (worldFlags->dureanMetal) {
         durean->addLink(new MapLink(durean, dureanUpper,
@@ -567,13 +570,16 @@ void WorldMap::createWorld (WorldFlags& creationFlags) {
         ));
     }
     // Top lair is always metal
-    blester->addLink(new MapLink(blesterMiddle, blesterTop,
+    blesterMiddle->addLink(new MapLink(blesterMiddle, blesterTop,
         (new LinkReqOr())
             ->addReq(new LinkReqCheck(ItemIndex::THUNDER_RING))
             ->addReq(new LinkReqCheck(ItemIndex::ZANTETSU_SWORD))
     ));
-    rockbird->addLink(new MapLink(rockbird, ghostShip,
-        (new LinkReqCheck(ItemIndex::NPC_MERMAID_STATUE_GHOST_SHIP))
+    stElles->addLink(new MapLink(stElles, ghostShip,
+        (new LinkReqAnd())
+            ->addReq(new LinkReqCheck(ItemIndex::BUBBLE_ARMOR))
+            ->addReq(new LinkReqCheck(ItemIndex::NPC_MERMAID_STATUE_GHOST_SHIP))
+            ->addReq(new LinkReqCheck(ItemIndex::NPC_MERMAID_BUBBLE_ARMOR))
     ));
     ghostShip->addLink(new MapLink(ghostShip, secretSeaCave,
         (new LinkReqAnd())
