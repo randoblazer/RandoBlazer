@@ -4,7 +4,7 @@
 #include <string>
 
 /*
-    Fastrom patch by kando - v1.1
+    Fastrom patch by kando - v1.1 - there are issues with v1.2 that cause crashes
     Patreon: kandowontu - https://www.patreon.com/Kandowontu
     Twitter: @kandowontu
 */

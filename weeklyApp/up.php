@@ -66,6 +66,9 @@ include 'config.php';
 				<li class="nav-item">
 					<a class="nav-link" href="resources.php">Resources</a>
 				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="https://discord.gg/aquuK9q">Discord</a>
+				</li>
                 <li class="nav-item">
                 	<a class="nav-link" href="https://randoblazer.com">Generate</a>
                 </li>
