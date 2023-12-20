@@ -183,7 +183,7 @@ function DownloadForm ({genSettings, onDownloadBackButton}) {
         blob = new Blob();
     }
     if (genSettings.note) {
-        romFileName = `Soul Blazer Randomizer - ${genSettings.seed} - ${note}.smc`;
+        romFileName = `Soul Blazer Randomizer - ${genSettings.seed} - ${genSettings.note}.smc`;
     } else {
         romFileName = `Soul Blazer Randomizer - ${genSettings.seed}.smc`;
     }

@@ -39,7 +39,7 @@ $seed = -1;
 if($stmt->execute()){
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $seed = $row['seed'];
-        $seedLink = 'https://randoblazer.com?race=1&seed='.$seed;
+        $seedLink = 'https://randoblazer.com?race=1&seed='.$seed.'&note=weekly-'.$year.'-'.$weekNumber;
     }
 }
 if($seed != -1) {
