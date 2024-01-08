@@ -178,7 +178,7 @@ function DownloadForm ({genSettings, onDownloadBackButton}) {
     let spoilerButton;
     if (!genSettings.race) {
         try {
-            blob = new Blob([FS.readFile(`/SpoilerLog.txt`)], { type: 'application/octet-stream' });
+            blob = new Blob([FS.readFile(`/SpoilerLog-${genSettings.seed}.txt`)], { type: 'application/octet-stream' });
         } catch (err) {
             blob = new Blob();
         }

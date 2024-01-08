@@ -1,7 +1,15 @@
-#ifndef __LAIR_H__
-#define __LAIR_H__
+#ifndef __LAIRS_H__
+#define __LAIRS_H__
 
-#define POSITION_DATA_SIZE  3
+#include "Random.h"
+#include "World.h"
+
+#include <fstream>
+
+#define NUMBER_OF_LAIRS   420
+#define NUMBER_OF_SPRITES 205
+#define MONSTER_LAIR_DATA_ADDRESS 0xBA0D
+
 
 enum class ActID : unsigned char {
     ACT_1 = 0,
@@ -20,6 +28,13 @@ enum class LairType : unsigned short {
     LAIR_ONE_BY_ONE_PROX = 0x13A8,
     LAIR_TWO_UP_TWO_DOWN = 0xD2A7,
     LAIR_ALREADY_THERE   = 0x52A7
+};
+
+enum class OrientationType : unsigned char {
+    DOWN  = 0x00,
+    LEFT  = 0x40,
+    RIGHT = 0x80,
+    UP    = 0xC0
 };
 
 enum class EnemyType : unsigned char {
@@ -118,14 +133,98 @@ public:
     bool MustNotRandomizeLairPosition(void);
     bool MustNotBeUpwardsLairPosition(void);
 
-    ActID         Act;                              /* 0A */
-    unsigned char PositionData[POSITION_DATA_SIZE]; /* from 0B to 0D */
-    LairType Type;                                  /* from 10 to 11 */
-    unsigned char NbEnemies;                        /* 13 */
-    unsigned char SpawnRate;                        /* 14 */
-    EnemyType     Enemy;                            /* 15 */
-    unsigned char Orientation;                      /* 17 */
+    bool isMetal ();
+    bool isSpirit ();
+    bool isSoul ();
+    const char* enemyName ();
+
+    static bool canRandomizeOrientation (ActID act, EnemyType enemy);
+
+    void log ();
+    void logCsv ();
+
+    ActID         act;          /* 0A */
+    int           address;      // For sprites
+    unsigned char area;         // these three were formerly PositionData
+    unsigned char x;
+    unsigned char y;
+    LairType      spawnType;    /* from 10 to 11 */
+    unsigned char numEnemies;   /* 13 */
+    unsigned char spawnRate;    /* 14 */
+    EnemyType     enemy;        /* 15 */
+    unsigned char orientation;  /* 17 */
 };
 
+class LairList {
+public:
+    LairList ();
+    ~LairList ();
 
-#endif // __LAIR_H__
+    static Lair originalLairs[NUMBER_OF_LAIRS];
+    Lair lairList[NUMBER_OF_LAIRS];
+
+    static void readOriginalLairs (std::fstream &ROMFile);
+    void copyOriginalLairs ();
+    void logLairs ();
+    void lairStats ();
+};
+
+class LairProfile {
+public:
+    LairProfile ();
+    ~LairProfile ();
+
+    virtual void roll (Lair& lair, Lair& originalLair);
+};
+
+class LairProfileA : public LairProfile {
+public:
+    LairProfileA (WorldFlags& flags);
+    ~LairProfileA ();
+
+    WorldFlags* worldFlags;
+    Random::WeightedPicker* normalTypePicker;
+    Random::WeightedPicker* upDownTypePicker;
+    Random::WeightedPicker* singleCountPicker;
+    Random::WeightedPicker* multiCountPicker;
+    Random::WeightedPicker* multiCountReducedPicker;
+    Random::WeightedPicker* spawnRatePickers[4];
+
+    // Reduce the multispawn count to reduce lag or make some areas faster
+    bool reduced;
+    // Force a lair to be proximity spawn, probably to reduce lag
+    bool forceProx;
+
+    void roll (Lair& lair, Lair& originalLair);
+};
+
+class LairProfileClassic : public LairProfile {
+public:
+    LairProfileClassic ();
+    ~LairProfileClassic ();
+
+    Random::WeightedPicker* typePicker;
+    Random::WeightedPicker* typePicker2;
+
+    void roll (Lair& lair, Lair& originalLair);
+};
+
+class LairProfileTwo : public LairProfile {
+public:
+    LairProfileTwo ();
+    ~LairProfileTwo ();
+
+    void roll (Lair& lair, Lair& originalLair);
+};
+
+class LairProfileSprite : public LairProfile {
+public:
+    LairProfileSprite ();
+    ~LairProfileSprite ();
+
+    void roll (Lair& lair, Lair& originalLair);
+};
+
+void readOriginalSprites (Lair sprites[], std::fstream &ROMFile);
+
+#endif // __LAIRS_H__
