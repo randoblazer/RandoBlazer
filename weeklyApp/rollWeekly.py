@@ -20,8 +20,9 @@ def randomSeed():
     random.seed()
     return random.randint(1, 4294967295)
 
-def getSeedUrl(seed):
-    return "https://randoblazer.com?race=1&seed=" + str(seed)
+def getSeedUrl(seed, year, week):
+    return f"https://randoblazer.com?race=1&seed={str(seed)}&note=weekly-{year}-{week}"
+
 
 def dbWriteSeed(year, week, seed):
     # Use UTC time for the database entry
@@ -52,7 +53,7 @@ def dbWriteSeed(year, week, seed):
 def webHookAnnounce(year, week, seed):
     message = f"""\
 It's that time again! Here is the weekly seed for {year} week {week}:
-{getSeedUrl(seed)}
+{getSeedUrl(seed, year, week)}
 """
     # For testing
     #print(message)

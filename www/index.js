@@ -3,6 +3,7 @@ const RandomizePhase = 'RandomizePhase';
 const DownloadPhase = 'DownloadPhase';
 const SeedLabelId = 'randoblazer-seed-label';
 const RaceLabelId = 'randoblazer-race-label';
+const NoteLabelId = 'randoblazer-note-label';
 
 var ModuleHooks = {
     preRun: function () {},
@@ -91,7 +92,7 @@ function romPicker ({validRom, onCheckRom}) {
     ));
 }
 
-function RandoForm ({race, seed, onFormChange, onRandomizeButton}) {
+function RandoForm ({race, seed, note, onFormChange, onRandomizeButton}) {
     var currentValue = {race, seed};
     let [validRom, setValidRom] = React.useState(Module.validRom);
 
@@ -123,6 +124,15 @@ function RandoForm ({race, seed, onFormChange, onRandomizeButton}) {
         onClick: onRandomizeButton,
         disabled: !validRom,
     }, "Randomize");
+    var hiddenNote = e('input', {
+        type: 'hidden',
+        id: NoteLabelId,
+        defaultValue: note,
+        onChange: event => {
+            currentValue.note = event.target.note;
+            onFormChange(currentValue)
+        }
+    });
 
     let colClass = 'col-lg-8 col-md-8';
     let rowClass = 'row g-3 justify-content-center mt-1';
@@ -147,6 +157,7 @@ function RandoForm ({race, seed, onFormChange, onRandomizeButton}) {
                 )
             ))
         ),
+        hiddenNote,
         e('div', {class: 'text-center mt-3'}, randomizeButton)
     );
 }
@@ -171,7 +182,11 @@ function DownloadForm ({genSettings, onDownloadBackButton}) {
     } catch (err) {
         blob = new Blob();
     }
-    romFileName = `Soul Blazer Randomizer - ${genSettings.seed}.smc`;
+    if (genSettings.note) {
+        romFileName = `Soul Blazer Randomizer - ${genSettings.note} - ${genSettings.seed}.smc`;
+    } else {
+        romFileName = `Soul Blazer Randomizer - ${genSettings.seed}.smc`;
+    }
     let downloadButton = e('a', {download: romFileName, href: URL.createObjectURL(blob)},
         e('button', {class: 'btn btn-primary mx-2'}, "Download ROM")
     );
@@ -209,6 +224,7 @@ function RandoBlazerMain () {
     let [phase, setPhase] = React.useState(RandomizePhase);
     let [seed, setSeed] = React.useState(urlParams.has('seed') ? urlParams.get('seed') : 0);
     let [race, setRace] = React.useState(urlParams.has('race') ? !!urlParams.get('race') : false);
+    let [note, setNote] = React.useState(urlParams.has('note') ? urlParams.get('note') : '');
     let [genSettings, setGenSettings] = React.useState({});
     function onFormChange (newValue) {
         setRace(newValue.race);
@@ -223,6 +239,7 @@ function RandoBlazerMain () {
         } else {
             urlParams.set('seed', newValue.seed);
         }
+        setNote(newValue.note);
         let url = new URL(location);
         url.search = urlParams.toString();
         window.history.replaceState(null, '', url.toString());
@@ -247,7 +264,7 @@ function RandoBlazerMain () {
         let url = new URL(location);
         url.search = urlParams.toString();
         window.history.replaceState(null, '', url.toString());
-        setGenSettings({seed: actualSeed, race});
+        setGenSettings({seed: actualSeed, race, note});
         setPhase(DownloadPhase);
     }
     function onDownloadBackButton () {
@@ -257,7 +274,7 @@ function RandoBlazerMain () {
     return e('div', {class: 'randoblazer-main container'}, 
         e('div', {class: 'row justify-content-center'}, e('div', {class: 'col-md-10 col-lg-8'},
             e('div', {class: phase === RandomizePhase ? '' : 'd-none'},
-                e(RandoForm, {race, seed, onFormChange, onRandomizeButton})
+                e(RandoForm, {race, seed, note, onFormChange, onRandomizeButton})
             ),
             e('div', {class: phase === DownloadPhase ? '' : 'd-none'},
                 e(DownloadForm, {genSettings, onDownloadBackButton})
@@ -272,3 +289,5 @@ function startup () {
 }
 
 document.addEventListener('DOMContentLoaded', startup);
+
+// Append the contents of randoblazer.js, the js output of the build process here

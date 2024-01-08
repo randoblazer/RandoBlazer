@@ -8,7 +8,6 @@
 #include <fstream>
 #include <string.h>
 #include <vector>
-#include <array>
 
 #define NB_NPC_TO_DISABLE_ADDRESSES 27
 #define NB_MASTER_INTRO_TEXTS 26
@@ -34,6 +33,12 @@
 #define TEXT_WriteByte(_Byte_)        \
 {                                     \
     Byte = _Byte_;                    \
+    ROMFile.write((char*)(&Byte), 1); \
+}
+#define TEXT_WriteByteAt(_Address_, _Byte_)        \
+{                                     \
+    Byte = _Byte_;                    \
+    ROMFile.seekp(_Address_, std::ios::beg); \
     ROMFile.write((char*)(&Byte), 1); \
 }
 
@@ -823,10 +828,10 @@ namespace ROMUpdate {
         ROMFile.seekp(0x13B2B, std::ios::beg);
         TEXT_WriteString("RANDO HYPE");
         ROMFile.seekp(0x13B3C, std::ios::beg);
-        TEXT_WriteString("RandoBlazer v0.5c  ");
+        TEXT_WriteString("RandoBlazer v0.5d  ");
         ROMFile.seekp(0x143B9, std::ios::beg);
         TEXT_WriteString("Seed ");
-	ROMFile.write(Seed.c_str(), 10);
+        ROMFile.write(Seed.c_str(), 10);
         //TEXT_WriteString(Seed.c_str());
 
         /*** Correct Magic Flare typo + Greenwood/Actinidia leaves + "received" typo */
@@ -1517,6 +1522,13 @@ namespace ROMUpdate {
         TEXT_WriteString("Southerta is open!");
         TEXT_EndText(TEXT_ENDTYPE_44AA);
 
+        /*** Move Rockbird statue */
+        ROMFile.seekp(0xA108, std::ios::beg);
+        TEXT_WriteByte(0x60);
+        TEXT_WriteByte(0x20);
+        // Remove a hole so we don't get stuck on ghost ship
+        TEXT_WriteByteAt(0xF039F, 0x0E);
+
         /*** Bubble Armor mermaid's revival text */
         ROMFile.seekp(0xF8BBD, std::ios::beg);
         TEXT_WriteString("Does anyone want my\r");
@@ -1588,19 +1600,64 @@ namespace ROMUpdate {
         TEXT_WriteByte(0x11);
         TEXT_WriteByte(0x0C);
 
-	    /*** change message speed */
-        std::array addrs = {
-        	0x2796C,
-            0x25F0F,
-            0x25F19,
-            0x26004,
-            0x2600E
-        };
-        for (int i = 0; i < addrs.size(); i++) {
-            ROMFile.seekp(addrs[i], std::ios::beg);
-            // 0 for instant, 1 for fast like J version
-            TEXT_WriteByte(0x01);
-        }
+        /*** change message speed */
+	    for (unsigned int addr: {
+		    0x2796C,
+		    0x25F0F,
+		    0x25F19,
+		    0x26004,
+		    0x2600E
+        }) {
+	        // 1 for fast like J version, 0 makes it instant but causes problems
+	        TEXT_WriteByteAt(addr, 1);
+	    }
+
+        /*** Double screen transition effect speed */
+        // This works by overwriting a subroutine jump with no-ops
+        ROMFile.seekp(0x27894, std::ios::beg);
+        TEXT_WriteByte(0xEA);
+        TEXT_WriteByte(0xEA);
+        TEXT_WriteByte(0xEA);
+        TEXT_WriteByte(0xEA);
+
+        /*** Tweak enemy spawn animation speed */
+        // These values affect the explosion animation that happens when enemies spawn in
+        // Default values are 6, 6, 6, 5
+        // Lowering them means enemy spawns in faster.
+        // Does not affect multispawn spawn rates.
+        // They still get iframes after this
+        // This also makes other explosion animations run faster
+	    for (unsigned int addr: {
+		    0x70022,
+		    0x7002A,
+		    0x70032,
+		    0x7003A
+        }) {
+	        TEXT_WriteByteAt(addr, 2);
+	    }
+	    TEXT_WriteByteAt(0x7003A, 1);
+
+        // Iframes once spawn has finished
+        // Default is 59 so one second
+        // Making it too short trivializes certain enemies - we still
+        // want random moving enemies to run off and wizards to teleport
+        // TEXT_WriteByteAt(0x294B, 50);
+        // Even small changes here are harsh to the enemies so we leave it as is
+
+        // This value controls how long the xp value hangs after finishing an enemy
+        // Default is 16. Lowering it speeds up single spawn lairs
+        TEXT_WriteByteAt(0x2B55, 1);
+
+        // This makes death animation faster
+	    for (unsigned int addr: {
+		    0x70138,
+		    0x70140,
+		    0x70148,
+		    0x70150,
+		    0x70158
+        }) {
+            TEXT_WriteByteAt(addr, 1);
+	    }
     }
 
 
