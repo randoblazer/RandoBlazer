@@ -108,8 +108,11 @@ namespace Randomizer {
 
     static bool SlowDownSpawnEnemy(ActID Act, EnemyType Enemy) {
         return ( (Act == ActID::ACT_1 && Enemy == EnemyType::ACT1_PLANT) ||
+                 (Act == ActID::ACT_2 && Enemy == EnemyType::ACT2_FLOWER) ||
                  (Act == ActID::ACT_2 && Enemy == EnemyType::ACT2_BUSH) ||
                  (Act == ActID::ACT_2 && Enemy == EnemyType::ACT2_STATUE) ||
+                 (Act == ActID::ACT_4 && Enemy == EnemyType::ACT4_ICE_HEAD) ||
+                 (Act == ActID::ACT_5 && Enemy == EnemyType::ACT5_MINI_ARCHER) ||
                  (Act == ActID::ACT_5 && Enemy == EnemyType::ACT5_CATAPULT) ||
                  (Act == ActID::ACT_5 && Enemy == EnemyType::ACT5_BULLDOZER) );
     }
