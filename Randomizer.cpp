@@ -30,6 +30,7 @@
 
 #define SPAWN_RATE_MIN 0x03
 #define SPAWN_RATE_MAX 0x20
+#define SPAWN_RATE_SLOW_ADJUST 0x10
 
 //#define DEBUG
 //#define DEBUG_NO_ENEMIES
@@ -103,6 +104,17 @@ namespace Randomizer {
                  (Act == ActID::ACT_6 && Enemy == EnemyType::ACT6_SNAKE) ||
                  (Act == ActID::ACT_6 && Enemy == EnemyType::ACT6_SKULL2) ||
                  (Act == ActID::ACT_7 && Enemy == EnemyType::ACT7_BRICK) );
+    }
+
+    static bool SlowDownSpawnEnemy(ActID Act, EnemyType Enemy) {
+        return ( (Act == ActID::ACT_1 && Enemy == EnemyType::ACT1_PLANT) ||
+                 (Act == ActID::ACT_2 && Enemy == EnemyType::ACT2_FLOWER) ||
+                 (Act == ActID::ACT_2 && Enemy == EnemyType::ACT2_BUSH) ||
+                 (Act == ActID::ACT_2 && Enemy == EnemyType::ACT2_STATUE) ||
+                 (Act == ActID::ACT_4 && Enemy == EnemyType::ACT4_ICE_HEAD) ||
+                 (Act == ActID::ACT_5 && Enemy == EnemyType::ACT5_MINI_ARCHER) ||
+                 (Act == ActID::ACT_5 && Enemy == EnemyType::ACT5_CATAPULT) ||
+                 (Act == ActID::ACT_5 && Enemy == EnemyType::ACT5_BULLDOZER) );
     }
 
     void RandomizeLairEnemies(Lair &Lair) {
@@ -326,6 +338,10 @@ namespace Randomizer {
     void RandomizeLairSpawnRate(Lair &Lair) {
         if (Lair.Type == LairType::LAIR_MULTISPAWN || Lair.Type == LairType::LAIR_TWO_UP_TWO_DOWN) {
             Lair.SpawnRate = Random::RandomIntegerRange(SPAWN_RATE_MIN, SPAWN_RATE_MAX);
+            if (SlowDownSpawnEnemy(Lair.Act, Lair.Enemy)) {
+                Lair.SpawnRate += SPAWN_RATE_SLOW_ADJUST;
+            }
+            return;
         }
 
         /* Reset Spawn Rate for One-by-One Lairs */
