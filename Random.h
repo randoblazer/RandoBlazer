@@ -9,6 +9,8 @@ namespace Random {
     int RandomInteger(int Range);
     // Returns [LB, UB]
     int RandomIntegerRange(int LowerBound, int UpperBound);
+    // Advance the RNG state, by "throwing away" some numbers
+    void discard(unsigned long z);
 
     template<class C>
     void Shuffle(C& c)

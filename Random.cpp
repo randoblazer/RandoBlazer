@@ -28,4 +28,8 @@ namespace Random {
 
         return dis(gen, boost::random::uniform_int_distribution<int>::param_type{LowerBound, UpperBound});
     }
+
+    void discard(unsigned long z) {
+        gen.discard(z);
+    }
 }
