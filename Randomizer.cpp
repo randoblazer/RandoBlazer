@@ -844,9 +844,7 @@ namespace Randomizer {
         */
         if (options.race) {
             std::cout << "Race mode enabled, altering actual seed.\n";
-            Random::RandomInit(seed);
-            Random::RandomInit(seed);
-            Random::RandomInit(seed);
+            Random::discard(3);
         }
 
         /***************************************************\
