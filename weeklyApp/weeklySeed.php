@@ -24,8 +24,9 @@ if(empty($_GET['weekNumber'])){
     if($dayNumber < 5 || ($dayNumber == 5 && $hourNumber < 8)) {
         $weekNumber = intval($weekNumber)-1;
         if ($weekNumber == 0) {
-            $weekNumber = 53;
             $year--;
+            $dateLastWeek = new DateTime($year . '-12-28'); 
+            $weekNumber = $dateLastWeek->format('W');
         }
     }
 }else{
@@ -151,14 +152,21 @@ if(isset($_SESSION['id']) && $getWeekNumber == -1){
 // Show all the times for this week if either we are not logged in or we are logged in and have submitted a time
 // Or if we are browsing past weeks
 if (!isset($_SESSION['id']) || !empty($oldTimeSent) || $getWeekNumber > -1) {
-    if($weekNumber==1){
-        $pastWeekNumber = 53;
+
+    $maxWeeksThisYear = (new DateTime($year . '-12-28'))->format('W');
+    $maxWeeksPrevYear = (new DateTime(($year - 1) . '-12-28'))->format('W');
+
+    if($weekNumber == 1){
+        // Si semaine 1, la précédente est la dernière de l'an passé (52 ou 53)
+        $pastWeekNumber = $maxWeeksPrevYear;
         $pastYearNumber = $year - 1;
     }else{
         $pastWeekNumber = $weekNumber - 1;
         $pastYearNumber = $year;
     }
-    if($weekNumber==53){
+
+    // Si on est à la dernière semaine (dynamique), la suivante est la 1
+    if($weekNumber == $maxWeeksThisYear){
         $futureWeekNumber = 1;
         $futureYear = $year + 1;
     }else{
